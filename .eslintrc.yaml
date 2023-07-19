@@ -1,0 +1,28 @@
+env:
+  node: true
+
+extends:
+  - 'eslint:recommended'
+  - 'plugin:@typescript-eslint/recommended'
+  - 'plugin:astro/recommended'
+  - prettier # should come last
+
+parser: '@typescript-eslint/parser'
+
+plugins:
+  - '@typescript-eslint'
+
+root: true
+
+rules:
+  '@typescript-eslint/no-var-requires': off
+
+overrides:
+  # Define the configuration for `.astro` file.
+  - files: ['*.astro']
+    parser: 'astro-eslint-parser'
+    # parser: '@astrojs/eslint-plugin-astro/parser'
+    parserOptions:
+      parser: '@typescript-eslint/parser'
+      extraFileExtensions: ['.astro']
+    # rules:

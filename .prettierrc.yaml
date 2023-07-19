@@ -1,0 +1,23 @@
+arrowParens: avoid
+bracketSameLine: false
+bracketSpacing: true
+endOfLine: lf
+htmlWhitespaceSensitivity: css
+insertPragma: false
+jsxSingleQuote: false
+# see: https://prettier.io/docs/en/configuration.html#setting-the-parserdocsenoptionshtmlparser-option
+overrides:
+  - files: ['*.astro']
+    options:
+      parser: 'astro'
+# see: https://prettier.io/docs/en/plugins.html
+plugins: ['prettier-plugin-astro', 'prettier-plugin-toml']
+printWidth: 120
+proseWrap: preserve
+quoteProps: as-needed
+requirePragma: false
+semi: false
+singleQuote: true
+tabWidth: 2
+trailingComma: all
+useTabs: false
