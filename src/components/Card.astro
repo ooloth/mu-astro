@@ -1,5 +1,5 @@
 ---
-interface Props {
+type Props = {
   title: string
   body: string
   href: string
@@ -8,7 +8,7 @@ interface Props {
 const { href, title, body } = Astro.props
 ---
 
-<li class="">
+<li>
   <a href={href}>
     <h2>
       {title}
@@ -20,5 +20,4 @@ const { href, title, body } = Astro.props
   </a>
 </li>
 
-<style>
-</style>
+<style></style>

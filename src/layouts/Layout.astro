@@ -7,14 +7,15 @@ const { title } = Astro.props
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="Astro description" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+
     <title>{title}</title>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
 
   <body>
@@ -22,5 +23,4 @@ const { title } = Astro.props
   </body>
 </html>
 
-<style is:global>
-</style>
+<style is:global></style>
