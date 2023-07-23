@@ -1,0 +1,21 @@
+{
+  "name": "Michael Uloth",
+  "short_name": "MU",
+  "description": "Software engineer helping scientists discover new medicines at Recursion.",
+  "icons": [
+    {
+      "src": "favicons/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "favicons/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "theme_color": "#ffffff"
+}
