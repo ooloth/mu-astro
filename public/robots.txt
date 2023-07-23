@@ -1,2 +1,4 @@
 User-agent: *
-Sitemap: https://michaeluloth.com/sitemap.xml
+Allow: /
+
+Sitemap: https://michaeluloth.com/sitemap-index.xml

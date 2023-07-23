@@ -1,7 +1,14 @@
-import { defineConfig } from 'astro/config'
-import tailwind from '@astrojs/tailwind'
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
 
 // see: https://astro.build/config
+import sitemap from "@astrojs/sitemap";
+
+// https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind()],
-})
+  compressHTML: true,
+  integrations: [tailwind(), sitemap()],
+  scopedStyleStrategy: 'class',
+  site: 'https://michaeluloth.com',
+  trailingSlash: 'always'
+});
