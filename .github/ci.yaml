@@ -1,0 +1,29 @@
+# See: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: Validate formatting, linting and types
+
+on: push
+
+jobs:
+  lint:
+    # See; https://www.eliostruyf.com/devhack-skip-github-actions-specific-commits-messages/
+    if: ${{ !contains(github.event.head_commit.message, '[skip linting]') }}
+    runs-on: ubuntu-latest
+    name: Format, lint and check types
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      # use cached node_modules if found (instead of running npm install)
+      - run: npm ci --prefer-offline
+
+      - name: Validate formatting 💅
+        run: npm run format:check
+
+      - name: Validate linting 🪲
+        run: npm run lint
+
+      - name: Validate types 🔍
+        run: npm run types:check
