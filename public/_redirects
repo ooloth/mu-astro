@@ -1,0 +1,38 @@
+# see: https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file
+
+# old page routes
+/blog            /
+/bookmarks       /notes
+/codes           /
+/contact         /about
+/lab             /
+/metrics         /
+/opera           /
+/sings           /
+/tax-preparation /
+/uses            /
+/web-design      /
+/websites        /
+/writes          /
+/writing         /
+
+# old post routes
+/how-to-shrink-video-file-size-using-ffmpeg /ffmpeg-reducing-video-file-size
+/translate-z                                /css-translate-z
+/what-is-a-factory-function                 /javascript-what-is-a-factory-function
+/writing-great-alt-text                     /html-writing-great-alt-text
+/levels-of-abstraction-in-testing           /testing-levels-of-abstraction
+/slack-alerts-for-cms-errors                /slack-notifications-for-cms-errors
+/filter-boolean                             /javascript-filter-boolean
+/using-graphql-with-gatsby                  /gatsby-using-graphql
+/adding-content-to-a-gatsby-project         /gatsby-adding-content
+/writing-css-in-js-in-a-gatsby-project      /gatsby-writing-css-in-js
+/writing-css-in-a-gatsby-project            /gatsby-writing-css
+/wrapping-pages-in-a-layout-component       /gatsby-layout-component
+/adding-pages-to-a-gatsby-project           /gatsby-adding-pages
+/writing-html-in-a-gatsby-project           /gatsby-writing-html
+/gatsbys-default-files-and-folders          /gatsby-default-files-and-folders
+/starting-a-new-gatsby-project              /gatsby-starting-a-new-project
+/what-is-gatsby                             /gatsby-what-is-it
+/introducing-gatsby-tutorials               /gatsby-tutorials
+/how-to-set-up-a-mac-for-web-development    /macos-set-up-for-web-development
