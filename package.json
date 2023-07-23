@@ -29,7 +29,7 @@
     "prettier": "prettier \"**/*.+(astro|css|graphql|html|js|json|jsonc|jsx|md|mdx|toml|ts|tsx|webc|xml|yaml|yml)\"",
     "preview": "astro preview",
     "start": "astro dev",
-    "types:check": "tsc",
+    "types:check": "astro check && tsc --noEmit",
     "validate": "npm run format:check && npm run lint && npm run types:check"
   }
 }
