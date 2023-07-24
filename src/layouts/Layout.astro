@@ -1,4 +1,6 @@
 ---
+import Base from './Base.astro'
+
 type Props = {
   title: string
 }
@@ -6,23 +8,6 @@ type Props = {
 const { title } = Astro.props
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
-    <meta name="viewport" content="width=device-width" />
-
-    <title>{title}</title>
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <link rel="sitemap" href="/sitemap-index.xml" />
-  </head>
-
-  <body>
-    <slot />
-  </body>
-</html>
-
-<style is:global></style>
+<Base title={title}>
+  <slot />
+</Base>
