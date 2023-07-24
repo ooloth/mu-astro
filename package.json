@@ -9,6 +9,7 @@
     "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
+    "@prettier/plugin-xml": "^3.1.1",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "eslint": "^8.45.0",
@@ -22,13 +23,13 @@
   "scripts": {
     "astro": "astro",
     "build": "astro build",
-    "dev": "astro dev",
+    "dev": "npm i && astro dev",
     "format:check": "npm run prettier -- --list-different",
     "format:fix": "npm run prettier -- --write",
     "lint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
-    "prettier": "prettier \"**/*.+(astro|css|graphql|html|js|json|jsonc|jsx|md|mdx|toml|ts|tsx|webc|xml|yaml|yml)\"",
+    "prettier": "prettier \"**/*.+(astro|cjs|css|graphql|html|js|json|jsonc|jsx|md|mdx|mjs|toml|ts|tsx|xml|yaml|yml)\"",
     "preview": "astro preview",
-    "start": "astro dev",
+    "start": "npm run dev",
     "types:check": "astro check && tsc --noEmit",
     "validate": "npm run format:check && npm run lint && npm run types:check"
   }
