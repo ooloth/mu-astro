@@ -7,8 +7,14 @@ type Post = PostOrNote & { data: { destination: 'blog'; date?: string } }
 
 type PostWithDate = Post & { data: { date: string } }
 
+/**
+ * Returns true if file is a blog post.
+ */
 const isPost = (post: PostOrNote): post is Post => post.data.destination === 'blog'
 
+/**
+ * Returns true if file is a published blog post.
+ */
 const isPublishedPost = (post: PostOrNote): post is PostWithDate =>
   isPost(post) && post.data.date && Date.parse(post.data.date) <= Date.now()
 
@@ -17,35 +23,37 @@ const isPublishedPost = (post: PostOrNote): post is PostWithDate =>
 
 // const isDraft = (post: Post): post is Post => isPost(post) && !isPublished(post) && !isScheduled(post)
 
-const sortByTitleOrSlug = (a: Post, b: Post): number => {
-  // If post is a draft with no title, sort using its slug.
-  const aTitleOrSlug = a.data.title || a.slug
-  const bTitleOrSlug = b.data.title || b.slug
-  return aTitleOrSlug.localeCompare(bTitleOrSlug)
-}
-
-const sortByDate = (a: Post, b: Post): number => {
-  // If post is a draft with no date, sort it to the top.
-  const aDate = a.data.date ? Date.parse(a.data.date).toString() : Date.now().toString()
-  const bDate = b.data.date ? Date.parse(b.data.date).toString() : Date.now().toString()
-  return bDate.localeCompare(aDate)
-}
+/**
+ * Sorts two posts in ascending order by title (or slug if either post is a draft with no title).
+ */
+const sortByTitleOrSlug = (a: Post, b: Post): number => (a.data.title || a.slug).localeCompare(b.data.title || b.slug)
 
 /**
- * Sorts post by title (ascending), then publish date (descending) so drafts appear in a consistent order
+ * Sorts two posts in descending order by publish date (or the current date if either post is a draft with no date).
+ */
+const sortByDate = (a: Post, b: Post): number =>
+  (Date.parse(b.data.date) || Date.now()).toString().localeCompare((Date.parse(a.data.date) || Date.now()).toString())
+
+/**
+ * Returns posts sorted in descending order by publish date.
+ */
+const sortPostsByDate = (posts: Post[]): Post[] => posts.sort(sortByDate)
+
+/**
+ * Returns posts sorted in ascending order by title, then descending order by publish date (so drafts with no dates appear first in alphabetical order).
  */
 const sortPosts = (posts: Post[]): Post[] => posts.sort(sortByTitleOrSlug).sort(sortByDate)
 
-export const getPublishedPosts = async (): Promise<PostWithDate[]> => await getCollection('writing', isPublishedPost)
+/**
+ * Returns all published posts, in descending order by date.
+ */
+export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
+  sortPostsByDate(await getCollection('writing', isPublishedPost))
 
 /**
- * Returns all posts in development and published posts in production, sorted in descending order by publish date.
+ * Returns all posts in development and published posts in production, in descending order by date.
  */
-export const getPosts = async (): Promise<Post[]> => {
-  const posts: Post[] = await getCollection(
-    'writing',
-    post => isPost(post) && (import.meta.env.PROD ? isPublishedPost(post) : true),
+export const getPosts = async (): Promise<Post[]> =>
+  sortPosts(
+    await getCollection('writing', post => isPost(post) && (import.meta.env.PROD ? isPublishedPost(post) : true)),
   )
-
-  return sortPosts(posts)
-}
