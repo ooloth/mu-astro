@@ -1,7 +1,8 @@
-// see: //docs.astro.build/en/guides/rss
+// see: https://docs.astro.build/en/guides/rss
 
 import rss from '@astrojs/rss'
 import { getCollection } from 'astro:content'
+import MarkdownIt from 'markdown-it'
 import sanitizeHtml from 'sanitize-html'
 
 const parser = new MarkdownIt()
