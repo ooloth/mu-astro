@@ -1,32 +1,29 @@
 // see: https://docs.astro.build/en/guides/rss
 
 import rss from '@astrojs/rss'
-import { getCollection } from 'astro:content'
 import MarkdownIt from 'markdown-it'
 import sanitizeHtml from 'sanitize-html'
+import type { APIContext } from 'astro'
+
+import { getPublishedPosts } from '../utils/collections'
 
 const parser = new MarkdownIt()
 
-export async function get(context) {
-  const writing = await getCollection('writing')
+export async function get(context: APIContext) {
+  const publishedBlogPosts = await getPublishedPosts()
 
   return rss({
     title: 'Michael Uloth',
-    description: 'A humble Astronaut’s guide to the stars',
+    description: 'Blog posts by Michael Uloth',
     // see: https://docs.astro.build/en/reference/api-reference/#contextsite
-    site: context.site,
-    // Array of `<item>`s in output xml
-    // See "Generating items" section for examples using content collections and glob imports
-    items: writing.map(post => ({
+    site: context.site as unknown as string,
+    customData: `<language>en-ca</language>`,
+    items: publishedBlogPosts.map(post => ({
       title: post.data.title,
-      pubDate: post.data.pubDate,
+      pubDate: post.data.date,
       description: post.data.description,
-      customData: post.data.customData,
-      // Compute RSS link from post `slug`
-      // This example assumes all posts are rendered as `/blog/[slug]` routes
-      link: `/blog/${post.slug}/`,
+      link: `/${post.slug}/`,
       content: sanitizeHtml(parser.render(post.body)),
     })),
-    customData: `<language>en-ca</language>`,
   })
 }
