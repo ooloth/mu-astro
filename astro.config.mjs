@@ -1,10 +1,8 @@
 import { defineConfig } from 'astro/config'
 import tailwind from '@astrojs/tailwind'
-
-// see: https://astro.build/config
 import sitemap from '@astrojs/sitemap'
 
-// https://astro.build/config
+// see: https://astro.build/config
 export default defineConfig({
   compressHTML: true,
   integrations: [tailwind(), sitemap()],
