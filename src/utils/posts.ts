@@ -51,7 +51,7 @@ export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
   sortPostsByDate(await getCollection('writing', isPublishedPost))
 
 /**
- * Returns all posts in development and published posts in production, in descending order by date.
+ * Returns all posts in development and only published posts in production, in ascending order by title (if unpublished) and descending order by date (if published).
  */
 export const getPosts = async (): Promise<Post[]> =>
   sortPosts(

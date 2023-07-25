@@ -5,7 +5,7 @@ import MarkdownIt from 'markdown-it'
 import sanitizeHtml from 'sanitize-html'
 import type { APIContext } from 'astro'
 
-import { getPublishedPosts } from '../utils/collections'
+import { getPublishedPosts } from '../utils/posts'
 
 const parser = new MarkdownIt()
 
