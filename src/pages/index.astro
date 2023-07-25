@@ -1,10 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro'
+import { getPosts } from '../utils/collections'
+
+const posts = await getPosts()
 ---
 
 <Layout title="Michael Uloth">
   <main>
     <h1>Michael Uloth</h1>
+    <ul>{posts.map(post => <li>{post.data.title}</li>)}</ul>
   </main>
 </Layout>
 
