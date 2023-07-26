@@ -1,21 +1,21 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
+
+import type { Writing } from './collections'
 
 // TODO: move post definitions to src/content/config.ts?
-type PostOrNote = CollectionEntry<'writing'>
-
-type Post = PostOrNote & { data: { destination: 'blog'; date?: string } }
+type Post = Writing & { data: { destination: 'blog'; date?: string } }
 
 type PostWithDate = Post & { data: { date: string } }
 
 /**
  * Returns true if file is a blog post.
  */
-const isPost = (post: PostOrNote): post is Post => post.data.destination === 'blog'
+const isPost = (post: Writing): post is Post => post.data.destination === 'blog'
 
 /**
  * Returns true if file is a published blog post.
  */
-const isPublishedPost = (post: PostOrNote): post is PostWithDate =>
+const isPublishedPost = (post: Writing): post is PostWithDate =>
   isPost(post) && post.data.date && Date.parse(post.data.date) <= Date.now()
 
 // const isScheduled = (post: Post): post is PostWithDate =>

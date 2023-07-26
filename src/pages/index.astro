@@ -1,15 +1,37 @@
 ---
-import Layout from '../layouts/Layout.astro'
+import Main from '../layouts/Main.astro'
 import { getPosts } from '../utils/posts'
 
 const posts = await getPosts()
 ---
 
-<Layout title="Michael Uloth">
-  <main>
-    <h1>Michael Uloth</h1>
-    <ul>{posts.map(post => <li>{post.data.title}</li>)}</ul>
-  </main>
-</Layout>
+<Main title="Michael Uloth">
+  <h1 class="sr-only">Michael Uloth</h1>
 
-<style></style>
+  <section>
+    <h2 class="sr-only">Latest Posts</h2>
+
+    <ol reversed class="columns-xl gap-x-24">
+      {
+        posts.map(post => {
+          const date = new Date(post.data.date || Date.now()).toLocaleDateString('en-CA', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
+
+          return (
+            <li class="flex flex-col md:flex-row md:items-baseline mb-7 md:mb-4">
+              <time datetime={date} class="timestamp md:min-w-[7rem]">
+                {date}
+              </time>
+              <a href={post.slug} class="group outline-none">
+                <span class="link">{post.data.title || post.slug}</span>
+              </a>
+            </li>
+          )
+        })
+      }
+    </ol>
+  </section>
+</Main>
