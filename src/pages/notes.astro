@@ -1,11 +1,41 @@
 ---
 import Main from '../layouts/Main.astro'
+import type { Writing } from '../utils/collections'
+import { getNotes } from '../utils/notes'
+
+const notes = await getNotes()
 ---
 
-<Main title="Notes">
-  <main>
-    <h1>Notes</h1>
-  </main>
-</Main>
+<Main title="Notes" description="Rough notes about coding and other topics by Michael Uloth.">
+  <h1 class="sr-only">Notes</h1>
 
-<style></style>
+  <section>
+    <h2 class="sr-only">Topics</h2>
+
+    <ul class="columns-2xs lowercase">
+      {
+        notes.map(note => {
+          const getLinkText = (item: Writing): string => item.data.title || item.slug
+
+          return (
+            <li class="mb-2 break-inside-avoid-column">
+              <a href={note.slug} class="link">
+                {getLinkText(note)}
+              </a>
+
+              <ul>
+                {note.data.children.map((child: Writing) => (
+                  <li class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]">
+                    <a href={child.slug} class="link">
+                      {getLinkText(child)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </section>
+</Main>

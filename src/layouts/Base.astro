@@ -3,10 +3,11 @@ import '../styles/global.css'
 import site from '../data/site'
 
 type Props = {
+  description: string
   title: string
 }
 
-const { title } = Astro.props
+const { description, title } = Astro.props
 ---
 
 <!DOCTYPE html>
@@ -16,7 +17,7 @@ const { title } = Astro.props
     <meta name="viewport" content="width=device-width" />
 
     <title>{title}</title>
-    <meta name="description" content="Astro description" />
+    <meta name="description" content={description} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
