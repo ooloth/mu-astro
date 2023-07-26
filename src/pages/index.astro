@@ -1,11 +1,12 @@
 ---
+import site from '../data/site'
 import Main from '../layouts/Main.astro'
 import { getPosts } from '../utils/posts'
 
 const posts = await getPosts()
 ---
 
-<Main title="Michael Uloth">
+<Main title={site.title} description={site.description.site}>
   <h1 class="sr-only">Michael Uloth</h1>
 
   <section>
