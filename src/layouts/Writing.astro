@@ -1,0 +1,80 @@
+---
+import { isPathnameInCollection } from '../utils/collections'
+import { getPosts } from '../utils/posts'
+import Base from './Base.astro'
+
+type Props = {
+  description: string
+  title: string
+}
+
+const { description, title } = Astro.props
+const { pathname } = Astro.url
+
+const posts = await getPosts()
+---
+
+<Base title={title} description={description}>
+  <div class="mx-auto max-w-2xl">
+    <header class="markdown">
+      {
+        isPathnameInCollection(pathname, posts) && (
+          <time datetime={page.date} class="timestamp">
+            {page.date}
+          </time>
+        )
+      }
+
+      <h1>{title || slug}</h1>
+    </header>
+
+    <article class="markdown"><slot /></article>
+
+    {
+      isPathnameInCollection(pathname, posts) && (
+        <script
+          src="https://giscus.app/client.js"
+          data-repo="ooloth/comments"
+          data-repo-id="R_kgDOJo8JPg"
+          data-category="Announcements"
+          data-category-id="DIC_kwDOJo8JPs4CXtJE"
+          data-mapping="pathname"
+          data-strict="1"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="bottom"
+          data-theme="preferred_color_scheme"
+          data-lang="en"
+          crossorigin="anonymous"
+          async
+        />
+      )
+    }
+
+    <!--
+  <script webc:type="js">
+    // const isPageWithTags = isPageInCollection(page, $data.collections.posts) || isPageInCollection(page, $data.collections.notes);
+    if (!$data.tags) {
+      ('');
+    } else {
+      `<footer class="mt-12 border-t-2">
+        <ul class="mt-4 flex flex-wrap">${$data.tags
+          .map(
+            tag =>
+              `<li class="me-3"><a href="/tags/${tag}/" class="text-neutral-500 dark:text-neutral-400 hover:underline hover:text-neutral-950 dark:hover:text-rose-300">#${tag}</a></li>`,
+          )
+          .join('')}
+        </ul>
+      </footer>`;
+    }
+  </script>
+  -->
+
+    <!--
+  <p class="text-[0.8rem] md:text-[0.9rem] uppercase md:min-w-[8rem]">
+    Last updated
+    <time :datetime="htmlDateString(page.date)" @text="readableDate(page.date)"></time>
+  </p>
+  -->
+  </div>
+</Base>
