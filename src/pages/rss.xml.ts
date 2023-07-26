@@ -6,17 +6,18 @@ import sanitizeHtml from 'sanitize-html'
 import type { APIContext } from 'astro'
 
 import { getPublishedPosts } from '../utils/posts'
+import site from '../data/site'
 
 const parser = new MarkdownIt()
 
-export async function get(context: APIContext) {
+export async function get(context: APIContext): Promise<{ body: string }> {
   const publishedBlogPosts = await getPublishedPosts()
 
   return rss({
-    title: 'Michael Uloth',
-    description: 'Blog posts by Michael Uloth',
     // see: https://docs.astro.build/en/reference/api-reference/#contextsite
     site: context.site as unknown as string,
+    title: site.title,
+    description: site.description.rss,
     customData: `<language>en-ca</language>`,
     items: publishedBlogPosts.map(post => ({
       title: post.data.title,
