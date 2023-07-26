@@ -1,11 +1,13 @@
 ---
 import Main from '../layouts/Main.astro'
+import { Content } from '../content/pages/about.md'
 ---
 
-<Main title="About">
-  <main>
-    <h1>About me</h1>
+<Main title="About" description="About me">
+  <main class="markdown mx-auto max-w-2xl">
+    <Content />
   </main>
-</Main>
 
-<style></style>
+  <!-- TODO: add images here? -->
+  <aside></aside>
+</Main>
