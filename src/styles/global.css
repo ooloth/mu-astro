@@ -1,0 +1,163 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer components {
+  .heading {
+    @apply break-after-avoid leading-tight font-semibold text-neutral-950 dark:text-neutral-50;
+  }
+
+  .image {
+    @apply rounded-sm bg-neutral-800;
+  }
+
+  .link {
+    @apply box-decoration-clone underline underline-offset-[0.2em] decoration-[0.18em] dark:decoration-[0.1em] decoration-rose-300  text-neutral-950 dark:text-rose-300;
+    text-decoration-skip-ink: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      @apply shadow-glow outline-none bg-rose-300 text-neutral-950;
+    }
+
+    /* group-focus is for instances where I've styled a span inside a flex-child anchor (to avoid full-width stretch) */
+    @apply group-focus:shadow-glow group-focus:outline-none group-focus:dark:bg-rose-300 group-focus:dark:text-neutral-950;
+  }
+
+  .link-nav {
+    @apply link dark:decoration-[0.15em] decoration-transparent dark:text-neutral-300;
+  }
+
+  .link-subtle {
+    @apply link underline-offset-2 decoration-auto;
+  }
+
+  .list {
+    @apply mt-4 ps-7;
+  }
+
+  .list-item {
+    @apply mt-1 leading-normal;
+  }
+
+  .timestamp {
+    @apply text-sm uppercase;
+  }
+
+  .markdown {
+    & h1 {
+      @apply heading mb-8 text-4xl leading-[1.1];
+    }
+    & h2 {
+      @apply heading mt-8 text-[1.55rem];
+    }
+    & h3 {
+      @apply heading mt-8 text-2xl;
+    }
+    & h4 {
+      @apply heading mt-6 text-xl;
+    }
+    & h5 {
+      @apply heading mt-4 text-lg;
+    }
+    & h6 {
+      @apply heading mt-4 text-base;
+    }
+
+    & p {
+      @apply mt-4;
+
+      & + ul,
+      & + ol {
+        @apply mt-3;
+      }
+    }
+
+    & a {
+      @apply link;
+    }
+
+    & ul {
+      @apply list list-disc marker:text-rose-300;
+    }
+
+    & ol {
+      @apply list list-decimal;
+    }
+
+    & li {
+      @apply mt-1;
+
+      & > ul,
+      & > ol {
+        @apply mt-0;
+      }
+    }
+
+    img {
+      @apply image mt-5;
+
+      /* paragraphs that follow an image should have a bit more margin above them */
+      & + p {
+        @apply mt-5;
+      }
+    }
+
+    figure {
+      & figcaption {
+        @apply mt-1 text-center text-[0.9rem] text-neutral-400;
+      }
+
+      /* paragraphs that follow an image should have a bit more margin above them */
+      & + p {
+        @apply mt-5;
+      }
+    }
+
+    & code {
+      @apply rounded-sm bg-neutral-800 box-decoration-clone py-0.5 px-1 text-[0.9rem] text-rose-300;
+    }
+
+    & pre {
+      @apply mt-4 rounded-sm overflow-x-scroll bg-neutral-800 py-2 px-3;
+    }
+
+    & strong,
+    & em {
+      @apply text-neutral-950 dark:text-neutral-50;
+    }
+
+    & blockquote {
+      @apply ms-4 border-l-4 border-rose-300 pl-3 italic text-neutral-50;
+    }
+
+    & .eleventy-plugin-youtube-embed {
+      @apply my-5;
+
+      /* Remove translucent black bar */
+      & lite-youtube::before {
+        background-image: none;
+      }
+
+      /* Make play button red */
+      & .lty-playbtn {
+        filter: none;
+      }
+
+      & iframe {
+        @apply rounded-sm;
+      }
+    }
+
+    & .eleventy-plugin-embed-twitter {
+      @apply my-5;
+    }
+  }
+}
+
+@layer components {
+  .giscus {
+    @apply mt-16;
+  }
+}

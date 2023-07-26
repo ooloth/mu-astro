@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^3.1.1",
+    "@rollup/plugin-yaml": "^4.1.1",
     "@types/markdown-it": "^12.2.3",
     "@types/sanitize-html": "^2.9.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
@@ -21,6 +22,9 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-astro": "^0.27.2",
     "eslint-plugin-jsx-a11y": "^6.7.1",
+    "postcss-import": "^15.1.0",
+    "postcss-nesting": "^12.0.0",
+    "postcss-preset-env": "^9.1.0",
     "prettier": "^3.0.0",
     "prettier-plugin-astro": "^0.11.0",
     "prettier-plugin-toml": "^0.3.1"

@@ -1,4 +1,7 @@
 ---
+import '../styles/global.css'
+import site from '../data/site'
+
 type Props = {
   title: string
 }
@@ -7,20 +10,22 @@ const { title } = Astro.props
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={site.language} class="bg-rose-300">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
     <meta name="viewport" content="width=device-width" />
 
     <title>{title}</title>
+    <meta name="description" content="Astro description" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
 
-  <body>
+  <body
+    class="flex flex-col overflow-x-hidden bg-neutral-50 dark:bg-neutral-900 py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed text-neutral-800 dark:text-neutral-300"
+  >
     <slot />
   </body>
 </html>
