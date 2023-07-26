@@ -1,0 +1,40 @@
+---
+import nav, { type NavItem } from '../data/nav'
+import site from '../data/site'
+
+// see: https://docs.astro.build/en/reference/api-reference/#astrourl
+const isCurrentPage = (item: NavItem): boolean => item.url === Astro.url.pathname
+
+// const isCurrentPage = item =>
+//   htmlBaseUrl(item.url) === htmlBaseUrl(page.url) ||
+//   (isPageInCollection(page, $data.collections.posts) && item.url === '/') ||
+//   (isPageInCollection(page, $data.collections.notes) && item.url === '/notes/')
+
+const getClasses = (item: NavItem): string =>
+  isCurrentPage(item) ? 'link-nav decoration-rose-300 dark:text-neutral-50' : 'link-nav'
+---
+
+<header class="mb-12">
+  <a href="#skip" class="sr-only">Skip to main content</a>
+
+  <nav>
+    <h2 class="sr-only">Top level navigation menu</h2>
+
+    <ul class="flex flex-wrap">
+      <li class="pb-1 w-full text-lg font-semibold text-neutral-950 dark:text-neutral-50">
+        <a href="/">{site.title}</a>
+        <span>👋</span>
+      </li>
+
+      {
+        nav.top.map(item => (
+          <li class="me-3 text-lg lowercase">
+            <a href={item.url} aria-current={isCurrentPage(item) ? 'page' : false} class={getClasses(item)}>
+              {item.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
