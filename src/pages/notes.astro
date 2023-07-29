@@ -25,7 +25,7 @@ const notes = await getNotes()
                     class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
                     style={`padding-left: ${level * 1.4}rem`}
                   >
-                    <a href={child.slug} class="link">
+                    <a href={`/${child.slug}/`} class="link">
                       {getLinkText(child)}
                     </a>
 
@@ -38,7 +38,7 @@ const notes = await getNotes()
 
           return (
             <li class="mb-2 break-inside-avoid-column">
-              <a href={note.slug} class="link">
+              <a href={`/${note.slug}/`} class="link">
                 {getLinkText(note)}
               </a>
 

@@ -1,15 +1,18 @@
 ---
+import type { CollectionEntry } from 'astro:content'
 import { isPathnameInCollection } from '../utils/collections'
 import { getPosts } from '../utils/posts'
 import Base from './Base.astro'
 
 type Props = {
-  description: string
-  title: string
+  entry: CollectionEntry<'writing'>
 }
 
-const { description, title } = Astro.props
+const { entry } = Astro.props
 const { pathname } = Astro.url
+
+const title = entry.data.title || entry.slug
+const description = ''
 
 const posts = await getPosts()
 ---
@@ -19,13 +22,13 @@ const posts = await getPosts()
     <header class="markdown">
       {
         isPathnameInCollection(pathname, posts) && (
-          <time datetime={page.date} class="timestamp">
-            {page.date}
+          <time datetime={entry.data.date} class="timestamp">
+            {entry.data.date}
           </time>
         )
       }
 
-      <h1>{title || slug}</h1>
+      <h1>{title}</h1>
     </header>
 
     <article class="markdown"><slot /></article>
