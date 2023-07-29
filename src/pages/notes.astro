@@ -17,21 +17,32 @@ const notes = await getNotes()
         notes.map(note => {
           const getLinkText = (item: Writing): string => item.data.title || item.slug
 
+          const getChildren = (item: Writing, level: number) =>
+            item.data.children && (
+              <ul>
+                {item.data.children.map((child: Writing) => (
+                  <li
+                    class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
+                    style={`padding-left: ${level * 1.4}rem`}
+                  >
+                    <a href={child.slug} class="link">
+                      {getLinkText(child)}
+                    </a>
+
+                    {/* Recursively render grandchildren, etc */}
+                    {getChildren(child, level + 1)}
+                  </li>
+                ))}
+              </ul>
+            )
+
           return (
             <li class="mb-2 break-inside-avoid-column">
               <a href={note.slug} class="link">
                 {getLinkText(note)}
               </a>
 
-              <ul>
-                {note.data.children.map((child: Writing) => (
-                  <li class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]">
-                    <a href={child.slug} class="link">
-                      {getLinkText(child)}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              {getChildren(note, 0)}
             </li>
           )
         })

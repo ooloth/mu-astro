@@ -14,47 +14,46 @@ const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.priv
 /**
  * Given an array of collection items, returns the array with child items nested under their parents.
  */
-const sortByParent = (collection: Writing[]): Writing[] => {
-  type WritingWithChildren = (Writing & { data: { children: Writing[] } })[]
+const nestChildren = (collection: Writing[]): Writing[] => {
+  // Step 1: Create a mapping from slugs to their respective objects
+  const slugToNodeMap = collection.reduce(
+    (nodesBySlug, item) => {
+      nodesBySlug[item.slug.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
+      return nodesBySlug
+    },
+    {} as Record<string, Writing>,
+  )
 
-  const tree: Record<string, Writing> = {}
-  const roots: WritingWithChildren = []
+  // Step 2: Build the tree
+  const tree = collection.reduce((roots, item): Writing[] => {
+    // Find the node for the current item
+    const node = slugToNodeMap[item.slug.toLowerCase()]
 
-  // TODO: rewrite as a single map or reduce?
+    // If the item has a parent, add the node to the parent's children array
+    if (item.data.parent) {
+      const parentNode = slugToNodeMap[item.data.parent.toLowerCase()]
 
-  // Prep by adding a "children" property to each item and indexing all file names
-  collection.forEach(item => {
-    item.data.children = [] // Add an empty array for the children if it does not already exist
-    tree[item.slug.toLowerCase()] = item // Index each item by its lowercase slug
-  })
-
-  // Connect children with their parents and separate the roots
-  collection.forEach(item => {
-    if (!item.data.parent) {
-      roots.push(item) // If the item has no parent, it's a root (a.k.a. parent)
-      return
+      if (parentNode) {
+        parentNode.data.children.push(node)
+      } else {
+        console.error(`Parent title "${item.data.parent}" not found.`)
+      }
+    } else {
+      // If the item doesn't have a parent, it is a root item, so add it to the accumulator (tree)
+      roots.push(node)
     }
 
-    // Get the lowercase version of the parent name
-    const parent = item.data.parent.toLowerCase()
+    // Return the accumulator for the next iteration
+    return roots
+  }, [] as Writing[])
 
-    // Handle not finding the parent name in the tree
-    if (!tree[parent]) {
-      // TODO: throw an error to avoid hiding the page link indefinitely?
-      console.log(`tree does not contain ${item.data.parent}`)
-    }
-
-    // Add the current item to the parent's children array
-    tree[parent].data.children.push(item)
-  })
-
-  return roots
+  return tree
 }
 
 /**
  * Returns all notes with child notes nested under their parents.
  */
 export const getNotes = async (): Promise<Writing[]> =>
-  sortByParent(
+  nestChildren(
     await getCollection('writing', note => isNote(note) && (import.meta.env.PROD ? isPublicNote(note) : true)),
   )
