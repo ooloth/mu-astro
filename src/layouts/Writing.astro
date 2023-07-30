@@ -2,7 +2,7 @@
 import type { CollectionEntry } from 'astro:content'
 import { isPathnameInCollection } from '../utils/collections'
 import { getPosts } from '../utils/posts'
-import Base from './Base.astro'
+import Main from './Main.astro'
 
 type Props = {
   entry: CollectionEntry<'writing'>
@@ -17,7 +17,7 @@ const description = ''
 const posts = await getPosts()
 ---
 
-<Base title={title} description={description}>
+<Main title={title} description={description}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
