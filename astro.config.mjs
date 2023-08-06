@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config'
-import rehypeCloudinaryImageAttributes from 'lib/rehype/cloudinary-image-attributes'
+import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
 import tailwind from '@astrojs/tailwind'
 import sitemap from '@astrojs/sitemap'
 import yaml from '@rollup/plugin-yaml'
