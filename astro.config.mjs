@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config'
+import rehypeCloudinaryImageAttributes from 'lib/rehype/cloudinary-image-attributes'
 import tailwind from '@astrojs/tailwind'
 import sitemap from '@astrojs/sitemap'
 import yaml from '@rollup/plugin-yaml'
@@ -6,17 +7,6 @@ import yaml from '@rollup/plugin-yaml'
 // see: https://astro.build/config
 export default defineConfig({
   compressHTML: true,
-  experimental: {
-    assets: true,
-  },
-  image: {
-    service: {
-      entrypoint: './src/api/image-service.ts', // 'astro/assets/services/squoosh' | 'astro/assets/services/sharp' | string,
-      config: {
-        // ... service-specific config. Optional.
-      },
-    },
-  },
   integrations: [
     sitemap(),
     tailwind({
@@ -24,6 +14,9 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
+  markdown: {
+    rehypePlugins: [rehypeCloudinaryImageAttributes],
+  },
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',
   trailingSlash: 'always',
