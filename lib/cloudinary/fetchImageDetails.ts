@@ -5,7 +5,15 @@ import isCloudinaryImage from './isCloudinaryImage'
  * @see https://cloudinary.com/documentation/admin_api#get_details_of_a_single_resource_by_public_id
  */
 function getDetailsUrlFromPublicId(publicId: string): string {
-  return `https://${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}@api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/resources/image/upload/${publicId}`
+  const apiKey = import.meta.env.CLOUDINARY_API_KEY
+  const apiSecret = import.meta.env.CLOUDINARY_API_SECRET
+  const cloudName = import.meta.env.CLOUDINARY_CLOUD_NAME
+
+  if (!apiKey || !apiSecret || !cloudName) {
+    throw Error('Missing Cloudinary environment variables.')
+  }
+
+  return `https://${apiKey}:${apiSecret}@api.cloudinary.com/v1_1/${cloudName}/resources/image/upload/${publicId}`
 }
 
 // TODO: handle no id param
