@@ -1,8 +1,6 @@
 import cloudinary from './client'
 import isCloudinaryImage from './isCloudinaryImage'
 
-// TODO: handle no publicId param
-// TODO: handle missing folder prefix in publicId
 async function fetchImageDetails(publicId: string): Promise<unknown> {
   if (!isCloudinaryImage(publicId)) {
     throw Error(`${publicId} is not a Cloudinary image path.`)
@@ -16,7 +14,6 @@ async function fetchImageDetails(publicId: string): Promise<unknown> {
       throw Error(`Error fetching image details for "${publicId}":\n\n${error}\n`)
     })
 
-  console.log('imageDetails', imageDetails)
   return imageDetails
 }
 
