@@ -9,7 +9,7 @@ import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 import type { Node } from 'unist'
 
 import fetchImageDetails from '../cloudinary/fetchImageDetails'
-import isCloudinaryImage from '../cloudinary/isCloudinaryImage'
+import isCloudinaryUpload from '../cloudinary/isCloudinaryUpload'
 import cloudinary from '../cloudinary/client'
 
 interface Image extends Element {
@@ -24,7 +24,7 @@ const rehypeCloudinaryImageAttributes = () => {
       isElement(node, 'img') &&
       node.properties !== undefined &&
       typeof node.properties.src === 'string' &&
-      isCloudinaryImage(node.properties.src)
+      isCloudinaryUpload(node.properties.src)
     ) {
       images.push(node as Image)
       return SKIP

@@ -1,5 +1,5 @@
 import cloudinary from './client'
-import isCloudinaryImage from './isCloudinaryImage'
+import isCloudinaryUpload from './isCloudinaryUpload'
 
 type Loading = 'lazy' | 'eager'
 type Decoding = 'async' | 'sync'
@@ -22,7 +22,7 @@ function parseAnyCustomAttributesPassedAsQueryParams(publicId: string): {
 }
 
 async function fetchImageDetails(publicId: string) {
-  if (!isCloudinaryImage(publicId)) {
+  if (!isCloudinaryUpload(publicId)) {
     throw Error(`${publicId} is not a Cloudinary image path.`)
   }
 
@@ -33,7 +33,7 @@ async function fetchImageDetails(publicId: string) {
   const imageDetails = await cloudinary.api
     .resource(publicIdWithoutQueryParams, { resource_type: 'image', type: 'upload', max_results: 1 })
     .catch(error => {
-      throw Error(`Error fetching image details for "${publicId}":\n\n${error}\n`)
+      throw Error(`Error fetching image details for "${publicId}":\n\n${JSON.stringify(error, null, 2)}\n`)
     })
 
   const { loading, decoding } = parseAnyCustomAttributesPassedAsQueryParams(publicId)
