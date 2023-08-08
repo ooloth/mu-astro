@@ -14,36 +14,37 @@ const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.priv
 /**
  * Given an array of collection items, returns the array with child items nested under their parents.
  */
-const nestChildren = (collection: Writing[]): Writing[] => {
-  // Step 1: Create a mapping from slugs to their respective objects
+function nestChildren(collection: Writing[]): Writing[] {
+  // Step 1: Create a mapping from item slugs to their respective item data
   const slugToNodeMap = collection.reduce(
-    (nodesBySlug, item) => {
+    (nodesBySlug, item): Record<string, Writing> => {
+      // Append an empty children array to the item data
       nodesBySlug[item.slug.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
       return nodesBySlug
     },
     {} as Record<string, Writing>,
   )
 
-  // Step 2: Build the tree
+  // Step 2: Build the item tree
   const tree = collection.reduce((roots, item): Writing[] => {
-    // Find the node for the current item
+    // Find the node matching the current collection item
     const node = slugToNodeMap[item.slug.toLowerCase()]
 
-    // If the item has a parent, add the node to the parent's children array
     if (item.data.parent) {
       const parentNode = slugToNodeMap[item.data.parent.toLowerCase()]
 
       if (parentNode) {
+        // If the note has a parent, add the item's data to the parent's children array
         parentNode.data.children.push(node)
       } else {
-        console.error(`Parent title "${item.data.parent}" not found.`)
+        console.error(`Parent slug "${item.data.parent}" not found (this should never happen).`)
       }
     } else {
-      // If the item doesn't have a parent, it is a root item, so add it to the accumulator (tree)
+      // If the item has no parent, treat it as a new root-level note
       roots.push(node)
     }
 
-    // Return the accumulator for the next iteration
+    // Return the update tree
     return roots
   }, [] as Writing[])
 
@@ -51,9 +52,19 @@ const nestChildren = (collection: Writing[]): Writing[] => {
 }
 
 /**
- * Returns all notes with child notes nested under their parents.
+ * In production, remove all private notes from all levels of the nested notes tree.
+ */
+const removePrivateNotes = (notes: Writing[]): Writing[] =>
+  import.meta.env.PROD
+    ? notes
+        // Remove private notes from the current nesting level (starting with the root)
+        .filter(note => isPublicNote(note))
+        // Remove private notes from the child level (and so on, recursively)
+        .map(note => ({ ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }))
+    : notes
+
+/**
+ * Returns all notes with child notes nested under their parents (always) and private notes removed (in production).
  */
 export const getNotes = async (): Promise<Writing[]> =>
-  nestChildren(
-    await getCollection('writing', note => isNote(note) && (import.meta.env.PROD ? isPublicNote(note) : true)),
-  )
+  removePrivateNotes(nestChildren(await getCollection('writing', note => isNote(note))))
