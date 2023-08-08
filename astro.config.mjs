@@ -1,8 +1,10 @@
 import { defineConfig } from 'astro/config'
-import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
-import tailwind from '@astrojs/tailwind'
+import remarkUnwrapImages from 'remark-unwrap-images'
 import sitemap from '@astrojs/sitemap'
+import tailwind from '@astrojs/tailwind'
 import yaml from '@rollup/plugin-yaml'
+
+import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
 
 // see: https://astro.build/config
 export default defineConfig({
@@ -15,6 +17,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    remarkPlugins: [remarkUnwrapImages],
     rehypePlugins: [rehypeCloudinaryImageAttributes],
   },
   scopedStyleStrategy: 'class',
