@@ -10,7 +10,7 @@ import type { Node } from 'unist'
 
 import fetchImageDetails from '../cloudinary/fetchImageDetails'
 import isCloudinaryImage from '../cloudinary/isCloudinaryImage'
-import insertOptimizationTransformations from '../cloudinary/insertOptimizationTransformations'
+import cloudinary from '../cloudinary/client'
 
 interface Image extends Element {
   properties: Properties
@@ -52,19 +52,33 @@ const rehypeCloudinaryImageAttributes = () => {
       2160, // max image layout width at 3x DPR
     ]
 
-    // For blog posts and notes, image layout size currently maxes out when browser hits 768px
-    // NOTE: browser takes first media query that's true, so be careful about the order
-    const sizes = '(min-width: 768px) 768px, 100vw'
-
     // Mutate the image nodes with the image details
     images.forEach((image, index) => {
       const imageDetails = details[index]
 
-      image.properties.src = insertOptimizationTransformations(imageDetails.secure_url, 1440)
+      image.properties.src = cloudinary.url(imageDetails.public_id, {
+        crop: 'scale',
+        fetch_format: 'auto',
+        quality: 'auto',
+        width: 1440,
+      })
+
       image.properties.srcset = widths
-        .map(width => `${insertOptimizationTransformations(imageDetails.secure_url, width)} ${width}w`)
+        .map(
+          width =>
+            `${cloudinary.url(imageDetails.public_id, {
+              crop: 'scale',
+              fetch_format: 'auto',
+              quality: 'auto',
+              width,
+            })} ${width}w`,
+        )
         .join(', ')
-      image.properties.sizes = sizes
+
+      // For blog posts and notes, image layout size currently maxes out when browser hits 768px
+      // NOTE: browser takes first media query that's true, so be careful about the order
+      image.properties.sizes = '(min-width: 768px) 768px, 100vw'
+
       image.properties.alt = imageDetails?.context?.custom?.alt ?? ' ' // comes from "Description" field in contextual metadata
       image.properties.width = imageDetails.width
       image.properties.height = imageDetails.height
@@ -90,6 +104,7 @@ const rehypeCloudinaryImageAttributes = () => {
         }
 
         // If a caption exists, replace the image with a figure that contains the img + figcaption
+        // Use Object.assign to replace the exact same object instead of triggering an infinite loop by creating new objects
         Object.assign(image, figure)
       }
     })
