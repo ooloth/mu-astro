@@ -58,11 +58,7 @@ const rehypeCloudinaryImageAttributes = () => {
 
     images.forEach((image, index) => {
       const imageDetails = details[index]
-      console.log('imageDetails', imageDetails)
 
-      image.properties.loading = 'lazy'
-      image.properties.decoding = 'async'
-      // image.properties.decoding = loading === 'eager' ? 'sync' : 'async'
       image.properties.src = insertOptimizationTransformations(imageDetails.secure_url, 1440)
       image.properties.srcset = widths
         .map(width => `${insertOptimizationTransformations(imageDetails.secure_url, width)} ${width}w`)
@@ -71,6 +67,8 @@ const rehypeCloudinaryImageAttributes = () => {
       image.properties.alt = imageDetails?.context?.custom?.alt ?? ' ' // comes from "Description" field in contextual metadata
       image.properties.width = imageDetails.width
       image.properties.height = imageDetails.height
+      image.properties.loading = imageDetails.loading
+      image.properties.decoding = imageDetails.decoding
 
       // TODO: conditionally add figure + figcaption
       // const caption = imageDetails?.context?.custom?.caption // comes from "Title" field in contextual metadata
