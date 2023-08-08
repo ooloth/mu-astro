@@ -37,7 +37,8 @@ export async function get(context: APIContext): Promise<{ body: string }> {
           title: post.data.title,
           pubDate: post.data.date,
           description: post.data.description,
-          link: `/${post.slug}/`,
+          link: `${post.slug}/`,
+          customData: `<guid permalink="true">${post.data.feedId || `${site.url}${post.slug}/`}</guid>`,
           content: String(content.value),
         }
       }),
