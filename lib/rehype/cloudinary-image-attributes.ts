@@ -56,6 +56,7 @@ const rehypeCloudinaryImageAttributes = () => {
     // NOTE: browser takes first media query that's true, so be careful about the order
     const sizes = '(min-width: 768px) 768px, 100vw'
 
+    // Mutate the image nodes with the image details
     images.forEach((image, index) => {
       const imageDetails = details[index]
 
@@ -70,12 +71,27 @@ const rehypeCloudinaryImageAttributes = () => {
       image.properties.loading = imageDetails.loading
       image.properties.decoding = imageDetails.decoding
 
-      // TODO: conditionally add figure + figcaption
-      // const caption = imageDetails?.context?.custom?.caption // comes from "Title" field in contextual metadata
+      const caption = imageDetails?.context?.custom?.caption // comes from "Title" field in contextual metadata
 
-      // const img = `<img src="${src}" srcset="${srcset}" sizes="${sizes}" alt="${alt}" width="${imageDetails.width}" height="${imageDetails.height}" loading="${loading}" decoding="${decoding}" />`
+      if (caption) {
+        // see: https://github.com/syntax-tree/hast#element
+        const figure = {
+          type: 'element',
+          tagName: 'figure',
+          properties: {},
+          children: [
+            { ...image },
+            {
+              type: 'element',
+              tagName: 'figcaption',
+              children: [{ type: 'text', value: caption }],
+            },
+          ],
+        }
 
-      // return caption ? `<figure>${img}<figcaption>${caption}</figcaption></figure>` : img
+        // If a caption exists, replace the image with a figure that contains the img + figcaption
+        Object.assign(image, figure)
+      }
     })
   }
 
