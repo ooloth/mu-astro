@@ -1,17 +1,14 @@
 ---
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
-import Base from './Base.astro'
+import Base, { type BaseProps } from './Base.astro'
 
-type Props = {
-  description: string
-  title: string
-}
+type Props = BaseProps
 
-const { description, title } = Astro.props
+const { description, title, ogImage } = Astro.props
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} ogImage={ogImage}>
   <div class="flex flex-col flex-1">
     <Header />
 

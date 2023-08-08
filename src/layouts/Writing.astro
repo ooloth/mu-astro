@@ -12,12 +12,11 @@ const { entry } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.slug
-const description = ''
 
 const posts = await getPosts()
 ---
 
-<Main title={title} description={description}>
+<Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
@@ -80,4 +79,4 @@ const posts = await getPosts()
   </p>
   -->
   </div>
-</Base>
+</Main>

@@ -1,27 +1,162 @@
 ---
 import '../styles/global.css'
 import site from '../data/site'
+import { getPosts } from '../utils/posts'
+import { getNotes } from '../utils/notes'
+import { isPathnameInCollection } from '../utils/collections'
 
-type Props = {
-  description: string
-  title: string
+export type BaseProps = {
+  description?: string
+  ogImage?: string
+  title?: string
 }
 
-const { description, title } = Astro.props
+type Props = BaseProps
+
+const { description, ogImage, title } = Astro.props
+const { pathname } = Astro.url
+
+const posts = await getPosts()
+const notes = await getNotes()
+
+const isHome = pathname === '/'
+const is404 = pathname === '/404.html' // TODO: confirm this is the correct path for 404 pages
+
+const pageTitle = title
+  ? title
+  : isHome
+  ? site.title
+  : is404
+  ? 'Page not found'
+  : // If no page title has been set, generate one from the pathname
+    pathname
+      .replace('/', '') // remove leading and trailing slashes
+      .split('-') // split on hyphens
+      .map((word, index, words) =>
+        // Always capitalize the first word
+        index === 0 ||
+        // Always capitalize the last word
+        index === words.length - 1 ||
+        // Don't capitalize articles, or 1-3 letter conjunctions and prepositions
+        // See: https://apastyle.apa.org/style-grammar-guidelines/capitalization/title-case
+        // See: https://www.grammarly.com/blog/capitalization-in-the-titles/
+        ![
+          'a',
+          'an',
+          'and',
+          'as',
+          'at',
+          'but',
+          'by',
+          'for',
+          'if',
+          'in',
+          'nor',
+          'of',
+          'off',
+          'on',
+          'or',
+          'per',
+          'so',
+          'the',
+          'to',
+          'up',
+          'via',
+          'yet',
+        ].includes(word)
+          ? // capitalize the first letter of the word
+            word[0].toUpperCase() + word.slice(1)
+          : // if not capitalizing, return the word as-is (lowercase)
+            word,
+      )
+      .join(' ')
+
+// Add site suffix to title element, but not og:title
+const pageTitleWithSuffix = pageTitle + (isHome ? '' : ` • ${site.title}`)
+
+const pageDescription = description
+  ? description
+  : isPathnameInCollection(pathname, notes)
+  ? `Notes about ${title} by ${site.author.name}.`
+  : isPathnameInCollection(pathname, posts)
+  ? `Blog post by ${site.author.name}.`
+  : site.description.site
+
+const borderWidth = 0
+const pink = 'fda4af'
+const black = '171717'
+const white = 'fafafa'
+const gray = 'd4d4d4'
+
+// TODO: use the cloudinary sdk instead of manually building the url
+// TODO: create a v2 option based on this design: https://delba.dev/blog/next-blog-generate-og-image
+const socialImage = ogImage
+  ? // If a custom ogImage is set and includes an extension, use it as the social sharing image
+    // TODO: handle customOgImagePublicId doesn't end with a known file extension
+    `https://res.cloudinary.com/ooloth/image/upload/c_fit,w_1200,h_630,f_auto,q_auto/${ogImage}`
+  : // Otherwise, generate an image using the page title and fileSlug
+    // See: https://cloudinary.com/documentation/transformation_reference
+    [
+      `https://res.cloudinary.com/${import.meta.env.CLOUDINARY_CLOUD_NAME}/image/upload`,
+      `c_fit,w_${1200 - borderWidth * 2},h_${630 - borderWidth * 2},f_auto,q_auto`,
+      // see: https://cloudinary.com/documentation/transformation_reference#e_colorize
+      `e_colorize,co_rgb:${black}`,
+      // see: https://cloudinary.com/cookbook/add_a_border_to_images
+      `bo_${borderWidth}px_solid_rgb:fda4af,b_rgb:000000,fl_relative`,
+      // see: https://cloudinary.com/cookbook/overlaying_social_profile_pictures_on_top_of_images
+      'l_twitter_name:ooloth.png,w_100,r_max,g_south_west,x_80,y_80',
+      // see: https://cloudinary.com/documentation/layers#text_overlays
+      `c_fit,l_text:arial_90_extrabold_line_spacing_4:${encodeURIComponent(
+        pageTitle,
+      )},co_rgb:${pink},g_west,x_80,y_${-60},w_1040,h_${630 - 24 * 2 - 80 - 56 * 2}`,
+      `c_fit,l_text:arial_26:${isHome ? 'Created' : 'Written'}%20by,co_rgb:${gray},g_south_west,x_200,y_136,w_900`,
+      `c_fit,l_text:arial_34:${encodeURIComponent(site.author.name)},co_rgb:${white},g_south_west,x_${
+        isHome ? 200 : 201
+      },y_100,w_900`,
+      'mu/blank.png',
+    ].join('/')
 ---
 
 <!DOCTYPE html>
 <html lang={site.language} class="bg-rose-300">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <!-- Base -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
+    <!-- SEO -->
+    <title>{pageTitleWithSuffix}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="author" content={site.author.name} />
+    <link rel="canonical" href={Astro.url.href} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph (see: https://ogp.me) -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:type" content={site.openGraph.type} />
+    <meta property="og:locale" content={site.openGraph.locale} />
+    <meta property="og:site_name" content={site.title} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content={site.openGraph.twitter.card} />
+    <meta name="twitter:creator" content={site.openGraph.twitter.creator} />
+    <meta name="twitter:site" content={site.openGraph.twitter.site} />
+
+    <!-- Icons (see: https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#adding_custom_icons_to_your_site) -->
+    <link rel="shortcut icon" href="/favicons/favicon.ico" />
+    <link rel="manifest" href="/favicons/site.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-config" content="/favicons/browserconfig.xml" />
+
+    <!--- Feeds --->
+    <link rel="alternate" href="/rss.xml" type="application/atom+xml" title={site.title} />
   </head>
 
   <body
