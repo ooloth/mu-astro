@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config'
 import remarkUnwrapImages from 'remark-unwrap-images'
 import sitemap from '@astrojs/sitemap'
 import tailwind from '@astrojs/tailwind'
-import yaml from '@rollup/plugin-yaml'
 
 import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
 
@@ -23,7 +22,4 @@ export default defineConfig({
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',
   trailingSlash: 'always',
-  vite: {
-    plugins: [yaml()],
-  },
 })
