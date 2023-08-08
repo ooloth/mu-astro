@@ -132,26 +132,9 @@
       @apply ms-4 border-l-4 border-rose-300 pl-3 italic text-neutral-50;
     }
 
-    & .eleventy-plugin-youtube-embed {
-      @apply my-5;
-
-      /* Remove translucent black bar */
-      & lite-youtube::before {
-        background-image: none;
-      }
-
-      /* Make play button red */
-      & .lty-playbtn {
-        filter: none;
-      }
-
-      & iframe {
-        @apply rounded-sm;
-      }
-    }
-
-    & .eleventy-plugin-embed-twitter {
-      @apply my-5;
+    /* e.g. YouTube and Twitter embeds */
+    & iframe {
+      @apply my-5 w-full h-auto aspect-video rounded-sm;
     }
   }
 }
