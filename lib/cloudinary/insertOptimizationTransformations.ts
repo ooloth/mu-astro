@@ -15,7 +15,7 @@ function insertOptimizationTransformations(cloudinaryUrl: string, width: number)
   }
 
   const w = width ?? 720
-  const transformationsPathSegment = `${TRANSFORMATIONS},w_${w}/`
+  const transformationsPathSegment = `${TRANSFORMATIONS},w_${w}`
 
   if (cloudinaryUrl.includes('upload/')) {
     return cloudinaryUrl.replace('upload/', `upload/${transformationsPathSegment}/`)
