@@ -8,11 +8,13 @@ import { getNotes } from '../utils/notes'
 const posts = await getPosts()
 const notes = await getNotes()
 
+const { pathname } = Astro.url
+
 // see: https://docs.astro.build/en/reference/api-reference/#astrourl
 const isCurrentPage = (item: NavItem): boolean =>
-  item.url === Astro.url.pathname ||
-  (isPathnameInCollection(Astro.url.pathname, posts) && item.url === '/') ||
-  (isPathnameInCollection(Astro.url.pathname, notes) && item.url === '/notes/')
+  item.url === pathname ||
+  (isPathnameInCollection(pathname, posts) && item.url === '/') ||
+  (isPathnameInCollection(pathname, notes) && item.url === '/notes/')
 
 const getClasses = (item: NavItem): string =>
   isCurrentPage(item) ? 'link-nav decoration-rose-300 dark:text-neutral-50' : 'link-nav'

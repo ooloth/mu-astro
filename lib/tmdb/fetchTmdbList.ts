@@ -10,16 +10,13 @@ export interface TmdbItem {
   title: string
 }
 
-export default async function fetchTmdbList(
-  listId: string,
-  api: 'tv' | 'movie',
-): Promise<TmdbItem[]> {
+export default async function fetchTmdbList(listId: string, api: 'tv' | 'movie'): Promise<TmdbItem[]> {
   if (!listId) {
     console.log('fetchTmdbList error: listId is undefined')
     return []
   }
 
-  let items = []
+  const items = []
   let page = 1
   let totalPages = 999 // will be updated after the first API response
 
@@ -32,7 +29,7 @@ export default async function fetchTmdbList(
       {
         headers: {
           Accept: 'application/json',
-          Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${import.meta.env.TMDB_READ_ACCESS_TOKEN}`,
         },
       },
     )
@@ -44,7 +41,7 @@ export default async function fetchTmdbList(
       totalPages = data.total_pages
 
       if (data.results && data.results.length > 0) {
-        for (let result of data.results) {
+        for (const result of data.results) {
           const title = result.title || result.name
           const id = result.id
           const date = result.release_date || result.first_air_date
