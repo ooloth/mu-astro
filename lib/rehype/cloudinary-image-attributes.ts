@@ -36,22 +36,20 @@ const rehypeCloudinaryImageAttributes = () => {
   const transformer = async (tree: Node) => {
     visit(tree, 'element', visitor)
 
-    const promises = images.map(image => {
-      return fetchImageDetails(image.properties?.src as string)
-    })
+    const promises = images.map(image => fetchImageDetails(image.properties?.src as string))
 
     const details = await Promise.all(promises)
 
     const widths = [
-      '350', // image layout width on phone at 1x DPR
-      '700', // image layout width on phone at 2x DPR
-      '850',
-      '1020',
-      '1200', // image layout width on phone at 3x DPR
-      '1440', // max image layout width at 2x DPR (skipped 1x since 700px is already included above)
-      '1680',
-      '1920',
-      '2160', // max image layout width at 3x DPR
+      350, // image layout width on phone at 1x DPR
+      700, // image layout width on phone at 2x DPR
+      850,
+      1020,
+      1200, // image layout width on phone at 3x DPR
+      1440, // max image layout width at 2x DPR (skipped 1x since 700px is already included above)
+      1680,
+      1920,
+      2160, // max image layout width at 3x DPR
     ]
 
     // For blog posts and notes, image layout size currently maxes out when browser hits 768px
