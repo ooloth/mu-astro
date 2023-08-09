@@ -20,14 +20,9 @@ const posts = await getPosts()
 const notes = await getNotes()
 
 const isHome = pathname === '/'
-const is404 = pathname === '/404.html' // TODO: confirm this is the correct path for 404 pages
 
 const pageTitle = title
   ? title
-  : isHome
-  ? site.title
-  : is404
-  ? 'Page not found'
   : // If no page title has been set, generate one from the pathname
     pathname
       .replace('/', '') // remove leading and trailing slashes
