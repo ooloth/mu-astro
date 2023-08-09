@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import { isPathnameInCollection } from '../utils/collections'
 import { getPosts } from '../utils/posts'
 import Main from './Main.astro'
+import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 
 type Props = {
   entry: CollectionEntry<'writing'>
@@ -12,6 +13,7 @@ const { entry } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.slug
+const date = entry.data.date || Date.now()
 
 const posts = await getPosts()
 ---
@@ -21,8 +23,8 @@ const posts = await getPosts()
     <header class="markdown">
       {
         isPathnameInCollection(pathname, posts) && (
-          <time datetime={entry.data.date} class="timestamp">
-            {entry.data.date}
+          <time datetime={getMachineReadableDate(date)} class="timestamp">
+            {getHumanReadableDate(date)}
           </time>
         )
       }
@@ -75,7 +77,7 @@ const posts = await getPosts()
     <!--
   <p class="text-[0.8rem] md:text-[0.9rem] uppercase md:min-w-[8rem]">
     Last updated
-    <time :datetime="htmlDateString(page.date)" @text="readableDate(page.date)"></time>
+    <time datetime="htmlDateString(page.date)" @text="readableDate(page.date)"></time>
   </p>
   -->
   </div>
