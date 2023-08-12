@@ -1,5 +1,7 @@
-import cloudinary from './client'
 import isCloudinaryUpload from './isCloudinaryUpload'
+import readCachedCloudinaryResources from './readCachedCloudinaryResources'
+
+const cloudinaryResources = await readCachedCloudinaryResources()
 
 type Loading = 'lazy' | 'eager'
 type Decoding = 'async' | 'sync'
@@ -21,24 +23,24 @@ function parseAnyCustomAttributesPassedAsQueryParams(publicId: string): {
   return { loading, decoding }
 }
 
-async function fetchImageDetails(publicId: string) {
+function findCachedResourceByPublicId(publicId: string) {
+  if (!cloudinaryResources) throw new Error('Cloudinary resources have not been cached yet.')
+
   if (!isCloudinaryUpload(publicId)) {
-    throw Error(`${publicId} is not a Cloudinary image path.`)
+    throw new Error(`${publicId} is not a Cloudinary image path.`)
   }
 
   const publicIdWithoutQueryParams = publicId.split('?')[0]
 
-  // see: https://cloudinary.com/documentation/admin_api#using_sdks_with_the_admin_api
-  // see: https://cloudinary.com/documentation/admin_api#get_details_of_a_single_resource_by_public_id
-  const imageDetails = await cloudinary.api
-    .resource(publicIdWithoutQueryParams, { resource_type: 'image', type: 'upload', max_results: 1 })
-    .catch(error => {
-      throw Error(`Error fetching image details for "${publicId}":\n\n${JSON.stringify(error, null, 2)}\n`)
-    })
+  const imageDetails = cloudinaryResources.find(resource => resource.public_id === publicIdWithoutQueryParams)
+
+  if (!imageDetails) throw new Error(`No cached Cloudinary resource found for public_id "${publicId}"`)
 
   const { loading, decoding } = parseAnyCustomAttributesPassedAsQueryParams(publicId)
 
   return { ...imageDetails, loading, decoding }
+
+  // return imageDetails
 }
 
-export default fetchImageDetails
+export default findCachedResourceByPublicId

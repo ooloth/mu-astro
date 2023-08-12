@@ -8,16 +8,16 @@ import type { Element } from 'hast'
 import { CONTINUE, SKIP, visit } from 'unist-util-visit'
 import type { Node } from 'unist'
 
-import fetchImageDetails from '../cloudinary/fetchImageDetails'
 import isCloudinaryUpload from '../cloudinary/isCloudinaryUpload'
 import cloudinary from '../cloudinary/client'
+import findCachedResourceByPublicId from '../cloudinary/findPrefetchedResourceByPublicId'
 
 interface Image extends Element {
   properties: Properties
 }
 
 const rehypeCloudinaryImageAttributes = () => {
-  const images: Image[] = []
+  const htmlImages: Image[] = []
 
   const visitor = (node: Element) => {
     if (
@@ -26,7 +26,7 @@ const rehypeCloudinaryImageAttributes = () => {
       typeof node.properties.src === 'string' &&
       isCloudinaryUpload(node.properties.src)
     ) {
-      images.push(node as Image)
+      htmlImages.push(node as Image)
       return SKIP
     }
 
@@ -36,9 +36,9 @@ const rehypeCloudinaryImageAttributes = () => {
   const transformer = async (tree: Node) => {
     visit(tree, 'element', visitor)
 
-    const promises = images.map(image => fetchImageDetails(image.properties?.src as string))
-
-    const details = await Promise.all(promises)
+    const cloudinaryImageDetails = htmlImages.map(htmlImage =>
+      findCachedResourceByPublicId(htmlImage.properties?.src as string),
+    )
 
     const widths = [
       350, // image layout width on phone at 1x DPR
@@ -53,20 +53,20 @@ const rehypeCloudinaryImageAttributes = () => {
     ]
 
     // Mutate the image nodes with the image details
-    images.forEach((image, index) => {
-      const imageDetails = details[index]
+    htmlImages.forEach((htmlImage, index) => {
+      const cloudinaryDetails = cloudinaryImageDetails[index]
 
-      image.properties.src = cloudinary.url(imageDetails.public_id, {
+      htmlImage.properties.src = cloudinary.url(cloudinaryDetails.public_id, {
         crop: 'scale',
         fetch_format: 'auto',
         quality: 'auto',
         width: 1440,
       })
 
-      image.properties.srcset = widths
+      htmlImage.properties.srcset = widths
         .map(
           width =>
-            `${cloudinary.url(imageDetails.public_id, {
+            `${cloudinary.url(cloudinaryDetails.public_id, {
               crop: 'scale',
               fetch_format: 'auto',
               quality: 'auto',
@@ -77,15 +77,17 @@ const rehypeCloudinaryImageAttributes = () => {
 
       // For blog posts and notes, image layout size currently maxes out when browser hits 768px
       // NOTE: browser takes first media query that's true, so be careful about the order
-      image.properties.sizes = '(min-width: 768px) 768px, 100vw'
+      htmlImage.properties.sizes = '(min-width: 768px) 768px, 100vw'
 
-      image.properties.alt = imageDetails?.context?.custom?.alt ?? ' ' // comes from "Description" field in contextual metadata
-      image.properties.width = imageDetails.width
-      image.properties.height = imageDetails.height
-      image.properties.loading = imageDetails.loading
-      image.properties.decoding = imageDetails.decoding
+      // @ts-expect-error: "custom" property currently defined as type "object"
+      htmlImage.properties.alt = cloudinaryDetails?.context?.custom?.alt ?? ' ' // comes from "Description" field in contextual metadata
+      htmlImage.properties.width = cloudinaryDetails.width
+      htmlImage.properties.height = cloudinaryDetails.height
+      htmlImage.properties.loading = cloudinaryDetails.loading
+      htmlImage.properties.decoding = cloudinaryDetails.decoding
 
-      const caption = imageDetails?.context?.custom?.caption // comes from "Title" field in contextual metadata
+      // @ts-expect-error: "custom" property currently defined as type "object"
+      const caption = cloudinaryDetails?.context?.custom?.caption // comes from "Title" field in contextual metadata
 
       if (caption) {
         // see: https://github.com/syntax-tree/hast#element
@@ -94,7 +96,7 @@ const rehypeCloudinaryImageAttributes = () => {
           tagName: 'figure',
           properties: {},
           children: [
-            { ...image },
+            { ...htmlImage },
             {
               type: 'element',
               tagName: 'figcaption',
@@ -105,7 +107,7 @@ const rehypeCloudinaryImageAttributes = () => {
 
         // If a caption exists, replace the image with a figure that contains the img + figcaption
         // Use Object.assign to replace the exact same object instead of triggering an infinite loop by creating new objects
-        Object.assign(image, figure)
+        Object.assign(htmlImage, figure)
       }
     })
   }

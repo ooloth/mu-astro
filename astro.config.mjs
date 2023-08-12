@@ -4,10 +4,10 @@ import sitemap from '@astrojs/sitemap'
 import tailwind from '@astrojs/tailwind'
 
 import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
-import cacheResourcesByAssetFolder from './lib/cloudinary/cacheResourcesByAssetFolder.ts'
+import cacheCloudinaryResources from './lib/cloudinary/cacheCloudinaryResources.ts'
 
 // Save all Cloudinary image details with a single Admin API call each time the build begins
-await cacheResourcesByAssetFolder()
+await cacheCloudinaryResources()
 
 // see: https://astro.build/config
 export default defineConfig({
@@ -26,4 +26,9 @@ export default defineConfig({
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',
   trailingSlash: 'always',
+  vite: {
+    // solves "Error: No loader is configured for ".node" files: node_modules/fsevents/fsevents.node"
+    // see: https://stackoverflow.com/a/75655669/8802485
+    optimizeDeps: { exclude: ['fsevents'] },
+  },
 })

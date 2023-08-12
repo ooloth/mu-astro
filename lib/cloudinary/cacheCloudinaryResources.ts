@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import fetchResourcesByAssetFolder, { type CloudinaryResource } from './fetchResourcesByAssetFolder'
 
-const getJsonFileName = (folderName: string): string => `./lib/cloudinary/resources.${folderName}.json`
+export const getJsonFileName = (folderName: string): string => `./lib/cloudinary/resources.${folderName}.json`
 
 async function writeResourcesToDisk(folderName: string, resources: CloudinaryResource[]): Promise<void> {
   const contents = {
@@ -23,7 +23,7 @@ async function writeResourcesToDisk(folderName: string, resources: CloudinaryRes
   }
 }
 
-export default async function cacheResourcesByAssetFolder(folderName = 'mu'): Promise<void> {
+export default async function cacheCloudinaryResources(folderName = 'mu'): Promise<void> {
   // IDEA: could extend later to cache multiple folders
   await writeResourcesToDisk(folderName, await fetchResourcesByAssetFolder(folderName))
 }

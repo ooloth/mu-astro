@@ -8,6 +8,7 @@
     "@astrojs/tailwind": "^4.0.0",
     "astro": "^2.8.4",
     "cloudinary": "^1.40.0",
+    "fs-extra": "^11.1.1",
     "hast-util-is-element": "^3.0.0",
     "markdown-it": "^13.0.1",
     "remark-unwrap-images": "^3.0.1",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^3.1.1",
+    "@types/fs-extra": "^11.0.1",
     "@types/markdown-it": "^12.2.3",
     "@types/sanitize-html": "^2.9.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
