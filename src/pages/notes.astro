@@ -1,9 +1,9 @@
 ---
 import Main from '../layouts/Main.astro'
 import type { Writing } from '../utils/collections'
-import { getNotes } from '../utils/notes'
+import { getNestedNotes, getNotes } from '../utils/notes'
 
-const notes = await getNotes()
+const notes = await getNestedNotes()
 ---
 
 <Main title="Notes" description="Rough notes about coding and other topics by Michael Uloth.">

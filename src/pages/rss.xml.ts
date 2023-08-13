@@ -14,6 +14,7 @@ import site from '../data/site'
 import rehypeCloudinaryImageAttributes from '../../lib/rehype/cloudinary-image-attributes'
 
 export async function get(context: APIContext): Promise<{ body: string }> {
+  // Only include published posts, even in development
   const publishedBlogPosts = await getPublishedPosts()
 
   return rss({
@@ -29,7 +30,7 @@ export async function get(context: APIContext): Promise<{ body: string }> {
           .use(remarkGfm)
           .use(remarkSmartyPants)
           .use(remarkRehype)
-          .use(rehypeCloudinaryImageAttributes)
+          .use(rehypeCloudinaryImageAttributes) // mine
           .use(rehypeStringify)
           .process(post.body)
 

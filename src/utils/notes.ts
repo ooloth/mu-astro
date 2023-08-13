@@ -60,11 +60,21 @@ const removePrivateNotes = (notes: Writing[]): Writing[] =>
         // Remove private notes from the current nesting level (starting with the root)
         .filter(note => isPublicNote(note))
         // Remove private notes from the child level (and so on, recursively)
-        .map(note => ({ ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }))
+        .map(note => {
+          return note.data?.children?.length
+            ? { ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }
+            : note
+        })
     : notes
+
+/**
+ * Returns a flat list of all notes with private notes removed (in production).
+ */
+export const getNotes = async (): Promise<Writing[]> =>
+  removePrivateNotes(await getCollection('writing', note => isNote(note)))
 
 /**
  * Returns all notes with child notes nested under their parents (always) and private notes removed (in production).
  */
-export const getNotes = async (): Promise<Writing[]> =>
+export const getNestedNotes = async (): Promise<Writing[]> =>
   removePrivateNotes(nestChildren(await getCollection('writing', note => isNote(note))))
