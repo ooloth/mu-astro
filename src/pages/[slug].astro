@@ -2,11 +2,11 @@
 import { getCollection } from 'astro:content'
 import Writing from '../layouts/Writing.astro'
 
-// Generate a new path for every collection entry
 export async function getStaticPaths() {
-  const blogEntries = await getCollection('writing')
+  const postsAndNotes = await getCollection('writing')
 
-  return blogEntries.map(entry => ({
+  // Generate a path for each writing collection entry
+  return postsAndNotes.map(entry => ({
     params: { slug: entry.slug },
     props: { entry },
   }))
