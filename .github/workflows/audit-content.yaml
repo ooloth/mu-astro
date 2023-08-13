@@ -10,9 +10,9 @@ env:
 
 on:
   schedule:
-    # TODO: reenable schedule when audit logic is hooked up (ideally in content repo)
+    # TODO: hook up audit logic (ideally in content repo)
     # every Monday at 8am ET
-    # - cron: '0 12 * * 1'
+    - cron: '0 12 * * 1'
 
 jobs:
   rebuild:
