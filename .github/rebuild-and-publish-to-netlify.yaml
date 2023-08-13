@@ -1,0 +1,58 @@
+# Builds the site on GitHub because GitHub offers 2000 free CI/CD minutes, while Netlify offers 300.
+# See: https://bennypowers.dev/posts/cheap-netlify-11ty-rebuilds/
+# See: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: Rebuild Netlify site
+
+env:
+  CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+  CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+  CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+  # Netlify settings "Site name"
+  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  # Netlify personal access token created here: https://app.netlify.com/user/applications
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/rebuild-and-publish-to-netlify.yaml'
+      - 'lib/**'
+      - 'public/**'
+      - 'src/**'
+      - astro.config.mjs
+      - netlify.toml
+      - postcss.config.cjs
+      - tailwind.config.cjs
+
+# TODO: when adding ci step here, can I add it as a separate job and have both jobs share the initial checkout and npm ci steps?
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    name: Rebuild site
+    steps:
+      - name: Check out repo ☁️
+        uses: actions/checkout@v3
+        with:
+          repository: ooloth/michaeluloth.com
+          # GitHub personal access token created here: https://github.com/settings/tokens
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          submodules: recursive
+
+      - name: Set up node 🧰
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies 📦
+        run: npm ci --prefer-offline
+
+      - name: Build the site 🏗️
+        run: npm run build
+
+      - name: Publish to Netlify 🚀
+        # Deploy updated "dist" folder to production Netlify branch
+        run: npx netlify-cli deploy --prod --message "deploy from GitHub Action" --dir=dist
