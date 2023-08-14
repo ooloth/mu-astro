@@ -3,10 +3,6 @@ import remarkUnwrapImages from 'remark-unwrap-images'
 import tailwind from '@astrojs/tailwind'
 
 import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
-import cacheCloudinaryResources from './lib/cloudinary/cacheCloudinaryResources.ts'
-
-// Save all Cloudinary image details with a single Admin API call each time the build begins
-await cacheCloudinaryResources()
 
 // see: https://astro.build/config
 export default defineConfig({

@@ -21,6 +21,7 @@
     "@types/sanitize-html": "^2.9.0",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
+    "dotenv": "^16.3.1",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-astro": "^0.27.2",
@@ -30,11 +31,13 @@
     "postcss-preset-env": "^9.1.0",
     "prettier": "^3.0.0",
     "prettier-plugin-astro": "^0.11.0",
-    "prettier-plugin-toml": "^0.3.1"
+    "prettier-plugin-toml": "^0.3.1",
+    "tsx": "^3.12.7"
   },
   "scripts": {
     "astro": "astro",
     "build": "astro build",
+    "prebuild": "tsx ./scripts/cacheCloudinaryResources.ts",
     "dev": "npm i && astro dev",
     "format:check": "npm run prettier -- --list-different",
     "format:fix": "npm run prettier -- --write",

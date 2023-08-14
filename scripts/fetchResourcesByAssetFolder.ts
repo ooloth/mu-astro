@@ -1,10 +1,9 @@
 // see: https://cloudinary.com/documentation/dynamic_folders
 // see: https://cloudinary.com/documentation/admin_api#get_resources_by_asset_folder
 
-import cloudinary from './client'
-import type { ResourceApiResponse } from 'cloudinary'
-
-export type CloudinaryResource = ResourceApiResponse['resources'][0]
+import type { CloudinaryResource } from '../lib/cloudinary/types'
+import { getErrorDetails } from '../src/utils/log'
+import cloudinary from './cloudinaryClient'
 
 async function fetchNextPage(folderName: string, nextCursor?: string): Promise<CloudinaryResource[]> {
   const response = await cloudinary.api
@@ -16,13 +15,8 @@ async function fetchNextPage(folderName: string, nextCursor?: string): Promise<C
       next_cursor: nextCursor,
     })
     .catch(error => {
-      
       throw Error(
-        `🚨 Error fetching Cloudinary resources by asset folder "${folderName}":\n\n${JSON.stringify(
-          error,
-          null,
-          2,
-        )}\n`,
+        `🚨 Error fetching Cloudinary resources by asset folder "${folderName}":\n\n${getErrorDetails(error)}\n`,
       )
     })
 
@@ -30,7 +24,7 @@ async function fetchNextPage(folderName: string, nextCursor?: string): Promise<C
 }
 
 async function fetchResourcesByAssetFolder(folderName = 'mu'): Promise<CloudinaryResource[]> {
-  console.info(`📥 Fetching all Cloudinary resources from folder "${folderName}"...`)
+  console.info(`📥 Fetching all Cloudinary resources from folder "${folderName}"`)
 
   const fetchedResources: CloudinaryResource[] = []
 
@@ -46,7 +40,7 @@ async function fetchResourcesByAssetFolder(folderName = 'mu'): Promise<Cloudinar
 
   // TODO: need to await all promises above here?
 
-  console.info(`✅ Fetched ${fetchedResources.length} Cloudinary resources from folder "${folderName}".`)
+  console.info(`✅ Fetched ${fetchedResources.length} Cloudinary resources from folder "${folderName}"`)
 
   return fetchedResources
 }
