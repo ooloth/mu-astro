@@ -1,7 +1,6 @@
 {
   "name": "michaeluloth.com",
   "type": "module",
-  "version": "0.0.1",
   "dependencies": {
     "@astrojs/rss": "^2.4.3",
     "@astrojs/tailwind": "^4.0.0",
@@ -36,9 +35,9 @@
   },
   "scripts": {
     "astro": "astro",
-    "build": "astro build",
-    "prebuild": "tsx ./scripts/cacheCloudinaryResources.ts",
-    "dev": "npm i && astro dev",
+    "build": "npm run cloudinary:cache && astro build",
+    "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
+    "dev": "npm i && npm run cloudinary:cache && astro dev",
     "format:check": "npm run prettier -- --list-different",
     "format:fix": "npm run prettier -- --write",
     "lint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
