@@ -15,7 +15,8 @@ plugins:
 root: true
 
 rules:
-  '@typescript-eslint/no-var-requires': off
+  '@typescript-eslint/no-var-requires': off # give me longer to write new code before distracting me with errors
+  '@typescript-eslint/triple-slash-reference': off # disable since astro automatically uses these
 
 overrides:
   # Define the configuration for `.astro` file.
