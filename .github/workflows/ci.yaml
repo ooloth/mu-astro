@@ -19,11 +19,15 @@ jobs:
       # use cached node_modules if found (instead of running npm install)
       - run: npm ci --prefer-offline
 
+      # generate all imported json files so TypeScript imports will work
+      - name: Run prebuild scripts 👷‍♀️
+        run: npm run cloudinary:cache
+
       - name: Validate formatting 💅
         run: npm run format:check
 
-      - name: Validate linting 🪲
-        run: npm run lint
+      - name: Validate linting 🧹
+        run: npm run lint:check
 
       - name: Validate types 🔍
         run: npm run types:check
