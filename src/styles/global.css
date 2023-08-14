@@ -131,8 +131,8 @@
     }
 
     /* inline code only; not code in pre blocks */
-    & p > code {
-      @apply rounded-sm bg-neutral-800 box-decoration-clone py-0.5 px-1 text-rose-300;
+    & p code {
+      @apply rounded-sm py-[0.2em] px-1;
     }
 
     & pre {

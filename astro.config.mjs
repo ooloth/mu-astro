@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config'
+import rehypePrettyCode from 'rehype-pretty-code'
 import remarkUnwrapImages from 'remark-unwrap-images'
 import tailwind from '@astrojs/tailwind'
 
@@ -15,11 +16,8 @@ export default defineConfig({
   ],
   markdown: {
     remarkPlugins: [remarkUnwrapImages],
-    rehypePlugins: [rehypeCloudinaryImageAttributes],
-    shikiConfig: {
-      // see: https://github.com/shikijs/shiki/blob/main/docs/themes.md#all-themes
-      theme: 'dracula-soft'
-    },
+    rehypePlugins: [rehypeCloudinaryImageAttributes, [rehypePrettyCode, {}]],
+    syntaxHighlight: false, // use rehype-pretty-code instead of shiki/prism built-ins
   },
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',
