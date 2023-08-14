@@ -36,15 +36,17 @@
   "scripts": {
     "astro": "astro",
     "build": "npm run cloudinary:cache && astro build",
+    "check": "npm run cloudinary:cache && npm run format:check && npm run lint:check && npm run types:check",
     "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
-    "dev": "npm i && npm run cloudinary:cache && astro dev",
+    "dev": "npm run cloudinary:cache && astro dev",
+    "eslint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
     "format:check": "npm run prettier -- --list-different",
     "format:fix": "npm run prettier -- --write",
-    "lint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
+    "lint:check": "npm run eslint",
+    "lint:fix": "npm run eslint -- --fix",
     "prettier": "prettier \"**/*.+(astro|cjs|css|graphql|html|js|json|jsonc|jsx|md|mdx|mjs|toml|ts|tsx|xml|yaml|yml)\"",
     "preview": "astro preview",
     "start": "npm run dev",
-    "types:check": "astro check && tsc --noEmit",
-    "validate": "npm run format:check && npm run lint && npm run types:check"
+    "types:check": "astro check && tsc --noEmit"
   }
 }
