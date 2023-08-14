@@ -125,12 +125,18 @@
       }
     }
 
+    /* all code; both inline and in pre blocks */
     & code {
-      @apply rounded-sm bg-neutral-800 box-decoration-clone py-0.5 px-1 text-[0.9rem] text-rose-300;
+      @apply text-[0.9rem];
+    }
+
+    /* inline code only; not code in pre blocks */
+    & p > code {
+      @apply rounded-sm bg-neutral-800 box-decoration-clone py-0.5 px-1 text-rose-300;
     }
 
     & pre {
-      @apply mt-4 rounded-sm overflow-x-scroll bg-neutral-800 py-2 px-3;
+      @apply mt-4 rounded-sm overflow-x-scroll py-2 px-3;
     }
 
     & strong,

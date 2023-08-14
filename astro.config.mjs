@@ -16,6 +16,10 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkUnwrapImages],
     rehypePlugins: [rehypeCloudinaryImageAttributes],
+    shikiConfig: {
+      // see: https://github.com/shikijs/shiki/blob/main/docs/themes.md#all-themes
+      theme: 'dracula-soft'
+    },
   },
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',
