@@ -113,7 +113,7 @@ const socialImage = ogImage
 ---
 
 <!DOCTYPE html>
-<html lang={site.language} class="bg-rose-300">
+<html lang={site.language}>
   <head>
     <!-- Base -->
     <meta charset="utf-8" />
@@ -154,11 +154,7 @@ const socialImage = ogImage
     <link rel="alternate" href="/rss.xml" type="application/atom+xml" title={site.title} />
   </head>
 
-  <body
-    class="flex flex-col overflow-x-hidden bg-neutral-50 dark:bg-neutral-900 py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed text-neutral-800 dark:text-neutral-300"
-  >
+  <body>
     <slot />
   </body>
 </html>
-
-<style is:global></style>

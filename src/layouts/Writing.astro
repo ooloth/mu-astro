@@ -51,6 +51,7 @@ const posts = await getPosts()
           data-lang="en"
           crossorigin="anonymous"
           async
+          defer
         />
       )
     }
@@ -65,7 +66,7 @@ const posts = await getPosts()
         <ul class="mt-4 flex flex-wrap">${$data.tags
           .map(
             tag =>
-              `<li class="me-3"><a href="/tags/${tag}/" class="text-neutral-500 dark:text-neutral-400 hover:underline hover:text-neutral-950 dark:hover:text-rose-300">#${tag}</a></li>`,
+              `<li class="me-3"><a href="/tags/${tag}/" class="text-zinc-500 dark:text-zinc-400 hover:underline hover:text-zinc-950 dark:hover:text-rose-300">#${tag}</a></li>`,
           )
           .join('')}
         </ul>

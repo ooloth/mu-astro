@@ -2,31 +2,58 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@layer components {
-  .heading {
-    @apply break-after-avoid leading-tight font-semibold text-neutral-950 dark:text-neutral-50;
+@import './components/syntax-highlighting';
+
+@layer base {
+  :root {
+    /* theme */
+    --moonlight-red: #ff98a4;
+
+    /* links */
+    --link-text-color: var(--moonlight-red);
+    --link-decoration-color: var(--moonlight-red);
+
+    /* dark mode adjustments */
+    @media (prefers-color-scheme: dark) {
+      --link-text-color: var(--moonlight-red);
+      --link-decoration-color: #ff98a4aa;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background-color: var(--moonlight-red);
   }
 
-  .image {
-    @apply rounded-sm bg-neutral-800;
+  body {
+    @apply flex flex-col overflow-x-hidden bg-zinc-50 dark:bg-zinc-900 py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed text-zinc-800 dark:text-zinc-300;
+  }
+}
+
+@layer components {
+  .heading {
+    @apply break-after-avoid leading-tight font-semibold text-zinc-950 dark:text-zinc-50;
   }
 
   .link {
-    @apply box-decoration-clone underline underline-offset-[0.2em] decoration-[0.18em] dark:decoration-[0.1em] decoration-rose-300  text-neutral-950 dark:text-rose-300;
+    @apply box-decoration-clone underline underline-offset-[0.2em] decoration-[0.18em] dark:decoration-[0.1em] decoration-[--link-decoration-color]  text-zinc-950 dark:text-[--link-text-color];
     text-decoration-skip-ink: none;
+    text-decoration-style: dotted;
 
     &:hover,
     &:focus,
     &:active {
-      @apply shadow-glow outline-none bg-rose-300 text-neutral-950;
+      @apply shadow-glow outline-none rounded-[0.75px] bg-[--link-text-color] text-zinc-950;
     }
 
     /* group-focus is for instances where I've styled a span inside a flex-child anchor (to avoid full-width stretch) */
-    @apply group-focus:shadow-glow group-focus:outline-none group-focus:dark:bg-rose-300 group-focus:dark:text-neutral-950;
+    @apply group-focus:shadow-glow group-focus:outline-none group-focus:bg-[--link-text-color] group-focus:text-zinc-950;
   }
 
   .link-nav {
-    @apply link dark:decoration-[0.15em] decoration-transparent dark:text-neutral-300;
+    @apply link underline-offset-[0.2em] dark:decoration-[0.15em] decoration-transparent dark:text-zinc-300;
+    text-decoration-style: solid;
   }
 
   .link-subtle {
@@ -89,7 +116,7 @@
     }
 
     & ul {
-      @apply list list-disc marker:text-rose-300;
+      @apply list list-disc marker:text-[--moonlight-red];
     }
 
     & ol {
@@ -106,46 +133,32 @@
     }
 
     img {
-      @apply image mt-5;
+      @apply mt-6 rounded-sm bg-zinc-800;
 
       /* paragraphs that follow an image should have a bit more margin above them */
       & + p {
-        @apply mt-5;
+        @apply mt-6;
       }
     }
 
     figure {
       & figcaption {
-        @apply mt-1 text-center text-[0.9rem] text-neutral-400;
+        @apply mt-1 text-center text-[0.9rem] text-zinc-400;
       }
 
-      /* paragraphs that follow an image should have a bit more margin above them */
+      /* paragraphs that follow a figure should have a bit more margin above them */
       & + p {
-        @apply mt-5;
+        @apply mt-6;
       }
-    }
-
-    /* all code; both inline and in pre blocks */
-    & code {
-      @apply text-[0.9rem];
-    }
-
-    /* inline code only; not code in pre blocks */
-    & p code {
-      @apply rounded-sm py-[0.2em] px-1;
-    }
-
-    & pre {
-      @apply mt-4 rounded-sm overflow-x-scroll py-2 px-3;
     }
 
     & strong,
     & em {
-      @apply text-neutral-950 dark:text-neutral-50;
+      @apply text-zinc-950 dark:text-zinc-50;
     }
 
     & blockquote {
-      @apply ms-4 border-l-4 border-rose-300 pl-3 italic text-neutral-50;
+      @apply ms-4 border-l-4 border-[--moonlight-red] pl-3 italic text-zinc-50;
     }
 
     /* e.g. YouTube and Twitter embeds */
