@@ -1,7 +1,7 @@
 ---
 import Main from '../layouts/Main.astro'
 import type { Writing } from '../utils/collections'
-import { getNestedNotes, getNotes } from '../utils/notes'
+import { getNestedNotes } from '../utils/notes'
 
 const notes = await getNestedNotes()
 ---
@@ -12,7 +12,7 @@ const notes = await getNestedNotes()
   <section>
     <h2 class="sr-only">Topics</h2>
 
-    <ul class="columns-2xs lowercase">
+    <ul class="list-notes">
       {
         notes.map(note => {
           const getLinkText = (item: Writing): string => item.data.title || item.slug

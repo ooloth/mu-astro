@@ -37,6 +37,16 @@
     @apply mt-4 ps-7;
   }
 
+  .list-notes {
+    @apply columns-2xs lowercase;
+
+    /* fixes list items jumping down on hover in Safari when their box-shadow changes */
+    /* see: https://stackoverflow.com/a/73268790/8802485 */
+    & * {
+      @apply will-change-opacity;
+    }
+  }
+
   .list-item {
     @apply mt-1 leading-normal;
   }
