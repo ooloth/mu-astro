@@ -6,18 +6,9 @@
 
 @layer base {
   :root {
-    /* theme */
     --moonlight-red: #ff98a4;
-
-    /* links */
-    --link-text-color: var(--moonlight-red);
-    --link-decoration-color: var(--moonlight-red);
-
-    /* dark mode adjustments */
-    @media (prefers-color-scheme: dark) {
-      --link-text-color: var(--moonlight-red);
-      --link-decoration-color: #ff98a4aa;
-    }
+    --moonlight-red-translucent: #ff98a4aa;
+    --moonlight-bg: #1f2028;
   }
 }
 
@@ -27,39 +18,74 @@
   }
 
   body {
-    @apply flex flex-col overflow-x-hidden bg-zinc-50 dark:bg-zinc-900 py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed text-zinc-800 dark:text-zinc-300;
+    @apply flex flex-col overflow-x-hidden py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed;
+
+    /* light mode */
+    @apply bg-white text-zinc-700;
+
+    /* dark mode */
+    @apply dark:bg-zinc-900 dark:text-zinc-400;
   }
 }
 
 @layer components {
   .heading {
-    @apply break-after-avoid leading-tight font-semibold text-zinc-950 dark:text-zinc-50;
-  }
+    @apply break-after-avoid leading-tight font-semibold;
 
+    /* light mode */
+    @apply text-black;
+
+    /* dark mode */
+    @apply dark:text-white;
+  }
+}
+
+@layer components {
   .link {
-    @apply box-decoration-clone underline underline-offset-[0.2em] decoration-[0.18em] dark:decoration-[0.1em] decoration-[--link-decoration-color]  text-zinc-950 dark:text-[--link-text-color];
+    @apply box-decoration-clone underline;
+
+    /* light mode */
+    @apply underline-offset-[0.17em] decoration-solid decoration-[0.18em] decoration-[--moonlight-red] text-black;
+
+    /* dark mode */
+    @apply dark:underline-offset-[0.2em] dark:decoration-dotted dark:decoration-[0.1em] dark:decoration-[--moonlight-red-translucent] dark:text-[--moonlight-red];
+
     text-decoration-skip-ink: none;
-    text-decoration-style: dotted;
 
     &:hover,
     &:focus,
     &:active {
-      @apply shadow-glow outline-none rounded-[0.75px] bg-[--link-text-color] text-zinc-950;
+      @apply shadow-glow outline-none rounded-[0.75px] bg-[--moonlight-red] text-black;
     }
 
     /* group-focus is for instances where I've styled a span inside a flex-child anchor (to avoid full-width stretch) */
-    @apply group-focus:shadow-glow group-focus:outline-none group-focus:bg-[--link-text-color] group-focus:text-zinc-950;
+    @apply group-focus:shadow-glow group-focus:outline-none group-focus:bg-[--moonlight-red] group-focus:text-black;
   }
 
   .link-nav {
-    @apply link underline-offset-[0.2em] dark:decoration-[0.15em] decoration-transparent dark:text-zinc-300;
-    text-decoration-style: solid;
-  }
+    @apply link underline-offset-[0.2em];
 
-  .link-subtle {
-    @apply link underline-offset-2 decoration-auto;
-  }
+    /* light & dark mode */
+    @apply decoration-transparent;
 
+    /* light mode */
+    @apply text-zinc-900;
+
+    /* dark mode */
+    @apply dark:decoration-solid dark:decoration-[0.15em] dark:text-zinc-300;
+
+    /* the active menu item (set in Header.astro) */
+    &[aria-current='page'] {
+      /* light mode */
+      @apply decoration-[--moonlight-red] text-black;
+
+      /* dark mode */
+      @apply dark:text-white;
+    }
+  }
+}
+
+@layer components {
   .list {
     @apply mt-4 ps-7;
   }
@@ -77,11 +103,15 @@
   .list-item {
     @apply mt-1 leading-normal;
   }
+}
 
+@layer components {
   .timestamp {
     @apply text-sm uppercase;
   }
+}
 
+@layer components {
   .markdown {
     & h1 {
       @apply heading mb-8 text-4xl leading-[1.1] font-bold;
@@ -112,11 +142,14 @@
     }
 
     & a {
-      @apply link;
+      @apply link font-medium;
     }
 
     & ul {
-      @apply list list-disc marker:text-[--moonlight-red];
+      @apply list list-disc;
+
+      /* light & dark mode */
+      @apply marker:text-[--moonlight-red];
     }
 
     & ol {
@@ -133,7 +166,13 @@
     }
 
     img {
-      @apply mt-6 rounded-sm bg-zinc-800;
+      @apply mt-6 rounded;
+
+      /* light mode */
+      @apply bg-zinc-200;
+
+      /* dark mode */
+      @apply dark:bg-zinc-800;
 
       /* paragraphs that follow an image should have a bit more margin above them */
       & + p {
@@ -143,7 +182,10 @@
 
     figure {
       & figcaption {
-        @apply mt-1 text-center text-[0.9rem] text-zinc-400;
+        @apply mt-1 text-center text-[0.9rem];
+
+        /* light & dark modes */
+        @apply text-zinc-500;
       }
 
       /* paragraphs that follow a figure should have a bit more margin above them */
@@ -154,16 +196,26 @@
 
     & strong,
     & em {
-      @apply text-zinc-950 dark:text-zinc-50;
+      /* light mode */
+      @apply text-black;
+
+      /* dark mode */
+      @apply dark:text-white;
     }
 
     & blockquote {
-      @apply ms-4 border-l-4 border-[--moonlight-red] pl-3 italic text-zinc-50;
+      @apply ms-4 border-l-4 border-[--moonlight-red] pl-3 italic;
+
+      /* light mode */
+      @apply text-black;
+
+      /* dark mode */
+      @apply dark:text-white;
     }
 
     /* e.g. YouTube and Twitter embeds */
     & iframe {
-      @apply my-5 w-full h-auto aspect-video rounded-sm;
+      @apply my-5 w-full h-auto aspect-video rounded;
     }
   }
 }

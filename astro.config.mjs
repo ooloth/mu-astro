@@ -6,6 +6,7 @@ import tailwind from '@astrojs/tailwind'
 
 import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
 
+// source: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
 const moonlightV2 = await fsExtra.readJson('./lib/rehype/themes/moonlight-ii.json')
 
 // see: https://astro.build/config
@@ -22,10 +23,9 @@ export default defineConfig({
     rehypePlugins: [
       rehypeCloudinaryImageAttributes,
       // see: https://rehype-pretty-code.netlify.app
-      // see: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
-      [rehypePrettyCode, { theme: moonlightV2 }],
+      [rehypePrettyCode, { keepBackground: false, theme: moonlightV2 }],
     ],
-    syntaxHighlight: false, // use rehype-pretty-code instead of shiki/prism built-ins
+    syntaxHighlight: false, // use rehype-pretty-code instead of built-in shiki/prism
   },
   scopedStyleStrategy: 'class',
   site: 'https://michaeluloth.com',

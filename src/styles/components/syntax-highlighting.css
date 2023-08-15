@@ -9,7 +9,9 @@
   li > code,
   span[data-rehype-pretty-code-fragment] {
     @apply rounded py-[0.2em] px-1;
-    background-color: rgba(205, 200, 255, 0.05);
+
+    /* light & dark mode */
+    @apply bg-[--moonlight-bg];
   }
 
   /* inline code without a language annotation (e.g. `true` instead of `true{:js}` */
@@ -21,7 +23,9 @@
   /* all code blocks */
   pre {
     @apply mt-6 rounded overflow-x-scroll py-3 px-4;
-    background-color: rgba(205, 200, 255, 0.05);
+
+    /* light & dark mode */
+    @apply bg-[--moonlight-bg];
   }
 
   /* paragraphs that follow a code block should have a bit more margin above them */
@@ -30,6 +34,7 @@
     @apply mt-6;
   }
 
+  /* TODO: test the following styles in light mode */
   [data-line] {
     @apply border-l-2 border-l-transparent;
   }

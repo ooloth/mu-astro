@@ -15,9 +15,6 @@ const isCurrentPage = (item: NavItem): boolean =>
   item.url === pathname ||
   (isPathnameInCollection(pathname, posts) && item.url === '/') ||
   (isPathnameInCollection(pathname, notes) && item.url === '/notes/')
-
-const getClasses = (item: NavItem): string =>
-  isCurrentPage(item) ? 'link-nav decoration-[--moonlight-red] dark:text-zinc-50' : 'link-nav'
 ---
 
 <header class="mb-12">
@@ -27,15 +24,14 @@ const getClasses = (item: NavItem): string =>
     <h2 class="sr-only">Top level navigation menu</h2>
 
     <ul class="flex flex-wrap">
-      <li class="pb-1 w-full text-lg font-semibold text-zinc-950 dark:text-zinc-50">
-        <a href="/">{site.title}</a>
-        <span>👋</span>
+      <li class="pb-1 w-full">
+        <a href="/" class="text-lg font-semibold text-black dark:text-white">{site.title}&nbsp;👋</a>
       </li>
 
       {
         nav.top.map(item => (
           <li class="me-3 text-lg lowercase">
-            <a href={item.url} aria-current={isCurrentPage(item) ? 'page' : false} class={getClasses(item)}>
+            <a href={item.url} aria-current={isCurrentPage(item) ? 'page' : false} class="link-nav">
               {item.title}
             </a>
           </li>
