@@ -20,6 +20,9 @@ jobs:
         with:
           # pull in src/content so content collections can be validated
           submodules: recursive
+          # Allow access to private content repo
+          # GitHub personal access token created here: https://github.com/settings/tokens
+          token: ${{ secrets.ACTIONS_TOKEN }}
 
       - uses: actions/setup-node@v3
         with:
