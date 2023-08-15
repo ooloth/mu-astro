@@ -1,3 +1,6 @@
+/* see: https://github.com/atomiks/rehype-pretty-code/blob/master/website/src/app/globals.css */
+/* see: https://github.com/atomiks/rehype-pretty-code/blob/master/website/tailwind.config.js */
+
 @layer components {
   /* all code; both inline and in pre blocks */
   code {
