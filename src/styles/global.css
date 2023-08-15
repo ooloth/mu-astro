@@ -80,6 +80,12 @@
 
       /* dark mode */
       @apply dark:text-white;
+
+      &:hover,
+      &:focus,
+      &:active {
+        @apply dark:text-black;
+      }
     }
   }
 }
