@@ -208,23 +208,14 @@
   "tokenColors": [
     {
       "name": "Comment",
-      "scope": [
-        "comment",
-        "punctuation.definition.comment",
-        "string.quoted.docstring"
-      ],
+      "scope": ["comment", "punctuation.definition.comment", "string.quoted.docstring"],
       "settings": {
         "foreground": "#858aa6"
       }
     },
     {
       "name": "Variables and Plain Text",
-      "scope": [
-        "variable",
-        "support.variable",
-        "string constant.other.placeholder",
-        "text.html"
-      ],
+      "scope": ["variable", "support.variable", "string constant.other.placeholder", "text.html"],
       "settings": {
         "foreground": "#c8d3f5"
       }
@@ -279,12 +270,7 @@
     },
     {
       "name": "Keyword, Storage",
-      "scope": [
-        "keyword",
-        "storage.type",
-        "storage.modifier",
-        "keyword.other.important"
-      ],
+      "scope": ["keyword", "storage.type", "storage.modifier", "keyword.other.important"],
       "settings": {
         "foreground": "#c099ff"
       }
@@ -296,10 +282,7 @@
     },
     {
       "name": "Interpolation",
-      "scope": [
-        "punctuation.definition.template-expression",
-        "punctuation.section.embedded"
-      ],
+      "scope": ["punctuation.definition.template-expression", "punctuation.section.embedded"],
       "settings": {
         "foreground": "#86e1fc"
       }
@@ -355,11 +338,7 @@
     },
     {
       "name": "Function, Special Method",
-      "scope": [
-        "entity.name.function",
-        "variable.function",
-        "keyword.other.special-method"
-      ],
+      "scope": ["entity.name.function", "variable.function", "keyword.other.special-method"],
       "settings": {
         "foreground": "#82aaff"
       }
@@ -472,11 +451,7 @@
     },
     {
       "name": "Object Property",
-      "scope": [
-        "variable.other.property",
-        "support.variable.property",
-        "support.variable.property.dom"
-      ],
+      "scope": ["variable.other.property", "support.variable.property", "support.variable.property.dom"],
       "settings": {
         "foreground": "#a9b8e8"
       }
@@ -497,11 +472,7 @@
     },
     {
       "name": "Types Fixes",
-      "scope": [
-        "source.haskell storage.type",
-        "source.c storage.type",
-        "source.java storage.type"
-      ],
+      "scope": ["source.haskell storage.type", "source.c storage.type", "source.java storage.type"],
       "settings": {
         "foreground": "#ffc777"
       }
@@ -554,11 +525,7 @@
     },
     {
       "name": "Sub-methods",
-      "scope": [
-        "entity.name.module.js",
-        "variable.import.parameter.js",
-        "variable.other.class.js"
-      ],
+      "scope": ["entity.name.module.js", "variable.import.parameter.js", "variable.other.class.js"],
       "settings": {
         "foreground": "#ff757f"
       }
@@ -579,10 +546,7 @@
     },
     {
       "name": "meta.method.js",
-      "scope": [
-        "meta.class-method.js entity.name.function.js",
-        "variable.function.constructor"
-      ],
+      "scope": ["meta.class-method.js entity.name.function.js", "variable.function.constructor"],
       "settings": {
         "foreground": "#82aaff"
       }
@@ -596,20 +560,14 @@
     },
     {
       "name": "HTML Attributes",
-      "scope": [
-        "text.html.basic entity.other.attribute-name.html",
-        "text.html.basic entity.other.attribute-name"
-      ],
+      "scope": ["text.html.basic entity.other.attribute-name.html", "text.html.basic entity.other.attribute-name"],
       "settings": {
         "foreground": "#ffc777"
       }
     },
     {
       "name": "HTML Doctype",
-      "scope": [
-        "meta.tag.metadata.doctype entity.name.tag",
-        "meta.tag.metadata.doctype entity.other.attribute-name"
-      ],
+      "scope": ["meta.tag.metadata.doctype entity.name.tag", "meta.tag.metadata.doctype entity.other.attribute-name"],
       "settings": {
         "foreground": "#c099ff"
       }
@@ -630,10 +588,7 @@
     },
     {
       "name": "CSS psuedo selectors",
-      "scope": [
-        "entity.other.attribute-name.pseudo-class",
-        "entity.other.attribute-name.pseudo-element"
-      ],
+      "scope": ["entity.other.attribute-name.pseudo-class", "entity.other.attribute-name.pseudo-element"],
       "settings": {
         "foreground": "#4fd6be"
       }
@@ -682,10 +637,7 @@
     },
     {
       "name": "Regular Expressions - Character Class",
-      "scope": [
-        "constant.other.character-class.regexp",
-        "keyword.control.anchor.regexp"
-      ],
+      "scope": ["constant.other.character-class.regexp", "keyword.control.anchor.regexp"],
       "settings": {
         "foreground": "#c099ff"
       }
@@ -720,10 +672,7 @@
     },
     {
       "name": "Decorators",
-      "scope": [
-        "tag.decorator.js entity.name.tag.js",
-        "tag.decorator.js punctuation.definition.tag.js"
-      ],
+      "scope": ["tag.decorator.js entity.name.tag.js", "tag.decorator.js punctuation.definition.tag.js"],
       "settings": {
         "foreground": "#82aaff"
       }
@@ -737,18 +686,14 @@
     },
     {
       "name": "ES7 Bind Operator",
-      "scope": [
-        "source.js constant.other.object.key.js string.unquoted.label.js"
-      ],
+      "scope": ["source.js constant.other.object.key.js string.unquoted.label.js"],
       "settings": {
         "foreground": "#ff757f"
       }
     },
     {
       "name": "JSON Key - Level 0",
-      "scope": [
-        "source.json meta.structure.dictionary.json support.type.property-name.json"
-      ],
+      "scope": ["source.json meta.structure.dictionary.json support.type.property-name.json"],
       "settings": {
         "foreground": "#82aaff"
       }
@@ -843,9 +788,7 @@
     },
     {
       "name": "Markdown - Markup Raw Inline Punctuation",
-      "scope": [
-        "text.html.markdown markup.inline.raw.markdown punctuation.definition.raw.markdown"
-      ],
+      "scope": ["text.html.markdown markup.inline.raw.markdown punctuation.definition.raw.markdown"],
       "settings": {
         "foreground": "#86e1fc"
       }
@@ -944,10 +887,7 @@
     },
     {
       "name": "Markdown - Fenced Bode Block Variable",
-      "scope": [
-        "markup.fenced_code.block.markdown",
-        "markup.inline.raw.string.markdown"
-      ],
+      "scope": ["markup.fenced_code.block.markdown", "markup.inline.raw.string.markdown"],
       "settings": {
         "foreground": "#86e1fc"
       }
