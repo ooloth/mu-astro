@@ -7,7 +7,7 @@
 @layer base {
   :root {
     --moonlight-red: #ff98a4;
-    --moonlight-red-translucent: #ff98a4aa;
+    --moonlight-red-translucent: #ff98a485;
     --moonlight-bg: #1f2028;
   }
 }
@@ -45,10 +45,10 @@
     @apply box-decoration-clone underline;
 
     /* light mode */
-    @apply underline-offset-[0.17em] decoration-solid decoration-[0.18em] decoration-[--moonlight-red] text-black;
+    @apply underline-offset-[0.16em] decoration-[0.18em] decoration-[--moonlight-red] text-black;
 
     /* dark mode */
-    @apply dark:underline-offset-[0.2em] dark:decoration-dotted dark:decoration-[0.1em] dark:decoration-[--moonlight-red-translucent] dark:text-[--moonlight-red];
+    @apply dark:underline-offset-[0.2em] dark:decoration-[0.1em] dark:decoration-[--moonlight-red-translucent] dark:text-[--moonlight-red];
 
     text-decoration-skip-ink: none;
 
