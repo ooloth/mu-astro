@@ -17,6 +17,10 @@ jobs:
     name: Format, lint and check types
     steps:
       - uses: actions/checkout@v3
+        with:
+          # pull in src/content so content collections can be validated
+          submodules: recursive
+
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
