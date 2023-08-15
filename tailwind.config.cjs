@@ -5,7 +5,7 @@ module.exports = {
     extend: {
       boxShadow: {
         /* solid shadow, glow shadow */
-        glow: '0 0 0 0.15em var(--moonlight-red), 0 0 2em 0 var(--moonlight-red)',
+        glow: '0 0 0 0.1em var(--moonlight-red), 0 0 3em 0 var(--moonlight-red)',
       },
       willChange: {
         opacity: 'opacity',
