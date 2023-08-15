@@ -13,8 +13,11 @@
   span[data-rehype-pretty-code-fragment] {
     @apply rounded py-[0.2em] px-1;
 
-    /* light & dark mode */
-    @apply bg-[--moonlight-bg];
+    /* light mode */
+    @apply bg-zinc-900;
+
+    /* dark mode */
+    @apply dark:bg-zinc-400/5;
   }
 
   /* inline code without a language annotation (e.g. `true` instead of `true{:js}` */
@@ -27,8 +30,11 @@
   pre {
     @apply mt-6 rounded overflow-x-scroll py-3 px-4;
 
-    /* light & dark mode */
-    @apply bg-[--moonlight-bg];
+    /* light mode */
+    @apply bg-zinc-900;
+
+    /* dark mode */
+    @apply dark:bg-zinc-400/5;
   }
 
   /* paragraphs that follow a code block should have a bit more margin above them */
