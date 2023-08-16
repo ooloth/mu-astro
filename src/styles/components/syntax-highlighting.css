@@ -54,14 +54,15 @@
 
         & [data-highlighted-line] {
           /* light & dark mode */
-          background-color: rgba(200, 200, 255, 0.1);
           @apply border-l-blue-400;
+          background-color: rgb(200 200 255 / 0.1);
         }
 
         & [data-highlighted-chars] {
           /* light & dark mode */
-          @apply bg-zinc-100/10 rounded-sm;
-          box-shadow: 0 0 0 4px rgb(82 82 91 / 0.5);
+          @apply rounded;
+          background-color: rgb(200 200 255 / 0.15);
+          box-shadow: 0 0 0 0.24em rgb(200 200 255 / 0.15);
         }
       }
 
