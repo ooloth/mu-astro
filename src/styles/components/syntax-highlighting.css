@@ -2,22 +2,17 @@
 /* see: https://github.com/atomiks/rehype-pretty-code/blob/master/website/tailwind.config.js */
 
 @layer components {
-  /* all code; both inline and in pre blocks */
-  code {
-    @apply text-[0.95rem];
-  }
-
   /* all inline code (not code blocks) */
   p > code,
   li > code,
   span[data-rehype-pretty-code-fragment] {
-    @apply rounded py-[0.2em] px-1;
+    @apply text-[0.87em];
 
     /* light mode */
-    @apply bg-zinc-900;
+    @apply rounded py-[0.2em] px-1 bg-zinc-900;
 
     /* dark mode */
-    @apply dark:bg-zinc-400/5;
+    @apply dark:rounded-none dark:p-0 dark:bg-transparent;
   }
 
   /* inline code without a language annotation (e.g. `true` instead of `true{:js}` */
@@ -28,7 +23,7 @@
 
   /* all code blocks */
   pre {
-    @apply mt-6 rounded overflow-x-scroll py-3 px-4;
+    @apply mt-6 rounded overflow-x-scroll py-3 px-4 text-[0.85em];
 
     /* light mode */
     @apply bg-zinc-900;
