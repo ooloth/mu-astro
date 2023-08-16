@@ -22,8 +22,22 @@ export default defineConfig({
     remarkPlugins: [remarkUnwrapImages],
     rehypePlugins: [
       rehypeCloudinaryImageAttributes,
-      // see: https://rehype-pretty-code.netlify.app
-      [rehypePrettyCode, { keepBackground: false, theme: moonlightV2 }],
+      [
+        rehypePrettyCode,
+        {
+          // see: https://rehype-pretty-code.netlify.app
+          keepBackground: false,
+          theme: moonlightV2,
+          tokensMap: {
+            fn: 'entity.name.function',
+            kw: 'keyword',
+            key: 'meta.object-literal.key',
+            pm: 'variable.parameter',
+            obj: 'variable.other.object',
+            str: 'string',
+          },
+        },
+      ],
     ],
     syntaxHighlight: false, // use rehype-pretty-code instead of built-in shiki/prism
   },
