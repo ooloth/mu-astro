@@ -111,6 +111,15 @@
 }
 
 @layer components {
+  .caption {
+    @apply mt-1 text-center text-[0.9rem];
+
+    /* light & dark modes */
+    @apply text-zinc-500;
+  }
+}
+
+@layer components {
   .timestamp {
     @apply text-sm uppercase;
   }
@@ -187,10 +196,7 @@
 
     figure {
       & figcaption {
-        @apply mt-1 text-center text-[0.9rem];
-
-        /* light & dark modes */
-        @apply text-zinc-500;
+        @apply caption;
       }
 
       /* paragraphs that follow a figure should have a bit more margin above them */
