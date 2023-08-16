@@ -9,7 +9,7 @@
     @apply text-[0.87em];
 
     /* light mode */
-    @apply rounded py-[0.2em] px-1 bg-zinc-900;
+    @apply rounded-[0.2em] py-[0.2em] px-[0.3em] bg-zinc-900;
 
     /* dark mode */
     @apply dark:rounded-none dark:p-0 dark:bg-transparent;
