@@ -6,7 +6,7 @@
   p > code,
   li > code,
   span[data-rehype-pretty-code-fragment] {
-    @apply text-[0.87em];
+    @apply text-[0.9em];
 
     /* light mode */
     @apply rounded-[0.2em] py-[0.2em] px-[0.3em] bg-zinc-900;
