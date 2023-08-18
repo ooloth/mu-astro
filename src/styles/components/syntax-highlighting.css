@@ -71,16 +71,18 @@
         counter-reset: line;
 
         & > [data-line]::before {
+          /* set the line number */
           counter-increment: line;
           content: counter(line);
 
-          /* Other styling */
-          display: inline-block;
-          width: 1rem;
-          margin-left: -1rem; /* counter the existing padding */
-          margin-right: 1rem;
-          text-align: right;
-          @apply text-zinc-600;
+          /* counter the existing line padding with negative left margin */
+          @apply inline-block -ms-4 me-4 w-4 text-right text-zinc-600;
+        }
+
+        /* make line numbers of highlighted lines a brighter white */
+        & > [data-highlighted-line]::before {
+          /* light & dark mode */
+          @apply text-zinc-400;
         }
       }
 
