@@ -18,11 +18,12 @@ export async function get(context: APIContext): Promise<{ body: string }> {
   const publishedBlogPosts = await getPublishedPosts()
 
   return rss({
+    // see: https://www.rssboard.org/rss-specification
     // see: https://docs.astro.build/en/reference/api-reference/#contextsite
     site: context.site as unknown as string,
     title: site.title,
     description: site.description.rss,
-    customData: `<language>en-ca</language>`,
+    customData: `<language>en-ca</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
     items: await Promise.all(
       publishedBlogPosts.map(async post => {
         const content = await unified()
@@ -34,12 +35,14 @@ export async function get(context: APIContext): Promise<{ body: string }> {
           .use(rehypeStringify)
           .process(post.body)
 
+        const permalink = post.data.feedId || `${site.url}${post.slug}/`
+
         return {
           title: post.data.title,
-          pubDate: post.data.date,
-          description: post.data.description,
           link: `${post.slug}/`,
-          customData: `<guid permalink="true">${post.data.feedId || `${site.url}${post.slug}/`}</guid>`,
+          description: post.data.description,
+          pubDate: post.data.date,
+          customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
           content: String(content.value),
         }
       }),
