@@ -35,11 +35,12 @@ export async function get(context: APIContext): Promise<{ body: string }> {
           .use(rehypeStringify)
           .process(post.body)
 
-        const permalink = post.data.feedId || `${site.url}${post.slug}/`
+        const slug = `${post.slug}/`
+        const permalink = post.data.feedId || `${site.url}${slug}`
 
         return {
           title: post.data.title,
-          link: `${post.slug}/`,
+          link: slug,
           description: post.data.description,
           pubDate: post.data.date,
           customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
