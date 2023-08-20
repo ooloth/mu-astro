@@ -12,6 +12,9 @@ env:
   NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
   # Netlify personal access token created here: https://app.netlify.com/user/applications
   NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  TMDB_MOVIE_LIST_ID: ${{ secrets.TMDB_MOVIE_LIST_ID }}
+  TMDB_READ_ACCESS_TOKEN: ${{ secrets.TMDB_READ_ACCESS_TOKEN }}
+  TMDB_TV_LIST_ID: ${{ secrets.TMDB_TV_LIST_ID }}
 
 on:
   push:
