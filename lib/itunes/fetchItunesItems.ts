@@ -105,7 +105,7 @@ export default async function fetchItunesItems(
       }),
     )
 
-    return formattedResults.filter(Boolean).sort((a, b): number => b.date.localeCompare(a.date))
+    return formattedResults.filter(Boolean).sort((a, b): number => Date.parse(b.date) - Date.parse(a.date))
   } catch (error) {
     console.log('fetchItunesItems error:', error)
     return []
