@@ -6,7 +6,7 @@ import fetchTmdbList from '../../lib/tmdb/fetchTmdbList'
 import Main from '../layouts/Main.astro'
 import { getMachineReadableDate } from '../utils/dates'
 
-const title = 'Likes ❤'
+const title = 'Likes'
 
 const iTunesLists = await getCollection('itunes')
 const bookList = iTunesLists.find(list => list.id === 'books')?.data
