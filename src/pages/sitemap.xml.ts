@@ -7,7 +7,7 @@ import { getPosts } from '../utils/posts'
 import { getNotes } from '../utils/notes'
 
 export const get: APIRoute = async (): Promise<{ body: string }> => {
-  const pages = ['/', '/notes/', '/about/'] // static pages statically output by src/pages
+  const pages = ['/', '/notes/', '/about/', '/likes/'] // static pages statically output by src/pages
   const posts = await getPosts() // posts dynamically output by src/pages/[slug].astro (excluding drafts in production)
   const notes = await getNotes() // notes dynamically output by src/pages/[slug].astro (excluding private notes in production)
 

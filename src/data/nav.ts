@@ -8,7 +8,7 @@ export default {
     { title: 'writing', url: '/' },
     { title: 'notes', url: '/notes/' },
     { title: 'about', url: '/about/' },
-    // { title: 'likes', url: '/likes/' },
+    { title: 'likes', url: '/likes/' },
   ],
   bottom: [
     { title: 'RSS', url: '/rss.xml' },

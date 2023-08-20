@@ -1,20 +1,18 @@
-import { transformCloudinaryImage } from 'lib/cloudinary/utils'
-import getImagePlaceholderForEnv from 'utils/getImagePlaceholderForEnv'
+import cloudinary from '../cloudinary/client'
 
 interface iTunesListItem {
-  date: string
+  date: string | Date
   id: number
   name: string
 }
 
 export interface iTunesItem {
-  artist: string
+  artist?: string
   title: string
-  id: string
+  id: number
   date: string
   link: string
   imageUrl: string
-  imagePlaceholder: string
 }
 
 type iTunesMedium = 'ebook' | 'music' | 'podcast'
@@ -25,12 +23,16 @@ interface iTunesResult {
   artistName?: string
   artworkUrl100: string
   collectionId?: number
+  collectionName?: string
+  collectionCensoredName?: string
   collectionViewUrl?: string
   date: string
   name: string
+  releaseDate: Date
   trackId: number
   trackViewUrl?: string
 }
+
 interface iTunesAlbumResult extends iTunesResult {}
 interface iTunesBookResult extends iTunesResult {}
 interface iTunesPodcastResult extends iTunesResult {}
@@ -56,13 +58,13 @@ export default async function fetchItunesItems(
     const data = await response.json()
 
     formattedResults = await Promise.all(
-      data.results.map(async (result: Result) => {
+      data.results.map(async (result: Result): Promise<iTunesItem | null> => {
         if (!result) {
           return null
         }
 
-        const resultID: number = result.collectionId || result.trackId
-        const matchingItem: iTunesListItem | undefined = items.find(item => item.id === resultID)
+        const resultID = result.collectionId || result.trackId
+        const matchingItem = items.find(item => item.id === resultID)
 
         if (!matchingItem) {
           console.log('No matching item...')
@@ -73,30 +75,37 @@ export default async function fetchItunesItems(
         }
 
         const artist = result.artistName
-        const title = matchingItem.name
+        const title = matchingItem.name || result.collectionName || result.collectionCensoredName
         const id = resultID
-        const date = matchingItem.date
+        const date = matchingItem.date || result.releaseDate
         const link = result.collectionViewUrl || result.trackViewUrl
-        // See image srcset URLs used on books.apple.com:
-        const imageUrl = transformCloudinaryImage(
-          `https://res.cloudinary.com/ooloth/image/fetch/${result.artworkUrl100.replace('100x100bb', '400x0w')}`,
-          192,
-        )
 
-        if (!title || !id || !date || !link || !imageUrl || includedIds.has(id)) {
-          console.log(`Removed iTunes result:`, result)
+        // See image srcset URLs used on books.apple.com:
+        const imageUrl = cloudinary.url(result.artworkUrl100.replace('100x100bb', '400x0w'), {
+          type: 'fetch',
+          crop: 'scale',
+          fetch_format: 'auto',
+          quality: 'auto',
+          width: 600,
+        })
+
+        if (!title || !id || !date || !link || !imageUrl) {
+          console.log(`Removed incomplete iTunes result:`, result)
           return null
         }
 
-        const imagePlaceholder = await getImagePlaceholderForEnv(imageUrl, 4)
+        if (includedIds.has(id)) {
+          console.log(`Removed duplicate iTunes result:`, result)
+          return null
+        } else {
+          includedIds.add(id)
+        }
 
-        includedIds.add(id)
-
-        return { artist, title, id, date, link, imageUrl, imagePlaceholder }
+        return { artist, title, id, date: String(date), link, imageUrl }
       }),
     )
 
-    return formattedResults.filter(Boolean).sort((a, b) => b.date.localeCompare(a.date))
+    return formattedResults.filter(Boolean).sort((a, b): number => b.date.localeCompare(a.date))
   } catch (error) {
     console.log('fetchItunesItems error:', error)
     return []

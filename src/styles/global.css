@@ -27,15 +27,19 @@
   }
 }
 
-@layer components {
-  .heading {
-    @apply break-after-avoid leading-tight font-semibold;
-
+@layer utilities {
+  .text-bright {
     /* light mode */
     @apply text-black;
 
     /* dark mode */
     @apply dark:text-white;
+  }
+}
+
+@layer components {
+  .heading {
+    @apply text-bright break-after-avoid leading-tight font-semibold;
   }
 }
 
@@ -111,6 +115,18 @@
 }
 
 @layer components {
+  .image {
+    @apply mt-6 rounded;
+
+    /* light mode */
+    @apply bg-zinc-200;
+
+    /* dark mode */
+    @apply dark:bg-zinc-800;
+  }
+}
+
+@layer components {
   .caption {
     @apply mt-1 text-center text-[0.9rem];
 
@@ -180,13 +196,7 @@
     }
 
     img {
-      @apply mt-6 rounded;
-
-      /* light mode */
-      @apply bg-zinc-200;
-
-      /* dark mode */
-      @apply dark:bg-zinc-800;
+      @apply image;
 
       /* paragraphs that follow an image should have a bit more margin above them */
       & + p {
@@ -234,5 +244,13 @@
 @layer components {
   .giscus {
     @apply mt-16;
+  }
+}
+
+@layer utilities {
+  /* For Blink- and WebKit-based browsers (e.g., Chrome, Edge, Opera, Safari, all browsers on iOS, and others). */
+  .hide-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
   }
 }
