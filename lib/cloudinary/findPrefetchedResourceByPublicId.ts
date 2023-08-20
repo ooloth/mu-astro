@@ -39,8 +39,6 @@ function findCachedResourceByPublicId(publicId: string) {
   const { loading, decoding } = parseAnyCustomAttributesPassedAsQueryParams(publicId)
 
   return { ...imageDetails, loading, decoding }
-
-  // return imageDetails
 }
 
 export default findCachedResourceByPublicId
