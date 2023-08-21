@@ -247,10 +247,15 @@
   }
 }
 
+/* see: https://blog.logrocket.com/hide-scrollbar-without-impacting-scrolling-css/ */
 @layer utilities {
-  /* For Blink- and WebKit-based browsers (e.g., Chrome, Edge, Opera, Safari, all browsers on iOS, and others). */
-  .hide-scrollbar::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    /* For Blink- and WebKit-based browsers (e.g., Chrome, Edge, Opera, Safari, all browsers on iOS, and others). */
+    &::-webkit-scrollbar {
+      @apply hidden;
+    }
   }
 }

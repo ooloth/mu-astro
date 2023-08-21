@@ -33,7 +33,7 @@ const categories = await Promise.all([
         <section>
           <h2 class="heading text-3xl">{category.title}</h2>
 
-          <ul class="flex relative overflow-x-auto overflow-y-hidden hide-scrollbar">
+          <ul class="hide-scrollbar flex relative overflow-x-auto overflow-y-hidden">
             {category.items.map(item => (
               <li class="flex-none mr-10 w-48">
                 <a
@@ -42,7 +42,7 @@ const categories = await Promise.all([
                   target="_blank"
                   class="text-center leading-tight font-semibold text-zinc-900 dark:text-zinc-300"
                 >
-                  {/*  decorative, so hide from screen readers */}
+                  {/* decorative, so hide from screen readers */}
                   <img
                     src={item.imageUrl}
                     alt=""
