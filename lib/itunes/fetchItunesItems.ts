@@ -86,7 +86,8 @@ export default async function fetchItunesItems(
           crop: 'scale',
           fetch_format: 'auto',
           quality: 'auto',
-          width: 600,
+          width: 192 * 2,
+          height: medium === 'ebook' ? 288 * 2 : 192 * 2,
         })
 
         if (!title || !id || !date || !link || !imageUrl) {

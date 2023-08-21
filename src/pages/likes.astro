@@ -26,41 +26,46 @@ const categories = await Promise.all([
   <h1 class="sr-only">{title}</h1>
 
   {
-    categories.map(category => (
-      <section>
-        <h2 class="heading text-3xl">{category.title}</h2>
+    categories.map(category => {
+      const imgHeightClass = category.title === 'Albums' || category.title === 'Podcasts' ? 'h-[192px]' : 'h-[288px]'
 
-        <ul class="flex relative overflow-x-auto overflow-y-hidden hide-scrollbar">
-          {category.items.map(item => (
-            <li class="flex-none mr-10 w-48">
-              <a
-                href={item.link || 'https://youtu.be/dQw4w9WgXcQ'}
-                aria-label={`Visit the ${category.source} page for "${item.title}" in a new window.`}
-                class="text-center leading-tight font-semibold text-zinc-900 dark:text-zinc-300"
-              >
-                {/*  decorative, so hide from screen readers */}
-                <img
-                  src={item.imageUrl}
-                  alt=""
-                  width={300}
-                  height={category.title === 'Albums' || category.title === 'Podcasts' ? 300 : 435}
-                  class="image"
-                />
+      return (
+        <section>
+          <h2 class="heading text-3xl">{category.title}</h2>
 
-                <p class="mt-3 text-[1.05rem]">{item.title}</p>
+          <ul class="flex relative overflow-x-auto overflow-y-hidden hide-scrollbar">
+            {category.items.map(item => (
+              <li class="flex-none mr-10 w-48">
+                <a
+                  href={item.link || 'https://youtu.be/dQw4w9WgXcQ'}
+                  aria-label={`Visit the ${category.source} page for "${item.title}" in a new window.`}
+                  target="_blank"
+                  class="text-center leading-tight font-semibold text-zinc-900 dark:text-zinc-300"
+                >
+                  {/*  decorative, so hide from screen readers */}
+                  <img
+                    src={item.imageUrl}
+                    alt=""
+                    width={192}
+                    height={category.title === 'Albums' || category.title === 'Podcasts' ? 192 : 288}
+                    class={`image w-[192px] ${imgHeightClass}`}
+                  />
 
-                {'artist' in item && item.artist && <p class="mt-[0.35rem] text-sm">{item.artist}</p>}
+                  <p class="mt-3 text-[1.05rem]">{item.title}</p>
 
-                {item.date && (
-                  <time datetime={getMachineReadableDate(item.date)} class="block mt-[0.35rem] text-sm">
-                    ({new Date(item.date).getFullYear()})
-                  </time>
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
+                  {/* {'artist' in item && item.artist && <p class="mt-[0.35rem] text-sm">{item.artist}</p>} */}
+
+                  {item.date && (
+                    <time datetime={getMachineReadableDate(item.date)} class="block mt-[0.25rem] text-sm">
+                      ({new Date(item.date).getFullYear()})
+                    </time>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    })
   }
 </Main>

@@ -49,12 +49,9 @@ export default async function fetchTmdbList(listId: string, api: 'tv' | 'movie')
             crop: 'scale',
             fetch_format: 'auto',
             quality: 'auto',
-            width: 600,
+            width: 192 * 2,
+            height: 288 * 2,
           })
-          // const imageUrl = transformCloudinaryImage(
-          // `https://res.cloudinary.com/ooloth/image/fetch/https://image.tmdb.org/t/p/original${result.poster_path}`,
-          // 192,
-          // )
 
           if (!title || !id || !date || !result.poster_path) {
             console.log(`Removed TMDB result:`, title || result)
