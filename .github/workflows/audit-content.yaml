@@ -13,7 +13,6 @@ env:
 
 on:
   schedule:
-    # TODO: hook up audit logic (ideally in content repo)
     # every Monday at 8am ET
     - cron: '0 12 * * 1'
 
@@ -33,10 +32,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies 📦
         run: npm ci --prefer-offline
 
-      - name: Build the site 🏗️
-        run: npm run build
+      - name: Build and audit the site 🏗️
+        run: 'npm run audit:content'

@@ -1,10 +1,15 @@
 ---
+import auditBlogPosts from '../../lib/content/auditBlogPosts'
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import { getPosts } from '../utils/posts'
 
 const posts = await getPosts()
+
+if (import.meta.env.AUDIT_CONTENT) {
+  auditBlogPosts(posts)
+}
 ---
 
 <Main title={site.title} description={site.description.site}>

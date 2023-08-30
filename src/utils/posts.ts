@@ -3,14 +3,14 @@ import { getCollection } from 'astro:content'
 import type { Writing } from './collections'
 
 // TODO: move post definitions to src/content/config.ts?
-type Post = Writing & { data: { destination: 'blog'; date?: string } }
+export type Post = Writing & { data: { destination: 'blog'; date?: string } }
 
 type PostWithDate = Post & { data: { date: string } }
 
 /**
  * Returns true if file is a blog post.
  */
-const isPost = (post: Writing): post is Post => post.data.destination === 'blog'
+export const isPost = (post: Writing): post is Post => post.data.destination === 'blog'
 
 /**
  * Returns true if file is a published blog post.
