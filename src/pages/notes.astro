@@ -15,7 +15,7 @@ const notes = await getNestedNotes()
     <ul class="list-notes">
       {
         notes.map(note => {
-          const getLinkText = (item: Writing): string => item.data.title || item.slug
+          const getLinkText = (item: Writing): string => item.data.linkText || item.data.title || item.slug
 
           const getChildren = (item: Writing, level: number) =>
             item.data.children && (
