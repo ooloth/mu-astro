@@ -33,7 +33,7 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     if (!isPost(item)) return
 
     // If item is both scheduled and publishing, put it in the scheduled list
-    if (item.data.date > Date.now()) {
+    if (Date.parse(item.data.date) > Date.now()) {
       scheduled.push(item)
       return
     }
