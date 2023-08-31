@@ -55,5 +55,8 @@ export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
  */
 export const getPosts = async (): Promise<Post[]> =>
   sortPosts(
-    await getCollection('writing', post => isPost(post) && (import.meta.env.PROD ? isPublishedPost(post) : true)),
+    await getCollection(
+      'writing',
+      post => isPost(post) && (import.meta.env.PROD && !import.meta.env.AUDIT_CONTENT ? isPublishedPost(post) : true),
+    ),
   )
