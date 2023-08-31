@@ -50,7 +50,11 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     if (!item.data.status && !item.data.published) draftsByStatus.unknown.items.push(item)
   })
 
-  const getItemsHtml = (items: Post[]): string => items.map(item => `<li>${item.slug}</li>`).join('')
+  const getItemsHtml = (items: Post[]): string =>
+    items
+      .sort((a, b) => a.slug.localeCompare(b.slug)) // sort alphabetically by slug
+      .map(item => `<li>${item.slug}</li>`)
+      .join('')
 
   const noTitleHtml = noTitle.length ? `<h3>🤷‍♂️ Missing a title️</h3><ul>${getItemsHtml(noTitle)}</ul>` : ''
 
@@ -63,7 +67,7 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
 
   const scheduledHtml =
     '<h3>Scheduled 📆</h3>' +
-    (scheduled.length ? `<ul>${getScheduledItemsHtml(scheduled)}</ul>` : '<em>Time to schedule a post!</em>')
+    (scheduled.length ? `<ul>${getScheduledItemsHtml(scheduled)}</ul>` : '<p><em>Time to schedule a post!</em></p>')
 
   const draftsHtml = Object.keys(draftsByStatus)
     .map(key =>
