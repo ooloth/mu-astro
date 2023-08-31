@@ -3,7 +3,7 @@ import sendEmail from '../sendGrid/sendEmail'
 
 async function auditBlogPosts(posts: Post[]): Promise<void> {
   // Only proceed if this is an audit build
-  if (!process.env.AUDIT_CONTENT) return
+  if (!import.meta.env.AUDIT_CONTENT) return
 
   const noTitle: Post[] = []
   const scheduled: Post[] = []
