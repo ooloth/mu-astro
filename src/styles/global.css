@@ -116,7 +116,7 @@
 
 @layer components {
   .image {
-    @apply mt-6 rounded;
+    @apply mt-6 rounded-lg;
 
     /* light mode */
     @apply bg-zinc-200;
@@ -241,7 +241,7 @@
 
     /* e.g. YouTube and Twitter embeds */
     & iframe {
-      @apply my-5 w-full h-auto aspect-video rounded;
+      @apply my-5 w-full h-auto aspect-video rounded-lg;
     }
   }
 }

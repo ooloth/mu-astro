@@ -23,11 +23,11 @@
 
   /* code blocks */
   div[data-rehype-pretty-code-fragment] {
-    @apply grid mt-6 rounded overflow-x-scroll;
+    @apply grid mt-6 rounded-lg overflow-x-scroll;
 
     /* title (if any) */
     [data-rehype-pretty-code-title] {
-      @apply py-1 px-[1.1rem] leading-[2.05] font-mono text-[0.75em];
+      @apply py-[0.25em] px-[1.1em] leading-[2.05] font-mono text-[0.75em];
 
       /* light & dark mode */
       @apply bg-zinc-800 text-zinc-300;
@@ -35,7 +35,7 @@
 
     /* code block */
     & pre {
-      @apply py-4 text-[0.85em];
+      @apply py-[1.1em] text-[0.8em];
 
       /* light mode */
       @apply bg-zinc-900;
