@@ -27,15 +27,15 @@
 
     /* title (if any) */
     [data-rehype-pretty-code-title] {
-      @apply py-1 px-3 leading-loose font-mono text-[0.7em];
+      @apply py-1 px-[1.1rem] leading-[2.05] font-mono text-[0.75em];
 
       /* light & dark mode */
-      @apply bg-zinc-700 text-zinc-300;
+      @apply bg-zinc-800 text-zinc-300;
     }
 
     /* code block */
     & pre {
-      @apply py-3 text-[0.85em];
+      @apply py-4 text-[0.85em];
 
       /* light mode */
       @apply bg-zinc-900;
@@ -47,7 +47,7 @@
       & > code {
         & [data-line] {
           /* put padding on each line rather than whole container so line highlighting reaches left edge */
-          @apply border-l-2 border-l-transparent ps-4;
+          @apply border-l-2 border-l-transparent px-[1.1rem];
         }
 
         & [data-highlighted-line] {
