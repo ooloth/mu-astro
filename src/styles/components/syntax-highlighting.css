@@ -23,7 +23,7 @@
 
   /* code blocks */
   div[data-rehype-pretty-code-fragment] {
-    @apply mt-6 rounded overflow-x-scroll;
+    @apply grid mt-6 rounded overflow-x-scroll;
 
     /* title (if any) */
     [data-rehype-pretty-code-title] {
@@ -45,8 +45,6 @@
 
       /* see: https://rehype-pretty-code.netlify.app */
       & > code {
-        @apply grid;
-
         & [data-line] {
           /* put padding on each line rather than whole container so line highlighting reaches left edge */
           @apply border-l-2 border-l-transparent ps-4;
