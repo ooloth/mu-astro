@@ -23,28 +23,33 @@
 
   /* code blocks */
   div[data-rehype-pretty-code-fragment] {
-    @apply grid mt-6 rounded-lg overflow-x-scroll;
+    @apply mt-6 rounded-lg overflow-x-scroll;
 
     /* title (if any) */
     [data-rehype-pretty-code-title] {
-      @apply py-[0.25em] px-[1.1em] leading-[2.05] font-mono text-[0.75em];
+      @apply inline-flex rounded-tr-lg py-[0.25em] px-[1.1em] leading-[2.05] font-mono text-[0.75em];
 
-      /* light & dark mode */
-      @apply bg-zinc-800 text-zinc-300;
+      /* light mode */
+      @apply bg-zinc-900 text-zinc-300;
+
+      /* dark mode */
+      @apply dark:bg-zinc-400/5;
     }
 
     /* code block */
     & pre {
-      @apply py-[1.1em] text-[0.8em];
-
-      /* light mode */
-      @apply bg-zinc-900;
-
-      /* dark mode */
-      @apply dark:bg-zinc-400/5;
+      @apply grid;
 
       /* see: https://rehype-pretty-code.netlify.app */
       & > code {
+        @apply py-[1.1em] text-[0.8em];
+
+        /* light mode */
+        @apply bg-zinc-900;
+
+        /* dark mode */
+        @apply dark:bg-zinc-400/5;
+
         & [data-line] {
           /* put padding on each line rather than whole container so line highlighting reaches left edge */
           @apply border-l-2 border-l-transparent px-[1.1rem];
