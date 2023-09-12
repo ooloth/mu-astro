@@ -7,12 +7,6 @@
   li > code,
   span[data-rehype-pretty-code-fragment] {
     @apply text-[0.9em];
-
-    /* light mode */
-    @apply rounded-[0.2em] py-[0.2em] px-[0.3em] bg-zinc-900;
-
-    /* dark mode */
-    @apply dark:rounded-none dark:p-0 dark:bg-transparent;
   }
 
   /* inline code with no language annotation (e.g. `true` instead of `true{:js}` */
@@ -28,12 +22,7 @@
     /* title (if any) */
     [data-rehype-pretty-code-title] {
       @apply inline-flex rounded-tr-lg py-[0.25em] px-[1.1em] leading-[2.05] font-mono text-[0.75em];
-
-      /* light mode */
-      @apply bg-zinc-900 text-zinc-300;
-
-      /* dark mode */
-      @apply dark:bg-zinc-400/5;
+      @apply bg-zinc-400/5 text-zinc-300;
     }
 
     /* code block */
@@ -43,12 +32,7 @@
       /* see: https://rehype-pretty-code.netlify.app */
       & > code {
         @apply py-[1.1em] text-[0.8em];
-
-        /* light mode */
-        @apply bg-zinc-900;
-
-        /* dark mode */
-        @apply dark:bg-zinc-400/5;
+        @apply bg-zinc-400/5;
 
         & [data-line] {
           /* put padding on each line rather than whole container so line highlighting reaches left edge */
@@ -56,13 +40,11 @@
         }
 
         & [data-highlighted-line] {
-          /* light & dark mode */
           @apply border-l-blue-400;
           background-color: rgb(200 200 255 / 0.1);
         }
 
         & [data-highlighted-chars] {
-          /* light & dark mode */
           @apply rounded;
           background-color: rgb(200 200 255 / 0.15);
           box-shadow: 0 0 0 0.24em rgb(200 200 255 / 0.15);
@@ -84,7 +66,6 @@
 
         /* make line numbers of highlighted lines a brighter white */
         & > [data-highlighted-line]::before {
-          /* light & dark mode */
           @apply text-zinc-400;
         }
       }
