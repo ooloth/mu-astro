@@ -20,19 +20,24 @@ const notes = await getNestedNotes()
           const getChildren = (item: Writing, level: number) =>
             item.data.children && (
               <ul>
-                {item.data.children.map((child: Writing) => (
-                  <li
-                    class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
-                    style={`padding-left: ${level * 1.4}rem`}
-                  >
-                    <a href={`/${child.slug}/`} class="link">
-                      {getLinkText(child)}
-                    </a>
+                {item.data.children
+                  // Sort alphabetically by link text, then title
+                  .sort((a: Writing, b: Writing) =>
+                    (a.data.linkText || a.data.title).localeCompare(b.data.linkText || b.data.title),
+                  )
+                  .map((child: Writing) => (
+                    <li
+                      class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
+                      style={`padding-left: ${level * 1.4}rem`}
+                    >
+                      <a href={`/${child.slug}/`} class="link">
+                        {getLinkText(child)}
+                      </a>
 
-                    {/* Recursively render grandchildren, etc */}
-                    {getChildren(child, level + 1)}
-                  </li>
-                ))}
+                      {/* Recursively render grandchildren, etc */}
+                      {getChildren(child, level + 1)}
+                    </li>
+                  ))}
               </ul>
             )
 
