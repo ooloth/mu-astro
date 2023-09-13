@@ -57,10 +57,15 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     }
   })
 
+  /**
+   * Returns the post slug and appends a star if the post is high priority
+   */
+  const getItemTitle = (item: Post): string => (item.data.priority === 'high' ? `${item.slug} ⭐️` : item.slug)
+
   const getItemsHtml = (items: Post[]): string =>
     items
       .sort((a, b) => a.slug.localeCompare(b.slug)) // sort alphabetically by slug
-      .map(item => `<li>${item.slug}</li>`)
+      .map(item => `<li>${getItemTitle(item)}</li>`)
       .join('')
 
   const noTitleHtml = noTitle.length ? `<h3>🤷‍♂️ Missing a title️</h3><ul>${getItemsHtml(noTitle)}</ul>` : ''
