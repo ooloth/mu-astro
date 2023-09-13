@@ -32,13 +32,18 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     if (!item.data.title) noTitle.push(item)
     if (!isPost(item)) return
 
+    // If item is published, skip it (since it's not a draft)
+    if (Date.parse(item.data.date) <= Date.now()) {
+      return
+    }
+
     // If item is both scheduled and publishing, put it in the scheduled list
     if (Date.parse(item.data.date) > Date.now()) {
       scheduled.push(item)
       return
     }
 
-    // Sort drafts by status
+    // Add drafts to the matching status list
     Object.keys(draftsByStatus).forEach(key => {
       if (item.data.status === key) {
         draftsByStatus[key as keyof DraftsByStatus].items.push(item)
@@ -46,8 +51,10 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
       }
     })
 
-    // If item is not published, put it in the unknown status list
-    if (!item.data.status && !item.data.published) draftsByStatus.unknown.items.push(item)
+    // If draft has an unrecognized status, add it to the unknown list
+    if (!Object.keys(draftsByStatus).some(item.data.status)) {
+      draftsByStatus.unknown.items.push(item)
+    }
   })
 
   const getItemsHtml = (items: Post[]): string =>

@@ -24,7 +24,7 @@ if (import.meta.env.AUDIT_CONTENT) {
           const date = post.data.date || Date.now()
 
           return (
-            <li class="flex flex-col md:flex-row md:items-baseline mb-7 md:mb-4 break-inside-avoid-column">
+            <li class="flex flex-col md:flex-row md:items-baseline mb-7 md:mb-4">
               <time datetime={getMachineReadableDate(date)} class="timestamp md:min-w-[7rem]">
                 {getHumanReadableDate(date)}
               </time>
