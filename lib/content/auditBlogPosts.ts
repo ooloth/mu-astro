@@ -86,7 +86,15 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
       draftsByStatus[key as keyof DraftsByStatus].items.length
         ? `<h3>${key[0].toLocaleUpperCase() + key.slice(1)} ${
             draftsByStatus[key as keyof DraftsByStatus].emoji
-          }</h3><ul>${getItemsHtml(draftsByStatus[key as keyof DraftsByStatus].items)}</ul>`
+          }</h3><ul>${getItemsHtml(
+            draftsByStatus[key as keyof DraftsByStatus].items.sort((a, b) =>
+              a.data.priority === 'high' && b.data.priority === 'low'
+                ? -1
+                : a.data.priority === 'low' && b.data.priority === 'high'
+                ? 1
+                : 0,
+            ),
+          )}</ul>`
         : '',
     )
     .join('')
