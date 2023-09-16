@@ -195,6 +195,27 @@
       @apply border-[--moonlight-red] text-bright;
     }
 
+    & table {
+      @apply table-auto mt-6 border-collapse;
+
+      & td,
+      & th {
+        @apply px-2 py-1 text-left;
+        @apply border border-zinc-700;
+      }
+
+      & td {
+        &:first-of-type {
+          @apply font-medium text-zinc-300;
+        }
+      }
+
+      & th {
+        @apply sticky top-0;
+        @apply bg-zinc-900 font-semibold text-bright;
+      }
+    }
+
     /* e.g. YouTube and Twitter embeds */
     & iframe {
       @apply my-5 aspect-video rounded-lg w-full h-auto;
