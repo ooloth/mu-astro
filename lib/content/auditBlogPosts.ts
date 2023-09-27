@@ -5,12 +5,11 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
   // Only proceed if this is an audit build
   if (!import.meta.env.AUDIT_CONTENT) return
 
-  const noTitle: Post[] = []
-  const scheduled: Post[] = []
-
   type DraftsByStatus = {
     announcing: { emoji: string; items: Post[] }
     publishing: { emoji: string; items: Post[] }
+    scheduled: { emoji: string; items: Post[] }
+    priority: { emoji: string; items: Post[] }
     editing: { emoji: string; items: Post[] }
     drafting: { emoji: string; items: Post[] }
     outlining: { emoji: string; items: Post[] }
@@ -21,6 +20,8 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
   const draftsByStatus: DraftsByStatus = {
     announcing: { emoji: '🎙️', items: [] },
     publishing: { emoji: '🚀', items: [] },
+    scheduled: { emoji: '📆', items: [] },
+    priority: { emoji: '⭐️', items: [] },
     editing: { emoji: '💅', items: [] },
     drafting: { emoji: '🤮', items: [] },
     outlining: { emoji: '🌳', items: [] },
@@ -29,7 +30,6 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
   }
 
   posts.forEach(item => {
-    if (!item.data.title) noTitle.push(item)
     if (!isPost(item)) return
 
     // If item is published, skip it (since it's not a draft)
@@ -39,7 +39,13 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
 
     // If item is both scheduled and publishing, put it in the scheduled list
     if (Date.parse(item.data.date) > Date.now()) {
-      scheduled.push(item)
+      draftsByStatus.scheduled.items.push(item)
+      return
+    }
+
+    // If the item is high priority, add it to the priority list
+    if (item.data.priority === 'high' && item.data.status !== 'announcing' && item.data.status !== 'publishing') {
+      draftsByStatus.priority.items.push(item)
       return
     }
 
@@ -57,18 +63,11 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     }
   })
 
-  /**
-   * Returns the post slug and appends a star if the post is high priority
-   */
-  const getItemTitle = (item: Post): string => (item.data.priority === 'high' ? `${item.slug} ⭐️` : item.slug)
-
   const getItemsHtml = (items: Post[]): string =>
     items
       .sort((a, b) => a.slug.localeCompare(b.slug)) // sort alphabetically by slug
-      .map(item => `<li>${getItemTitle(item)}</li>`)
+      .map(item => `<li>${item.slug}</li>`)
       .join('')
-
-  const noTitleHtml = noTitle.length ? `<h3>🤷‍♂️ Missing a title️</h3><ul>${getItemsHtml(noTitle)}</ul>` : ''
 
   const getScheduledItemsHtml = (items: Post[]): string =>
     items
@@ -77,29 +76,21 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
       .map(item => `<li><strong>${item.data.date}:</strong> ${item.data.title}</li>`)
       .join('')
 
-  const scheduledHtml =
-    '<h3>Scheduled 📆</h3>' +
-    (scheduled.length ? `<ul>${getScheduledItemsHtml(scheduled)}</ul>` : '<p><em>Time to schedule a post!</em></p>')
-
   const draftsHtml = Object.keys(draftsByStatus)
     .map(key =>
       draftsByStatus[key as keyof DraftsByStatus].items.length
         ? `<h3>${key[0].toLocaleUpperCase() + key.slice(1)} ${
             draftsByStatus[key as keyof DraftsByStatus].emoji
-          }</h3><ul>${getItemsHtml(
-            draftsByStatus[key as keyof DraftsByStatus].items.sort((a, b) =>
-              a.data.priority === 'high' && b.data.priority === 'low'
-                ? -1
-                : a.data.priority === 'low' && b.data.priority === 'high'
-                ? 1
-                : 0,
-            ),
-          )}</ul>`
+          }</h3><ul>${
+            key === 'scheduled'
+              ? getScheduledItemsHtml(draftsByStatus[key as keyof DraftsByStatus].items)
+              : getItemsHtml(draftsByStatus[key as keyof DraftsByStatus].items)
+          }</ul>`
         : '',
     )
     .join('')
 
-  await sendEmail('Blog post drafts ✍️', noTitleHtml + scheduledHtml + draftsHtml)
+  await sendEmail('Blog post drafts ✍️', draftsHtml)
 }
 
 export default auditBlogPosts
