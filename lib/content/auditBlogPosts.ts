@@ -52,7 +52,7 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     })
 
     // If draft has an unrecognized status, add it to the unknown list
-    if (!Object.keys(draftsByStatus).some(item.data.status)) {
+    if (!Object.keys(draftsByStatus).includes(item.data.status)) {
       draftsByStatus.unknown.items.push(item)
     }
   })
@@ -99,7 +99,7 @@ async function auditBlogPosts(posts: Post[]): Promise<void> {
     )
     .join('')
 
-  await sendEmail('Blog post status ✍️', noTitleHtml + scheduledHtml + draftsHtml)
+  await sendEmail('Blog post drafts ✍️', noTitleHtml + scheduledHtml + draftsHtml)
 }
 
 export default auditBlogPosts
