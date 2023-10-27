@@ -9,7 +9,7 @@ const isNote = (note: Writing): boolean => note.data.destination !== 'blog'
 /**
  * Returns true if file is a non-private note.
  */
-const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private
+const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.slug.includes('recursion')
 
 /**
  * Given an array of collection items, returns the array with child items nested under their parents.
