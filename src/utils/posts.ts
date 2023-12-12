@@ -10,7 +10,8 @@ type PostWithDate = Post & { data: { date: string } }
 /**
  * Returns true if file is a blog post.
  */
-export const isPost = (post: Writing): post is Post => post.data.destination === 'blog'
+export const isPost = (post: Writing): post is Post =>
+  post.data?.tags.includes('post') || post.data?.destination === 'blog'
 
 /**
  * Returns true if file is a published blog post.
@@ -54,9 +55,4 @@ export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
  * Returns all posts in development and only published posts in production, in ascending order by title (if unpublished) and descending order by date (if published).
  */
 export const getPosts = async (): Promise<Post[]> =>
-  sortPosts(
-    await getCollection(
-      'writing',
-      post => isPost(post) && (import.meta.env.PROD && !import.meta.env.AUDIT_CONTENT ? isPublishedPost(post) : true),
-    ),
-  )
+  sortPosts(await getCollection('writing', post => isPost(post) && import.meta.env.PROD && isPublishedPost(post)))

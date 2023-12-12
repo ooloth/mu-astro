@@ -38,7 +38,6 @@
   },
   "scripts": {
     "astro": "astro",
-    "audit:content": "AUDIT_CONTENT=true npm run build",
     "build": "npm run cloudinary:cache && astro build",
     "check": "npm run cloudinary:cache && npm run format:check && npm run lint:check && npm run types:check",
     "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
