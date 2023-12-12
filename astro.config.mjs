@@ -4,6 +4,7 @@ import rehypePrettyCode from 'rehype-pretty-code'
 import remarkUnwrapImages from 'remark-unwrap-images'
 import tailwind from '@astrojs/tailwind'
 
+import remarkRemoveTags from './lib/remark/remove-tags.ts'
 import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
 
 // source: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
@@ -19,7 +20,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [remarkUnwrapImages],
+    remarkPlugins: [remarkRemoveTags, remarkUnwrapImages],
     rehypePlugins: [
       rehypeCloudinaryImageAttributes,
       [
