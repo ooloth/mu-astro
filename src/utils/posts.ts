@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 import type { Writing } from './collections'
 
 // TODO: move post definitions to src/content/config.ts?
-export type Post = Writing & { data: { destination: 'blog'; date?: string } }
+export type Post = Writing & { data: { destination?: 'blog'; tags?: string[]; date?: string } }
 
 type PostWithDate = Post & { data: { date: string } }
 
@@ -11,7 +11,7 @@ type PostWithDate = Post & { data: { date: string } }
  * Returns true if file is a blog post.
  */
 export const isPost = (post: Writing): post is Post =>
-  post.data?.tags.includes('post') || post.data?.destination === 'blog'
+  post.data.tags?.includes('post') || post.data.destination === 'blog'
 
 /**
  * Returns true if file is a published blog post.
@@ -55,4 +55,4 @@ export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
  * Returns all posts in development and only published posts in production, in ascending order by title (if unpublished) and descending order by date (if published).
  */
 export const getPosts = async (): Promise<Post[]> =>
-  sortPosts(await getCollection('writing', post => isPost(post) && import.meta.env.PROD && isPublishedPost(post)))
+  sortPosts(await getCollection('writing', post => (import.meta.env.PROD ? isPublishedPost(post) : isPost(post))))
