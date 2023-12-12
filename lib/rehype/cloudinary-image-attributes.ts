@@ -2,6 +2,7 @@
 // see: https://github.com/bradgarropy/rehype-cloudinary-image-size/blob/master/src/rehypeCloudinaryImageSize.ts
 // see: https://github.com/bradgarropy/rehype-cloudinary-image-size/blob/master/example/index.js
 
+import type { RehypePlugin } from '@astrojs/markdown-remark'
 import type { Properties } from 'hast'
 import { isElement } from 'hast-util-is-element'
 import type { Element } from 'hast'
@@ -16,7 +17,7 @@ interface Image extends Element {
   properties: Properties
 }
 
-const rehypeCloudinaryImageAttributes = () => {
+const rehypeCloudinaryImageAttributes: RehypePlugin = () => {
   const htmlImages: Image[] = []
 
   const visitor = (node: Element) => {
