@@ -9,7 +9,7 @@ import type { Node } from 'unist'
 /**
  * Given a string, remove all topic tags like " #post" or " #question"
  */
-const removeTags = (str: string): string => str.replaceAll(/\s#\w+/g, '')
+const removeTags = (str: string): string => str.replaceAll(/\s#[\w|/]+/g, '')
 
 type Transformer = (tree: Node<Data>) => Promise<void>
 
