@@ -1,10 +1,11 @@
 import { getCollection } from 'astro:content'
 import type { Writing } from './collections'
+import { isPost } from './posts'
 
 /**
  * Returns true if file is a note.
  */
-const isNote = (note: Writing): boolean => note.data.destination !== 'blog'
+const isNote = (note: Writing): boolean => !isPost(note)
 
 /**
  * Returns true if file is a non-private note.
