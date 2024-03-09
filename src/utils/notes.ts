@@ -3,16 +3,6 @@ import type { Writing } from './collections'
 import { isPost } from './posts'
 
 /**
- * Returns true if file is a note.
- */
-const isNote = (note: Writing): boolean => !isPost(note)
-
-/**
- * Returns true if file is a non-private note.
- */
-const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.slug.includes('recursion')
-
-/**
  * Given an array of collection items, returns the array with child items nested under their parents.
  */
 function nestChildren(collection: Writing[]): Writing[] {
@@ -53,6 +43,16 @@ function nestChildren(collection: Writing[]): Writing[] {
 }
 
 /**
+ * Returns true if file is a note.
+ */
+const isNote = (note: Writing): boolean => !isPost(note)
+
+/**
+ * Returns true if file is a non-private note.
+ */
+const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.slug.includes('recursion')
+
+/**
  * In production, remove all private notes from all levels of the nested notes tree.
  */
 const removePrivateNotes = (notes: Writing[]): Writing[] =>
@@ -60,7 +60,7 @@ const removePrivateNotes = (notes: Writing[]): Writing[] =>
     ? notes
         // Remove private notes from the current nesting level (starting with the root)
         .filter(note => isPublicNote(note))
-        // Remove private notes from the child level (and so on, recursively)
+        // Remove private notes from the children of remaining notes (and so on, recursively)
         .map(note => {
           return note.data?.children?.length
             ? { ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }
