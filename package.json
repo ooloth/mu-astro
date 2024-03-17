@@ -4,6 +4,7 @@
   "dependencies": {
     "@astrojs/rss": "^2.4.3",
     "@astrojs/tailwind": "^4.0.0",
+    "@portaljs/remark-wiki-link": "^1.1.2",
     "@sendgrid/mail": "^7.7.0",
     "@types/mdast": "^4.0.3",
     "astro": "^2.8.4",

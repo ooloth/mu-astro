@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config'
 import fsExtra from 'fs-extra'
 import rehypePrettyCode from 'rehype-pretty-code'
 import remarkUnwrapImages from 'remark-unwrap-images'
+import remarkWikiLink from '@portaljs/remark-wiki-link'
 import tailwind from '@astrojs/tailwind'
 
 import remarkRemoveTags from './lib/remark/remove-tags.ts'
@@ -20,7 +21,18 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    remarkPlugins: [remarkRemoveTags, remarkUnwrapImages],
+    remarkPlugins: [
+      remarkRemoveTags,
+      remarkUnwrapImages,
+      [
+        remarkWikiLink,
+        {
+          // see: https://github.com/datopian/portaljs/tree/main/packages/remark-wiki-link
+          pathFormat: 'obsidian-absolute',
+          wikiLinkResolver: slug => [`${slug}/`], // expects all pages to have root-level paths
+        },
+      ],
+    ],
     rehypePlugins: [
       rehypeCloudinaryImageAttributes,
       [
