@@ -28,6 +28,7 @@ export default defineConfig({
         remarkWikiLink,
         {
           // see: https://github.com/datopian/portaljs/tree/main/packages/remark-wiki-link
+          // see: https://stackoverflow.com/a/76897910/8802485
           pathFormat: 'obsidian-absolute',
           wikiLinkResolver: slug => [`${slug}/`], // expects all pages to have root-level paths
         },
