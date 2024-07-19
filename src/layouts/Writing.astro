@@ -29,6 +29,7 @@ const entryTopics = getEntryTopics(entry)
 const posts = await getPosts()
 const relatedPosts = posts
   .filter(post => {
+    if (post.slug === entry.slug) return false
     const postTopics = getEntryTopics(post)
     return postTopics.some(topic => entryTopics.includes(topic))
   })
