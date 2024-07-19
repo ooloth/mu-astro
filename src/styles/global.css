@@ -160,7 +160,8 @@
       @apply mt-1;
 
       & > ul,
-      & > ol {
+      & > ol,
+      & > p {
         @apply mt-0;
       }
     }
