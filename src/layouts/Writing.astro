@@ -1,6 +1,7 @@
 ---
-import type { CollectionEntry } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
 import { isPathnameInCollection } from '../utils/collections'
+import { getNotes } from '../utils/notes'
 import { getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
@@ -15,7 +16,40 @@ const { pathname } = Astro.url
 const title = entry.data.title || entry.slug
 const date = entry.data.date || Date.now()
 
+// TODO: consider tags as well as slug prefixes?
+const getEntryTopics = (entry: CollectionEntry<'writing'>): string[] => {
+  const topic: string = entry.slug.split('-').at(0) ?? ''
+  const parentTopic: string = entry.data?.parent?.split('-').at(0) ?? ''
+  const allTopics = [...new Set([topic, parentTopic].filter(Boolean))]
+  return allTopics
+}
+
+const entryTopics = getEntryTopics(entry)
+
 const posts = await getPosts()
+const relatedPosts = posts
+  .filter(post => {
+    const postTopics = getEntryTopics(post)
+    return postTopics.some(topic => entryTopics.includes(topic))
+  })
+  .map(post => ({
+    ...post,
+    topics: getEntryTopics(post),
+  }))
+
+const notes = await getNotes()
+// TODO: add relatedNotes or topics to notes in notes.ts?
+// TODO: walk entire related tree of topic? use getNestedNotes instead of this flat list?
+const relatedNotes = notes
+  .filter(note => {
+    if (note.slug === entry.slug) return false
+    const noteTopics = getEntryTopics(note)
+    return noteTopics.some(topic => entryTopics.includes(topic))
+  })
+  .map(note => ({
+    ...note,
+    topics: getEntryTopics(note),
+  }))
 ---
 
 <Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
@@ -34,8 +68,52 @@ const posts = await getPosts()
 
     <article class="markdown"><slot /></article>
 
+    <!-- <ul class="flex gap-3 mt-12 text-zinc-400">
+      {entryTopics.sort().map(topic => <li>#{topic}</li>)}
+    </ul> -->
+
     {
-      isPathnameInCollection(pathname, posts) && (
+      (relatedPosts.length > 0 || relatedNotes.length > 0) && (
+        <footer class="markdown mt-12 border-t-2 border-b-2 border-zinc-600 pb-8">
+          <h2 class="text-red-500">
+            {/* Related */}
+            Related to{' '}
+            <span class="text-zinc-400">
+              {entryTopics
+                .map(topic => `#${topic}`)
+                .sort()
+                .join(', ')}
+            </span>
+          </h2>
+          <ul>
+            {[...relatedPosts, ...relatedNotes].map(relatedEntry => (
+              <li>
+                <a href={`/${relatedEntry.slug}/`}>{relatedEntry.data.title}</a>
+                {/* <span class="ml-1 text-zinc-400">
+                  {relatedEntry.topics
+                    .map(topic => `#${topic}`)
+                    .sort()
+                    .join(' ')}
+                </span> */}
+                {relatedEntry.data.date ? (
+                  <time datetime={getMachineReadableDate(relatedEntry.data.date)} class="timestamp ml-3">
+                    {getHumanReadableDate(relatedEntry.data.date)}
+                  </time>
+                ) : (
+                  isPathnameInCollection(entry.slug, posts) && <span class="timestamp ml-3">draft</span>
+                )}
+              </li>
+            ))}
+          </ul>
+          {/* <pre>{JSON.stringify(relatedPosts, null, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(relatedNotes, null, 2)}</pre> */}
+        </footer>
+      )
+    }
+
+    {
+      (
+        // isPathnameInCollection(pathname, posts) && (
         <script
           src="https://giscus.app/client.js"
           data-repo="ooloth/comments"
@@ -53,6 +131,7 @@ const posts = await getPosts()
           async
           defer
         />
+        // )
       )
     }
 
