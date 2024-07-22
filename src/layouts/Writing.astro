@@ -51,13 +51,16 @@ const relatedNotes = notes
     ...note,
     topics: getEntryTopics(note),
   }))
+
+const isPost = isPathnameInCollection(pathname, posts)
+const hasRelated = relatedPosts.length > 0 || relatedNotes.length > 0
 ---
 
 <Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        isPathnameInCollection(pathname, posts) && (
+        isPost && (
           <time datetime={getMachineReadableDate(date)} class="timestamp">
             {getHumanReadableDate(date)}
           </time>
@@ -74,7 +77,7 @@ const relatedNotes = notes
     </ul> -->
 
     {
-      (relatedPosts.length > 0 || relatedNotes.length > 0) && (
+      !isPost && hasRelated && (
         <footer class="markdown mt-12 border-t-2 border-b-2 border-zinc-600 pb-8">
           <h2 class="text-red-500">
             {/* Related */}
