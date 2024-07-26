@@ -21,6 +21,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    // NOTE: mirror any changes I make here in pages/rss.xml.ts
     remarkPlugins: [
       remarkRemoveTags,
       remarkUnwrapImages,

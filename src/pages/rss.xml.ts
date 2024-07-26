@@ -14,6 +14,8 @@ import { unified } from 'unified'
 import { getPublishedPosts } from '../utils/posts'
 import site from '../data/site'
 import rehypeCloudinaryImageAttributes from '../../lib/rehype/cloudinary-image-attributes'
+import remarkRemoveTags from '../../lib/remark/remove-tags'
+import { remarkWikiLink } from '@portaljs/remark-wiki-link'
 
 export async function get(context: APIContext): Promise<{ body: string }> {
   // Only include published posts, even in development
@@ -33,7 +35,14 @@ export async function get(context: APIContext): Promise<{ body: string }> {
           .use(remarkParse)
           .use(remarkGfm)
           .use(remarkSmartyPants)
+          .use(remarkRemoveTags)
           .use(remarkUnwrapImages)
+          .use(remarkWikiLink, {
+            // see: https://github.com/datopian/portaljs/tree/main/packages/remark-wiki-link
+            // see: https://stackoverflow.com/a/76897910/8802485
+            pathFormat: 'obsidian-absolute',
+            wikiLinkResolver: slug => [`${slug}/`], // expects all pages to have root-level paths
+          })
           .use(remarkRehype)
           .use(rehypeCloudinaryImageAttributes) // mine
           .use(rehypePrettyCode, {
