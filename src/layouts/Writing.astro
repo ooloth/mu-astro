@@ -2,12 +2,12 @@
 import type { CollectionEntry } from 'astro:content'
 import { isPathnameInCollection } from '../utils/collections'
 import { getNotes } from '../utils/notes'
-import { getPosts } from '../utils/posts'
+import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 
 type Props = {
-  entry: CollectionEntry<'writing'>
+  entry: CollectionEntry<'writing'> | CollectionEntry<'drafts'>
 }
 
 const { entry } = Astro.props
@@ -54,13 +54,21 @@ const relatedNotes = notes
 
 const isPost = isPathnameInCollection(pathname, posts)
 const hasRelated = relatedPosts.length > 0 || relatedNotes.length > 0
+
+const drafts = await getDrafts()
+const isDraft = isPathnameInCollection(pathname, drafts)
+
+// const isScheduled = (post: Post): post is PostWithDate =>
+//   isPost(post) && post.data.date && Date.parse(post.data.date) > Date.now()
+
+// const isDraft = (post: Post): post is Post => isPost(post) && !isPublished(post) && !isScheduled(post)
 ---
 
 <Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        isPost && (
+        (isPost || isDraft) && (
           <time datetime={getMachineReadableDate(date)} class="timestamp">
             {getHumanReadableDate(date)}
           </time>

@@ -2,9 +2,10 @@
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getPosts } from '../utils/posts'
+import { getDrafts, getPosts } from '../utils/posts'
 
 const posts = await getPosts()
+const drafts = await getDrafts()
 ---
 
 <Main title={site.title} description={site.description.site}>
@@ -15,7 +16,7 @@ const posts = await getPosts()
 
     <ol reversed class="columns-xl gap-x-24">
       {
-        posts.map(post => {
+        [...drafts, ...posts].map(post => {
           const date = post.data.date || Date.now()
 
           return (
