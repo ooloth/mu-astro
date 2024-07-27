@@ -21,13 +21,13 @@ const notes = await getNotes()
 
 const isHome = pathname === '/'
 
-const pageTitle = title
+const pageTitle: string = title
   ? title
   : // If no page title has been set, generate one from the pathname
     pathname
       .replace('/', '') // remove leading and trailing slashes
       .split('-') // split on hyphens
-      .map((word, index, words) =>
+      .map((word: string, index: number, words: string[]) =>
         // Always capitalize the first word
         index === 0 ||
         // Always capitalize the last word
@@ -151,7 +151,7 @@ const socialImage = ogImage
     <meta name="msapplication-config" content="/favicons/browserconfig.xml" />
 
     <!--- Feeds --->
-    <link rel="alternate" href="/rss.xml" type="application/atom+xml" title={site.title} />
+    <link rel="alternate" type="application/rss+xml" href={site.url + 'rss.xml'} title={site.title} />
   </head>
 
   <body>
