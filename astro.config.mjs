@@ -1,15 +1,8 @@
 import { defineConfig } from 'astro/config'
-import fsExtra from 'fs-extra'
-import rehypePrettyCode from 'rehype-pretty-code'
-import remarkUnwrapImages from 'remark-unwrap-images'
-import remarkWikiLink from '@portaljs/remark-wiki-link'
 import tailwind from '@astrojs/tailwind'
 
-import remarkRemoveTags from './lib/remark/remove-tags.ts'
-import rehypeCloudinaryImageAttributes from './lib/rehype/cloudinary-image-attributes.ts'
-
-// source: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
-const moonlightV2 = await fsExtra.readJson('./lib/rehype/themes/moonlight-ii.json')
+import rehypePlugins from './lib/rehype/plugins.ts'
+import remarkPlugins from './lib/remark/plugins.ts'
 
 // see: https://astro.build/config
 export default defineConfig({
@@ -21,39 +14,10 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    // NOTE: mirror any changes I make here in pages/rss.xml.ts
-    remarkPlugins: [
-      remarkRemoveTags,
-      remarkUnwrapImages,
-      [
-        remarkWikiLink,
-        {
-          // see: https://github.com/datopian/portaljs/tree/main/packages/remark-wiki-link
-          // see: https://stackoverflow.com/a/76897910/8802485
-          pathFormat: 'obsidian-absolute',
-          wikiLinkResolver: slug => [`${slug}/`], // expects all pages to have root-level paths
-        },
-      ],
-    ],
-    rehypePlugins: [
-      rehypeCloudinaryImageAttributes,
-      [
-        rehypePrettyCode,
-        {
-          // see: https://rehype-pretty-code.netlify.app
-          keepBackground: false,
-          theme: moonlightV2,
-          tokensMap: {
-            fn: 'entity.name.function',
-            kw: 'keyword',
-            key: 'meta.object-literal.key',
-            pm: 'variable.parameter',
-            obj: 'variable.other.object',
-            str: 'string',
-          },
-        },
-      ],
-    ],
+    // NOTE: mirror any updates I make here in pages/rss.xml.ts
+    // TODO: define a single source of truth for these settings this file + rss can import?
+    remarkPlugins,
+    rehypePlugins,
     syntaxHighlight: false, // use rehype-pretty-code instead of built-in shiki/prism
   },
   scopedStyleStrategy: 'class',
