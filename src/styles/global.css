@@ -225,6 +225,12 @@
 }
 
 @layer components {
+  .footnotes {
+    @apply mt-8 text-[0.9rem];
+  }
+}
+
+@layer components {
   .giscus {
     @apply mt-16;
   }
