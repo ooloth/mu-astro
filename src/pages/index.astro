@@ -1,11 +1,15 @@
 ---
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
+import { type Draft, isPathnameInCollection } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getDrafts, getPosts } from '../utils/posts'
+import { getDrafts, getPosts, type Post } from '../utils/posts'
 
 const posts = await getPosts()
 const drafts = await getDrafts()
+
+const isDraft = (post: Post | Draft): post is Draft => isPathnameInCollection(`/${post.slug}/`, drafts)
+const isScheduled = (post: Post | Draft): boolean => post.data.date && Date.parse(post.data.date) > Date.now()
 ---
 
 <Main title={site.title} description={site.description.site}>
@@ -27,6 +31,7 @@ const drafts = await getDrafts()
 
               <a href={`/${post.slug}/`} class="group outline-none">
                 <span class="link">{post.data.title || post.slug}</span>
+                {isScheduled(post) ? <span class="ml-1">📆</span> : isDraft(post) ? <span class="ml-1">✏️</span> : null}
               </a>
             </li>
           )

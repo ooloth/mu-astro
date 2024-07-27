@@ -1,6 +1,6 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
 
-import type { Writing } from './collections'
+import type { Draft, Writing } from './collections'
 
 // TODO: move post definitions to src/content/config.ts?
 export type Post = Writing & { data: { destination?: 'blog'; tags?: string[]; date?: string } }
@@ -22,7 +22,7 @@ const isPublished = (post: Writing): post is PostWithDate =>
 /**
  * Sorts two drafts in ascending order by slug.
  */
-const sortBySlug = (a: CollectionEntry<'drafts'>, b: CollectionEntry<'drafts'>): number => a.slug.localeCompare(b.slug)
+const sortBySlug = (a: Draft, b: Draft): number => a.slug.localeCompare(b.slug)
 
 /**
  * Sorts two posts in ascending order by title (or slug if either post is a draft with no title).
@@ -48,7 +48,7 @@ const sortPosts = (posts: Post[]): Post[] => posts.sort(sortByTitleOrSlug).sort(
 /**
  * Returns posts sorted in ascending order by title, then descending order by publish date (so drafts with no dates appear first in alphabetical order).
  */
-const sortDrafts = (drafts: CollectionEntry<'drafts'>[]): CollectionEntry<'drafts'>[] => drafts.sort(sortBySlug)
+const sortDrafts = (drafts: Draft[]): Draft[] => drafts.sort(sortBySlug)
 
 /**
  * Returns all published posts, in descending order by date.
@@ -65,5 +65,5 @@ export const getPosts = async (): Promise<Post[]> =>
 /**
  * Returns all drafts in development and none in production, in ascending order by title (if unpublished) and descending order by date (if published).
  */
-export const getDrafts = async (): Promise<CollectionEntry<'drafts'>[]> =>
+export const getDrafts = async (): Promise<Draft[]> =>
   sortDrafts(await getCollection('drafts', () => import.meta.env.DEV))

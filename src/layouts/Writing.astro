@@ -1,13 +1,12 @@
 ---
-import type { CollectionEntry } from 'astro:content'
-import { isPathnameInCollection } from '../utils/collections'
+import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
 import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 
 type Props = {
-  entry: CollectionEntry<'writing'> | CollectionEntry<'drafts'>
+  entry: Writing | Draft
 }
 
 const { entry } = Astro.props
@@ -17,7 +16,7 @@ const title = entry.data.title || entry.slug
 const date = entry.data.date || Date.now()
 
 // TODO: consider tags as well as slug prefixes?
-const getEntryTopics = (entry: CollectionEntry<'writing'> | CollectionEntry<'drafts'>): string[] => {
+const getEntryTopics = (entry: Writing | Draft): string[] => {
   const topic: string = entry.slug.split('-').at(0) ?? ''
   const parentTopic: string = entry.data?.parent?.split('-').at(0) ?? ''
   const allTopics = [...new Set([topic, parentTopic].filter(Boolean))]
@@ -57,11 +56,6 @@ const hasRelated = relatedPosts.length > 0 || relatedNotes.length > 0
 
 const drafts = await getDrafts()
 const isDraft = isPathnameInCollection(pathname, drafts)
-
-// const isScheduled = (post: Post): post is PostWithDate =>
-//   isPost(post) && post.data.date && Date.parse(post.data.date) > Date.now()
-
-// const isDraft = (post: Post): post is Post => isPost(post) && !isPublished(post) && !isScheduled(post)
 ---
 
 <Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
@@ -80,15 +74,10 @@ const isDraft = isPathnameInCollection(pathname, drafts)
 
     <article class="markdown"><slot /></article>
 
-    <!-- <ul class="flex gap-3 mt-12 text-zinc-400">
-      {entryTopics.sort().map(topic => <li>#{topic}</li>)}
-    </ul> -->
-
     {
       !isPost && hasRelated && (
         <footer class="markdown mt-12 border-t-2 border-b-2 border-zinc-600 pb-8">
           <h2 class="text-red-500">
-            {/* Related */}
             Related to{' '}
             <span class="text-zinc-400">
               {entryTopics
@@ -101,24 +90,17 @@ const isDraft = isPathnameInCollection(pathname, drafts)
             {[...relatedPosts, ...relatedNotes].map(relatedEntry => (
               <li>
                 <a href={`/${relatedEntry.slug}/`}>{relatedEntry.data.title}</a>
-                {/* <span class="ml-1 text-zinc-400">
-                  {relatedEntry.topics
-                    .map(topic => `#${topic}`)
-                    .sort()
-                    .join(' ')}
-                </span> */}
+
                 {relatedEntry.data.date ? (
                   <time datetime={getMachineReadableDate(relatedEntry.data.date)} class="timestamp ml-3">
                     {getHumanReadableDate(relatedEntry.data.date)}
                   </time>
                 ) : (
-                  isPathnameInCollection(entry.slug, posts) && <span class="timestamp ml-3">draft</span>
+                  isPathnameInCollection(pathname, posts) && <span class="timestamp ml-3">draft</span>
                 )}
               </li>
             ))}
           </ul>
-          {/* <pre>{JSON.stringify(relatedPosts, null, 2)}</pre> */}
-          {/* <pre>{JSON.stringify(relatedNotes, null, 2)}</pre> */}
         </footer>
       )
     }
