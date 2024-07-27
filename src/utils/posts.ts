@@ -25,45 +25,35 @@ const isPublished = (post: Writing): post is PostWithDate =>
 const sortBySlug = (a: Draft, b: Draft): number => a.slug.localeCompare(b.slug)
 
 /**
- * Sorts two posts in ascending order by title (or slug if either post is a draft with no title).
- */
-const sortByTitleOrSlug = (a: Post, b: Post): number => (a.data.title || a.slug).localeCompare(b.data.title || b.slug)
-
-/**
  * Sorts two posts in descending order by publish date (or the current date if either post is a draft with no date).
  */
-const sortByDate = (a: Post, b: Post): number =>
+const sortByDate = (a: Post | Draft, b: Post | Draft): number =>
   (Date.parse(b.data.date) || Date.now()).toString().localeCompare((Date.parse(a.data.date) || Date.now()).toString())
 
 /**
  * Returns posts sorted in descending order by publish date.
  */
-const sortPostsByDate = (posts: Post[]): Post[] => posts.sort(sortByDate)
+const sortPosts = (posts: Post[]): Post[] => posts.sort(sortByDate)
 
 /**
- * Returns posts sorted in ascending order by title, then descending order by publish date (so drafts with no dates appear first in alphabetical order).
+ * Returns drafts sorted in ascending order by slug, then descending order by date (so scheduled drafts appear first, followed by unscheduled drafts in alphabetical order).
  */
-const sortPosts = (posts: Post[]): Post[] => posts.sort(sortByTitleOrSlug).sort(sortByDate)
+const sortDrafts = (drafts: Draft[]): Draft[] => drafts.sort(sortBySlug).sort(sortByDate)
 
 /**
- * Returns posts sorted in ascending order by title, then descending order by publish date (so drafts with no dates appear first in alphabetical order).
- */
-const sortDrafts = (drafts: Draft[]): Draft[] => drafts.sort(sortBySlug)
-
-/**
- * Returns all published posts, in descending order by date.
+ * Returns all published posts, in descending order by date (useful for RSS feed).
  */
 export const getPublishedPosts = async (): Promise<PostWithDate[]> =>
-  sortPostsByDate(await getCollection('writing', isPublished))
+  sortPosts(await getCollection('writing', isPublished))
 
 /**
- * Returns all posts in development and only published posts in production, in ascending order by title (if unpublished) and descending order by date (if published).
+ * Returns all posts in development and only published posts in production, in descending order by date.
  */
 export const getPosts = async (): Promise<Post[]> =>
   sortPosts(await getCollection('writing', post => (import.meta.env.PROD ? isPublished(post) : isPost(post))))
 
 /**
- * Returns all drafts in development and none in production, in ascending order by title (if unpublished) and descending order by date (if published).
+ * Returns all drafts in development and none in production, in descending order by date (if scheduled), then ascending order by title.
  */
 export const getDrafts = async (): Promise<Draft[]> =>
   sortDrafts(await getCollection('drafts', () => import.meta.env.DEV))
