@@ -69,6 +69,14 @@ const removePrivateNotes = (notes: Writing[]): Writing[] =>
     : notes
 
 /**
+ * Given an array of nested collection items, returns the array with related items added to each parent and child.
+ * TODO: based on parent-child relationships? Tags?
+ */
+// function addRelated(collection: Writing[]): Writing[] {
+//   return collection
+// }
+
+/**
  * Returns a flat list of all notes with private notes removed (in production).
  */
 export const getNotes = async (): Promise<Writing[]> =>

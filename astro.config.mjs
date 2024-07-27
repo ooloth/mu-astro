@@ -14,8 +14,6 @@ export default defineConfig({
     }),
   ],
   markdown: {
-    // NOTE: mirror any updates I make here in pages/rss.xml.ts
-    // TODO: define a single source of truth for these settings this file + rss can import?
     remarkPlugins,
     rehypePlugins,
     syntaxHighlight: false, // use rehype-pretty-code instead of built-in shiki/prism

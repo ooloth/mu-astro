@@ -17,7 +17,7 @@ const title = entry.data.title || entry.slug
 const date = entry.data.date || Date.now()
 
 // TODO: consider tags as well as slug prefixes?
-const getEntryTopics = (entry: CollectionEntry<'writing'>): string[] => {
+const getEntryTopics = (entry: CollectionEntry<'writing'> | CollectionEntry<'drafts'>): string[] => {
   const topic: string = entry.slug.split('-').at(0) ?? ''
   const parentTopic: string = entry.data?.parent?.split('-').at(0) ?? ''
   const allTopics = [...new Set([topic, parentTopic].filter(Boolean))]

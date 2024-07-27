@@ -37,7 +37,7 @@ export async function get(context: APIContext): Promise<{ body: string }> {
     customData: `<language>en-ca</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
     items: await Promise.all(
       publishedBlogPosts.map(async post => {
-        // An alternative way to call unified().use(plugin).use(plugin).process(post.body) that leverages the array of shared plugins above
+        // An alternative to calling unified().use(plugin).use(plugin).process(post.body) that leverages the arrays of shared plugins above
         const content = (await unifiedPluginsPlusAstroDefaults
           // @ts-expect-error - TS doesn't like the type of "plugin" here
           .reduce((processor: Processor, plugin): Processor => processor.use(plugin), unified())

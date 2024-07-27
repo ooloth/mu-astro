@@ -8,6 +8,7 @@ import type { Node } from 'unist'
 
 /**
  * Given a string, remove all topic tags like " #post" or " #question"
+ * TODO: can I move these tags to the frontmatter?
  */
 const removeTags = (str: string): string => str.replaceAll(/\s#[\w|/]+/g, '')
 
