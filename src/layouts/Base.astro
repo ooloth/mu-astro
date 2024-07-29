@@ -83,6 +83,10 @@ const black = '171717'
 const white = 'fafafa'
 const gray = 'd4d4d4'
 
+// source: https://gravatar.com/site/check/
+// see: https://cloudinary.com/documentation/social_media_profile_pictures#gravatar_profile_pictures
+const gravatarEmailHash = '02472001a48406084e0aa751cf2f430d87ef343c7b7cb6750db88a084606bab5'
+
 // TODO: use the cloudinary sdk instead of manually building the url
 // TODO: create a v2 option based on this design: https://delba.dev/blog/next-blog-generate-og-image
 const socialImage = ogImage
@@ -99,7 +103,7 @@ const socialImage = ogImage
       // see: https://cloudinary.com/cookbook/add_a_border_to_images
       `bo_${borderWidth}px_solid_rgb:fda4af,b_rgb:000000,fl_relative`,
       // see: https://cloudinary.com/cookbook/overlaying_social_profile_pictures_on_top_of_images
-      'l_twitter_name:ooloth.png,w_100,r_max,g_south_west,x_80,y_80',
+      `l_gravatar:${gravatarEmailHash},w_100,r_max,g_south_west,x_80,y_80`,
       // see: https://cloudinary.com/documentation/layers#text_overlays
       `c_fit,l_text:arial_90_extrabold_line_spacing_4:${encodeURIComponent(
         pageTitle,
