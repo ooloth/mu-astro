@@ -28,7 +28,7 @@ const notes = await getNestedNotes()
                   .map((child: Writing) => (
                     <li
                       class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
-                      style={`padding-left: ${level * 1.4}rem`}
+                      style={`padding-left: ${level === 0 ? 0 : 1.4}rem`}
                     >
                       <a href={`/${child.slug}/`} class="link">
                         {getLinkText(child)}
