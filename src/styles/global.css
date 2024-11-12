@@ -23,6 +23,10 @@
 }
 
 @layer utilities {
+  .decoration-bright {
+    @apply decoration-white;
+  }
+
   .text-bright {
     @apply text-white;
   }
@@ -64,6 +68,19 @@
       &:active {
         @apply text-black;
       }
+    }
+  }
+
+  .link-heading {
+    @apply box-decoration-clone underline;
+    @apply underline-offset-[0.2em] decoration-[0.1em] decoration-[--moonlight-red-translucent] text-[--moonlight-red];
+
+    text-decoration-skip-ink: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      @apply outline-none decoration-bright text-bright;
     }
   }
 }
