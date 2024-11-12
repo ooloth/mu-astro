@@ -6,6 +6,7 @@ export type NavItem = {
 export default {
   top: [
     { title: 'writing', url: '/' },
+    { title: 'til', url: '/til/' },
     { title: 'notes', url: '/notes/' },
     { title: 'about', url: '/about/' },
     { title: 'likes', url: '/likes/' },

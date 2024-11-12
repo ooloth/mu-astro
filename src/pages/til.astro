@@ -1,0 +1,40 @@
+---
+import site from '../data/site'
+import Main from '../layouts/Main.astro'
+import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
+import { getTILs } from '../utils/tils'
+
+const tils = await getTILs()
+---
+
+<Main title={site.title} description={site.description.site}>
+  <h1 class="sr-only">{site.title}</h1>
+
+  <section>
+    <h2 class="sr-only">TIL - Today I Learned</h2>
+
+    <ol reversed class="mx-auto max-w-2xl">
+      {
+        tils.map(til => {
+          const date = til.data.date || Date.now()
+
+          return (
+            <li class="mb-16">
+              <a href={`/${til.slug}/`} class="link-heading heading text-2xl">
+                {til.data.title || til.slug}
+              </a>
+
+              <time datetime={getMachineReadableDate(date)} class="timestamp block mt-2 md:min-w-[7rem]">
+                {getHumanReadableDate(date)}
+              </time>
+
+              <div class="markdown pt-2">
+                <til.Content />
+              </div>
+            </li>
+          )
+        })
+      }
+    </ol>
+  </section>
+</Main>

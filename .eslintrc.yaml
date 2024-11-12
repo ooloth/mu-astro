@@ -17,6 +17,7 @@ root: true
 rules:
   '@typescript-eslint/no-var-requires': off # give me longer to write new code before distracting me with errors
   '@typescript-eslint/triple-slash-reference': off # disable since astro automatically uses these
+  dot-notation: 'error' # enforce dot notation instead of square brackets whenever possible
 
 overrides:
   # Define the configuration for `.astro` file.

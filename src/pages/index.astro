@@ -21,6 +21,19 @@ const isScheduled = (post: Post | Draft): boolean => post.data.date && Date.pars
     <ol reversed class="columns-xl gap-x-24">
       {
         [...drafts, ...posts].map(post => {
+          // TODO: my goal is to group the posts under a heading for each topic (tag) or perhaps the even-higher level category
+          // (e.g. Languages, Frameworks, etc) so I can do the same on the notes page and start publishing small notes quickly
+          // without worrying about nesting them hierarchically or inserting them into a topic note. All hidden "drafts" could
+          // just be immediately published as rough note outlines which I can expand on later if worthwhile. Otherwise, a quick
+          // blurb and a few links would be enough to share the idea in a way that would be helpful to future me, at the very least.
+          // TODO: read a "category" property instead of the first tag?
+          // const primaryTag =
+          //   (post.data.tags ?? ['untagged'])
+          //     .filter(tag => tag !== 'post')
+          //     .map(tag => tag.replace('topic/', ''))
+          //     .at(0) ?? 'untagged'
+          // console.log('primaryTag:', primaryTag)
+
           const date = post.data.date || Date.now()
 
           return (
