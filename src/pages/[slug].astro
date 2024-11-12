@@ -1,15 +1,17 @@
 ---
 import Writing from '../layouts/Writing.astro'
+import { getTILs } from '../utils/tils'
 import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 
 export async function getStaticPaths() {
   const posts = await getPosts()
+  const tils = await getTILs()
   const notes = await getNotes()
   const drafts = await getDrafts()
 
   // Generate a path for each writing collection entry
-  return [...posts, ...notes, ...drafts].map(entry => ({
+  return [...posts, ...tils, ...notes, ...drafts].map(entry => ({
     params: { slug: entry.slug },
     props: { entry },
   }))
