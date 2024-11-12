@@ -12,6 +12,18 @@ const notes = await getNestedNotes()
   <section>
     <h2 class="sr-only">Topics</h2>
 
+    <!-- <ul>
+      {
+        notes.map(note => (
+          <li class="mb-2">
+            <a href={`/${note.slug}/`} class="link">
+              {String(note.data.title || note.slug).toLowerCase()}
+            </a>
+          </li>
+        ))
+      }
+    </ul> -->
+
     <ul class="list-notes">
       {
         notes.map(note => {
