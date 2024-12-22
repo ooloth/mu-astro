@@ -1,6 +1,7 @@
 import { getCollection } from 'astro:content'
 import type { Writing } from './collections'
 import { isPost } from './posts'
+import { cleanTags } from './tags'
 
 /**
  * Given an array of collection items, returns the array with child items nested under their parents.
@@ -75,6 +76,34 @@ const removePrivateNotes = (notes: Writing[]): Writing[] =>
 // function addRelated(collection: Writing[]): Writing[] {
 //   return collection
 // }
+
+/**
+ * Returns a flat list of all tags found in all notes.
+ */
+export const getAllTagsInNotes = async (): Promise<string[]> =>
+  getNotes().then(notes => cleanTags(notes.flatMap(note => note.data.tags)))
+
+/**
+ * Returns a flat list of all notes with matching tags.
+ */
+export const getNotesWithTags = async (tags: string[]): Promise<Writing[]> =>
+  getNotes().then(notes => notes.filter(note => (note.data.tags ?? []).some(tag => tags.includes(tag))))
+
+/**
+ * Returns all tags with their respective notes.
+ */
+export const getNotesByTag = async (): Promise<Record<string, Writing[]>> => {
+  const tags = await getAllTagsInNotes()
+
+  const notesByTagEntries = await Promise.all(
+    tags.map(async tag => {
+      const notes = await getNotesWithTags([tag])
+      return [tag, notes]
+    }),
+  )
+
+  return Object.fromEntries(notesByTagEntries)
+}
 
 /**
  * Returns a flat list of all notes with private notes removed (in production).
