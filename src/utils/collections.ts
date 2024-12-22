@@ -9,8 +9,14 @@ export type Writing = CollectionEntry<'writing'>
 /**
  * Returns true if the pathname matches any slug in the collection (at any ancestry level)
  */
-export const isPathnameInCollection = (pathname: string, collection: Writing[] | Draft[] | TIL[]): boolean => {
-  const pathnameMatchesSlug = (slug: string): boolean => pathname === `/${slug}/`
+export const isPathnameInCollection = (
+  pathname: string | undefined,
+  collection: Writing[] | Draft[] | TIL[] | Bookmark[],
+): boolean => {
+  const removeLeadingAndTrailingSlashes = (str?: string): string => (str ? str.replace(/^\/|\/$/g, '') : '')
+
+  const pathnameMatchesSlug = (slug: string): boolean =>
+    removeLeadingAndTrailingSlashes(pathname) === removeLeadingAndTrailingSlashes(slug)
 
   return collection.some(
     item =>
