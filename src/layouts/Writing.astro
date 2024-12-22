@@ -106,8 +106,7 @@ const isDraft = isPathnameInCollection(pathname, drafts)
     }
 
     {
-      (
-        // isPathnameInCollection(pathname, posts) && (
+      isPathnameInCollection(pathname, posts) && (
         <script
           src="https://giscus.app/client.js"
           data-repo="ooloth/comments"
@@ -125,7 +124,6 @@ const isDraft = isPathnameInCollection(pathname, drafts)
           async
           defer
         />
-        // )
       )
     }
 
