@@ -1,5 +1,7 @@
 import type { CollectionEntry } from 'astro:content'
 
+// TODO: add Note? put in dedicated folder?
+export type Bookmark = CollectionEntry<'bookmarks'>
 export type Draft = CollectionEntry<'drafts'>
 export type TIL = CollectionEntry<'til'>
 export type Writing = CollectionEntry<'writing'>
