@@ -43,6 +43,8 @@ jobs:
           # GitHub personal access token created here: https://github.com/settings/tokens
           token: ${{ secrets.ACTIONS_TOKEN }}
           submodules: recursive
+          # Fetch all history for accurate "last modified date" checking via "git log":
+          fetch-depth: 0
 
       - name: Set up node 🧰
         uses: actions/setup-node@v3
