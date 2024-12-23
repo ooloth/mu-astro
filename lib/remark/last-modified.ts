@@ -5,13 +5,14 @@ import { resolve } from 'path'
 
 function remarkModifiedTime() {
   return function (tree, file) {
-    console.log('file:', file)
+    // console.log('file:', file)
     const filepath = file.history[0]
     console.log('filepath:', filepath)
 
     // FIXME: the filepath might not be correctly set in the production environment. This could be due to differences in how file paths are handled or how the file.history array is populated.
 
     if (!filepath) {
+      // NOTE: we'll get here when building the RSS feed, which is totally fine
       console.error('Error: filepath is undefined')
       return
     }
@@ -23,7 +24,7 @@ function remarkModifiedTime() {
 
       // Get the root directory of the repository
       const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
-      console.log('repoRoot:', repoRoot)
+      // console.log('repoRoot:', repoRoot)
 
       // Get the relative path of the file from the repository root
       const relativeFilePath = absoluteFilePath.replace(`${repoRoot}/`, '')
@@ -35,7 +36,7 @@ function remarkModifiedTime() {
         .trim()
         .split('\n')
         .find(submodule => relativeFilePath.startsWith(submodule))
-      console.log('submodulePath:', submodulePath)
+      // console.log('submodulePath:', submodulePath)
 
       let result
       if (submodulePath) {
