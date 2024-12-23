@@ -1,9 +1,9 @@
 ---
 import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
-import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
+import Related from '../components/Related.astro'
 
 type Props = {
   entry: Writing | Draft
@@ -13,49 +13,15 @@ const { entry } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.slug
-const date = entry.data.date || Date.now()
-
-// TODO: consider tags as well as slug prefixes?
-const getEntryTopics = (entry: Writing | Draft): string[] => {
-  const topic: string = entry.slug.split('-').at(0) ?? ''
-  const parentTopic: string = entry.data?.parent?.split('-').at(0) ?? ''
-  const allTopics = [...new Set([topic, parentTopic].filter(Boolean))]
-  return allTopics
-}
-
-const entryTopics = getEntryTopics(entry)
+const date = entry.data.date || entry.data.lastModified
 
 const posts = await getPosts()
-const relatedPosts = posts
-  .filter(post => {
-    if (post.slug === entry.slug) return false
-    const postTopics = getEntryTopics(post)
-    return postTopics.some(topic => entryTopics.includes(topic))
-  })
-  .map(post => ({
-    ...post,
-    topics: getEntryTopics(post),
-  }))
-
-const notes = await getNotes()
-// TODO: add relatedNotes or topics to notes in notes.ts?
-// TODO: walk entire related tree of topic? use getNestedNotes instead of this flat list?
-const relatedNotes = notes
-  .filter(note => {
-    if (note.slug === entry.slug) return false
-    const noteTopics = getEntryTopics(note)
-    return noteTopics.some(topic => entryTopics.includes(topic))
-  })
-  .map(note => ({
-    ...note,
-    topics: getEntryTopics(note),
-  }))
+const drafts = await getDrafts()
 
 const isPost = isPathnameInCollection(pathname, posts)
-const hasRelated = relatedPosts.length > 0 || relatedNotes.length > 0
-
-const drafts = await getDrafts()
 const isDraft = isPathnameInCollection(pathname, drafts)
+
+// const tags = cleanTags(entry.data.tags)
 ---
 
 <Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
@@ -70,40 +36,23 @@ const isDraft = isPathnameInCollection(pathname, drafts)
       }
 
       <h1>{title}</h1>
-    </header>
 
-    <article class="markdown"><slot /></article>
-
-    {
-      !isPost && hasRelated && (
-        <footer class="markdown mt-12 border-t-2 border-b-2 border-zinc-600 pb-8">
-          <h2 class="text-red-500">
-            Related to{' '}
-            <span class="text-zinc-400">
-              {entryTopics
-                .map(topic => `#${topic}`)
-                .sort()
-                .join(', ')}
-            </span>
-          </h2>
-          <ul>
-            {[...relatedPosts, ...relatedNotes].map(relatedEntry => (
+      <!-- TODO: how to show tags on all writing pages? -->
+      <!-- {
+        tags.length ? (
+          <ul class="flex flex-wrap gap-2">
+            {tags.map(tag => (
               <li>
-                <a href={`/${relatedEntry.slug}/`}>{relatedEntry.data.title}</a>
-
-                {relatedEntry.data.date ? (
-                  <time datetime={getMachineReadableDate(relatedEntry.data.date)} class="timestamp ml-3">
-                    {getHumanReadableDate(relatedEntry.data.date)}
-                  </time>
-                ) : (
-                  isPathnameInCollection(pathname, posts) && <span class="timestamp ml-3">draft</span>
-                )}
+                <Tag tag={tag} />
               </li>
             ))}
           </ul>
-        </footer>
-      )
-    }
+        ) : null
+      } -->
+    </header>
+
+    <article class="markdown"><slot /></article>
+    <Related entry={entry} />
 
     {
       isPathnameInCollection(pathname, posts) && (
@@ -127,30 +76,9 @@ const isDraft = isPathnameInCollection(pathname, drafts)
       )
     }
 
-    <!--
-  <script webc:type="js">
-    // const isPageWithTags = isPageInCollection(page, $data.collections.posts) || isPageInCollection(page, $data.collections.notes);
-    if (!$data.tags) {
-      ('');
-    } else {
-      `<footer class="mt-12 border-t-2">
-        <ul class="mt-4 flex flex-wrap">${$data.tags
-          .map(
-            tag =>
-              `<li class="me-3"><a href="/tags/${tag}/" class="text-white dark:text-zinc-400 hover:underline hover:text-black dark:hover:text-rose-300">#${tag}</a></li>`,
-          )
-          .join('')}
-        </ul>
-      </footer>`;
-    }
-  </script>
-  -->
-
-    <!--
-  <p class="text-[0.8rem] md:text-[0.9rem] uppercase md:min-w-[8rem]">
+    <!-- <p class="text-[0.8rem] md:text-[0.9rem] uppercase md:min-w-[8rem]">
     Last updated
     <time datetime="htmlDateString(page.date)" @text="readableDate(page.date)"></time>
-  </p>
-  -->
+  </p> -->
   </div>
 </Main>
