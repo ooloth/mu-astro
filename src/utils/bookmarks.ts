@@ -7,7 +7,7 @@ import { cleanTags } from './tags'
  * TODO: add unit tests
  */
 const isPublicBookmark = (bookmark: Bookmark): boolean =>
-  !bookmark.data.private && !(bookmark.tags || []).includes('recursion')
+  !bookmark.data.private && !(bookmark.data.tags || []).includes('recursion')
 
 /**
  * In production, remove all private bookmarks.
