@@ -4,50 +4,34 @@ import { execSync } from 'child_process'
 import { resolve } from 'path'
 
 function remarkModifiedTime() {
-  return function (tree, file) {
-    // console.log('file:', file)
-    const filepath = file.history[0]
-    console.log('filepath:', filepath)
+  const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
 
-    // FIXME: the filepath might not be correctly set in the production environment. This could be due to differences in how file paths are handled or how the file.history array is populated.
+  const submodulePaths = execSync('git config --file .gitmodules --get-regexp path')
+    .toString()
+    .trim()
+    .split('\n')
+    .map(line => line.split(' ')[1])
+
+  return function (tree, file) {
+    const filepath = file.history[0]
 
     if (!filepath) {
       // NOTE: we'll get here when building the RSS feed, which is totally fine
-      console.error('Error: filepath is undefined')
       return
     }
 
     try {
-      // Resolve the absolute path of the file
       const absoluteFilePath = resolve(filepath)
-      console.log('absoluteFilePath:', absoluteFilePath)
-
-      // Get the root directory of the repository
-      const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
-      console.log('repoRoot:', repoRoot)
-
-      // Get the relative path of the file from the repository root
       const relativeFilePath = absoluteFilePath.replace(`${repoRoot}/`, '')
-      console.log('relativeFilePath:', relativeFilePath)
 
       // Check if the file is within a submodule
-      const submodulePaths = execSync('git config --file .gitmodules --get-regexp path')
-        .toString()
-        .trim()
-        .split('\n')
-        .map(line => line.split(' ')[1])
-      console.log('submodulePaths:', submodulePaths)
-
       const submodulePath = submodulePaths.find(submodule => relativeFilePath.startsWith(submodule))
-      console.log('submodulePath:', submodulePath)
 
       let result
       if (submodulePath) {
         // Navigate to the submodule directory and get the last modified time
         const submoduleAbsolutePath = resolve(repoRoot, submodulePath)
         const submoduleRelativeFilePath = absoluteFilePath.replace(`${submoduleAbsolutePath}/`, '')
-        console.log('submoduleAbsolutePath:', submoduleAbsolutePath)
-        console.log('submoduleRelativeFilePath:', submoduleRelativeFilePath)
         result = execSync(
           `cd ${submoduleAbsolutePath} && git log -1 --pretty="format:%cI" "${submoduleRelativeFilePath}"`,
         )
@@ -59,7 +43,6 @@ function remarkModifiedTime() {
       }
 
       file.data.astro.frontmatter.lastModified = result
-      console.log('lastModified:', result)
     } catch (error) {
       console.error('Error getting last modified time:', error)
     }
