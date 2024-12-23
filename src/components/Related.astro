@@ -29,7 +29,7 @@ const hasRelated = Object.keys(entriesWithSameTags).length > 0
 
 {
   isPost || !hasRelated ? null : (
-    <footer class="markdown mt-12 border-t-2 border-zinc-600 pb-8">
+    <footer class="markdown mt-12 border-t-[1px] border-zinc-600 pb-8">
       {Object.entries(entriesWithSameTags).map(([tag, entriesWithTag]) => (
         <>
           <h2 class="text-red-500">
