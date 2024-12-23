@@ -4,6 +4,7 @@ import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import Related from '../components/Related.astro'
+import { getTILs } from '../utils/tils'
 
 type Props = {
   entry: Writing | Draft
@@ -14,11 +15,14 @@ const { pathname } = Astro.url
 
 const title = entry.data.title || entry.slug
 const date = entry.data.date || entry.data.lastModified
+const hasBeenModified = new Date(date).toDateString() > new Date(entry.data.lastModified).toDateString()
 
 const posts = await getPosts()
+const tils = await getTILs()
 const drafts = await getDrafts()
 
 const isPost = isPathnameInCollection(pathname, posts)
+const isTIL = isPathnameInCollection(pathname, tils)
 const isDraft = isPathnameInCollection(pathname, drafts)
 
 // const tags = cleanTags(entry.data.tags)
@@ -28,10 +32,21 @@ const isDraft = isPathnameInCollection(pathname, drafts)
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        (isPost || isDraft) && (
-          <time datetime={getMachineReadableDate(date)} class="timestamp">
-            {getHumanReadableDate(date)}
-          </time>
+        (isPost || isTIL || isDraft) && (
+          <p class="timestamp">
+            <time datetime={getMachineReadableDate(date)} class="timestamp">
+              {getHumanReadableDate(date)}
+            </time>
+
+            {hasBeenModified ? (
+              <>
+                <span class="mx-1">-</span>
+                <time datetime={getMachineReadableDate(entry.data.lastModified)} class="timestamp">
+                  {getHumanReadableDate(entry.data.lastModified)}
+                </time>
+              </>
+            ) : null}
+          </p>
         )
       }
 
@@ -52,6 +67,7 @@ const isDraft = isPathnameInCollection(pathname, drafts)
     </header>
 
     <article class="markdown"><slot /></article>
+
     <Related entry={entry} />
 
     {
@@ -75,10 +91,5 @@ const isDraft = isPathnameInCollection(pathname, drafts)
         />
       )
     }
-
-    <!-- <p class="text-[0.8rem] md:text-[0.9rem] uppercase md:min-w-[8rem]">
-    Last updated
-    <time datetime="htmlDateString(page.date)" @text="readableDate(page.date)"></time>
-  </p> -->
   </div>
 </Main>
