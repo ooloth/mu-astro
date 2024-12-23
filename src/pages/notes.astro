@@ -3,14 +3,11 @@ import Tag from '../components/Tag.astro'
 import Main from '../layouts/Main.astro'
 import { getBookmarks } from '../utils/bookmarks'
 import { isPathnameInCollection, type Bookmark, type Writing, type Draft } from '../utils/collections'
-import { getAllTagsInNotes, getNotes, getNestedNotes } from '../utils/notes'
+import { getAllTagsInNotes, getNotes } from '../utils/notes'
 import { getDrafts } from '../utils/posts'
-import { cleanTags } from '../utils/tags'
 
 const bookmarks = await getBookmarks()
-const notesFlat = await getNotes()
-const notesByParent = await getNestedNotes()
-// const notesByTag = await getNotesByTag()
+const notes = await getNotes()
 const tags = await getAllTagsInNotes()
 
 const drafts = await getDrafts()
@@ -27,7 +24,7 @@ const notesByLastModified = [...bookmarks, ...notes, ...drafts].sort((a, b) => {
 
 const getEmoji = (item: Bookmark | Draft | Writing): string => {
   if (item.data.favicon) {
-    return `<img src="${item.data.favicon}" alt="" class="" />`
+    return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block -mt-1 mr-[0.15rem] ml-[0.2rem]" />`
   }
 
   if (item.data.url) {
@@ -55,52 +52,8 @@ const getEmoji = (item: Bookmark | Draft | Writing): string => {
   <h1 class="sr-only">Notes</h1>
 
   <section>
-    <h2 class="sr-only">Topics</h2>
+    <h2 class="sr-only">Bookmarks, post drafts and topic notes</h2>
 
-    <!-- <ul class="list-notes">
-      {
-        notesByParent.map(note => {
-          const getLinkText = (item: Writing): string => item.data.linkText || item.data.title || item.slug
-
-          const getChildren = (item: Writing, level: number) =>
-            item.data.children && (
-              <ul>
-                {item.data.children
-                  // Sort alphabetically by link text, then title
-                  .sort((a: Writing, b: Writing) =>
-                    (a.data.linkText || a.data.title).localeCompare(b.data.linkText || b.data.title),
-                  )
-                  .map((child: Writing) => (
-                    <li
-                      class="before:content-['└'] before:pe-[0.3rem] mt-[0.1rem]"
-                      style={`padding-left: ${level === 0 ? 0 : 1.4}rem`}
-                    >
-                      <a href={`/${child.slug}/`} class="link">
-                        {getLinkText(child)}
-                      </a>
-
-                      {/* Recursively render grandchildren, etc */}
-                      {getChildren(child, level + 1)}
-                    </li>
-                  ))}
-              </ul>
-            )
-
-          return (
-            <li class="mb-2 break-inside-avoid-column">
-              <a href={`/${note.slug}/`} class="link">
-                {getLinkText(note)}
-              </a>
-
-              {getChildren(note, 0)}
-            </li>
-          )
-        })
-      }
-    </ul> -->
-
-    <!-- TODO: tag cloud (when filtering functional) -->
-    <!-- <ul class="mt-48 flex flex-wrap gap-2">
     <!-- Tags -->
     <ul class="flex flex-wrap gap-2">
       {
@@ -112,16 +65,19 @@ const getEmoji = (item: Bookmark | Draft | Writing): string => {
       }
     </ul>
 
-    <!-- Notes with tags -->
-    <!-- <ul class="mt-10"> -->
-    <ul class="mt-10 flex flex-wrap gap-y-2 gap-x-6">
+    <!-- Bookmarks, post drafts and topic notes, by last modified date -->
+    <ul class="mt-5 leading-loose">
       {
-        [...bookmarks, ...drafts, ...notesFlat].map(item => (
-          <li class="flex flex-wrap items-center gap-x-2">
-            <span class="flex-none w-5" set:html={getEmoji(item)} />
-            <a href={`/${item.slug}/`} class="inline link-nav leading-tight">
-              {item.data.title || item.slug}
-            </a>
+        notesByLastModified.map((item, index) => (
+          <li class="inline">
+            <span class="whitespace-nowrap">
+              <span class="inline mr-1" set:html={getEmoji(item)} />
+              <a href={`/${item.slug}/`} class="inline link-nav whitespace-normal">
+                {item.data.title || item.slug} {item.data.author ? ` (${item.data.author})` : ''}
+              </a>
+            </span>
+
+            {index < notesByLastModified.length - 1 ? <span class="mx-2 text-[--moonlight-red]">•</span> : null}
             {/* TODO: show item tags? */}
             {/* <ul class="ml-2 inline-flex gap-1">
               {cleanTags(note.data.tags).map(tag => (
