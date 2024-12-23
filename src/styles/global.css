@@ -243,6 +243,10 @@
     & iframe {
       @apply my-5 aspect-video rounded-lg w-full h-auto;
     }
+
+    & hr {
+      @apply my-8 border-zinc-600;
+    }
   }
 }
 
