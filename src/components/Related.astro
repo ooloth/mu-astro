@@ -23,7 +23,6 @@ const notes = await getNotes()
 const isPost = isPathnameInCollection(pathname, posts)
 
 const entriesWithSameTags = await getEntriesWithSameTags(entry, [...posts, ...tils, ...drafts, ...notes, ...bookmarks])
-console.log('entriesWithSameTags:', entriesWithSameTags)
 
 const hasRelated = Object.keys(entriesWithSameTags).length > 0
 ---
