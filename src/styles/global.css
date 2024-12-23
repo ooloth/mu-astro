@@ -20,6 +20,11 @@
     @apply flex flex-col overflow-x-hidden py-7 px-4 sm:px-6 min-h-screen text-[1.1rem] leading-relaxed;
     @apply bg-zinc-900 text-zinc-400;
   }
+
+  /* FIXME: bg color doesn't look right... */
+  /* ::selection {
+    @apply bg-[--moonlight-red] text-black;
+  } */
 }
 
 @layer utilities {
