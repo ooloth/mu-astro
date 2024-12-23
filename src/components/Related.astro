@@ -1,0 +1,57 @@
+---
+import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
+import { getNotes } from '../utils/notes'
+import { getDrafts, getPosts } from '../utils/posts'
+import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
+import { getTILs } from '../utils/tils'
+import { getBookmarks } from '../utils/bookmarks'
+import { getEntriesWithTags as getEntriesWithSameTags } from '../utils/tags'
+
+type Props = {
+  entry: Writing | Draft
+}
+
+const { entry } = Astro.props
+const { pathname } = Astro.url
+
+const posts = await getPosts()
+const tils = await getTILs()
+const bookmarks = await getBookmarks()
+const drafts = await getDrafts()
+const notes = await getNotes()
+
+const isPost = isPathnameInCollection(pathname, posts)
+
+const entriesWithSameTags = await getEntriesWithSameTags(entry, [...posts, ...tils, ...drafts, ...notes, ...bookmarks])
+
+const hasRelated = Object.keys(entriesWithSameTags).length > 0
+---
+
+{
+  isPost || !hasRelated ? null : (
+    <footer class="markdown mt-12 border-t-2 border-zinc-600 pb-8">
+      {Object.entries(entriesWithSameTags).map(([tag, entriesWithTag]) => (
+        <>
+          <h2 class="text-red-500">
+            Related to <span class="text-zinc-400">#{tag}</span>
+          </h2>
+          <ul>
+            {entriesWithTag.map(item => (
+              <li>
+                <a href={`/${item.slug}/`}>{item.data.title}</a>
+
+                {item.data.date ? (
+                  <time datetime={getMachineReadableDate(item.data.date)} class="timestamp ml-3">
+                    {getHumanReadableDate(item.data.date)}
+                  </time>
+                ) : (
+                  isPathnameInCollection(pathname, posts) && <span class="timestamp ml-3">draft</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </>
+      ))}
+    </footer>
+  )
+}

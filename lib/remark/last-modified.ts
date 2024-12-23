@@ -1,0 +1,49 @@
+// see: https://docs.astro.build/en/recipes/modified-time/
+
+import { execSync } from 'child_process'
+import { resolve } from 'path'
+
+function remarkModifiedTime() {
+  return function (tree, file) {
+    const filepath = file.history[0]
+
+    try {
+      // Resolve the absolute path of the file
+      const absoluteFilePath = resolve(filepath)
+
+      // Get the root directory of the repository
+      const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
+
+      // Get the relative path of the file from the repository root
+      const relativeFilePath = absoluteFilePath.replace(`${repoRoot}/`, '')
+
+      // Check if the file is within a submodule
+      const submodulePath = execSync(`git submodule foreach --quiet 'echo $path'`)
+        .toString()
+        .trim()
+        .split('\n')
+        .find(submodule => relativeFilePath.startsWith(submodule))
+
+      let result
+      if (submodulePath) {
+        // Navigate to the submodule directory and get the last modified time
+        const submoduleAbsolutePath = resolve(repoRoot, submodulePath)
+        const submoduleRelativeFilePath = absoluteFilePath.replace(`${submoduleAbsolutePath}/`, '')
+        result = execSync(
+          `cd ${submoduleAbsolutePath} && git log -1 --pretty="format:%cI" "${submoduleRelativeFilePath}"`,
+        )
+          .toString()
+          .trim()
+      } else {
+        // Get the last modified time in the main repository
+        result = execSync(`git log -1 --pretty="format:%cI" "${relativeFilePath}"`).toString().trim()
+      }
+
+      file.data.astro.frontmatter.lastModified = result
+    } catch (error) {
+      console.error('Error getting last modified time:', error)
+    }
+  }
+}
+
+export default remarkModifiedTime

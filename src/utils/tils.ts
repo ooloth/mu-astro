@@ -42,12 +42,10 @@ export const getTILs = async (): Promise<TILWithContent[]> => {
   const tilsWithContent: TILWithContent[] = await Promise.all(
     tilProperties.map(async til => {
       const entry = await getEntry('til', til.slug)
-      const { Content, headings } = await entry!.render() // TODO: make safer
-      return { ...til, Content, headings }
+      const { Content, headings, remarkPluginFrontmatter } = await entry!.render() // TODO: make safer
+      return { ...til, Content, headings, data: { ...til.data, ...remarkPluginFrontmatter } }
     }),
   )
 
   return tilsWithContent.sort(sortByDate)
-
-  // return sortTILs(tilsWithContent)
 }
