@@ -24,25 +24,30 @@ function remarkModifiedTime() {
 
       // Get the root directory of the repository
       const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
-      // console.log('repoRoot:', repoRoot)
+      console.log('repoRoot:', repoRoot)
 
       // Get the relative path of the file from the repository root
       const relativeFilePath = absoluteFilePath.replace(`${repoRoot}/`, '')
       console.log('relativeFilePath:', relativeFilePath)
 
       // Check if the file is within a submodule
-      const submodulePath = execSync(`git submodule foreach --quiet 'echo $path'`)
+      const submodulePaths = execSync('git config --file .gitmodules --get-regexp path')
         .toString()
         .trim()
         .split('\n')
-        .find(submodule => relativeFilePath.startsWith(submodule))
-      // console.log('submodulePath:', submodulePath)
+        .map(line => line.split(' ')[1])
+      console.log('submodulePaths:', submodulePaths)
+
+      const submodulePath = submodulePaths.find(submodule => relativeFilePath.startsWith(submodule))
+      console.log('submodulePath:', submodulePath)
 
       let result
       if (submodulePath) {
         // Navigate to the submodule directory and get the last modified time
         const submoduleAbsolutePath = resolve(repoRoot, submodulePath)
         const submoduleRelativeFilePath = absoluteFilePath.replace(`${submoduleAbsolutePath}/`, '')
+        console.log('submoduleAbsolutePath:', submoduleAbsolutePath)
+        console.log('submoduleRelativeFilePath:', submoduleRelativeFilePath)
         result = execSync(
           `cd ${submoduleAbsolutePath} && git log -1 --pretty="format:%cI" "${submoduleRelativeFilePath}"`,
         )
