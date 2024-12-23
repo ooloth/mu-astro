@@ -5,10 +5,11 @@ import { resolve } from 'path'
 
 function remarkModifiedTime() {
   return function (tree, file) {
-    console.log('tree:', tree)
     console.log('file:', file)
     const filepath = file.history[0]
     console.log('filepath:', filepath)
+
+    // FIXME: the filepath might not be correctly set in the production environment. This could be due to differences in how file paths are handled or how the file.history array is populated.
 
     if (!filepath) {
       console.error('Error: filepath is undefined')
