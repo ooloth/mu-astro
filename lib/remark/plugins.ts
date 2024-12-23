@@ -3,6 +3,7 @@ import remarkWikiLink from '@portaljs/remark-wiki-link'
 
 import remarkLastModified from './last-modified'
 import remarkRemoveTags from './remove-tags'
+import remarkYouTubeEmbedFromImageLink from './youtube-embed-from-image-link'
 
 export default [
   remarkLastModified,
@@ -17,4 +18,5 @@ export default [
       wikiLinkResolver: (slug: string): string[] => [`${slug}/`], // expects all pages to have root-level paths
     },
   ],
+  remarkYouTubeEmbedFromImageLink,
 ]
