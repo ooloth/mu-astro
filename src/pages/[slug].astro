@@ -20,9 +20,12 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props
-const { Content } = await entry.render()
+const { Content, remarkPluginFrontmatter } = await entry.render()
+
+// see: https://docs.astro.build/en/recipes/modified-time/
+const entryWithRemarkFrontmatter = { ...entry, data: { ...entry.data, ...remarkPluginFrontmatter } }
 ---
 
-<Writing entry={entry}>
+<Writing entry={entryWithRemarkFrontmatter}>
   <Content />
 </Writing>

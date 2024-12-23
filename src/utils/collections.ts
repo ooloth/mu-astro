@@ -24,3 +24,12 @@ export const isPathnameInCollection = (
       (item.data.children || []).some((child: Writing): boolean => pathnameMatchesSlug(child.slug)),
   )
 }
+
+export const addRemarkFrontmatter = async <CollectionEntry>(entry: CollectionEntry): Promise<CollectionEntry> => {
+  const { remarkPluginFrontmatter } = await entry.render()
+
+  // see: https://docs.astro.build/en/recipes/modified-time/
+  const entryWithRemarkFrontmatter = { ...entry, data: { ...entry.data, ...remarkPluginFrontmatter } }
+
+  return entryWithRemarkFrontmatter
+}

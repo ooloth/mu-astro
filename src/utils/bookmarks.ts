@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content'
-import type { Bookmark } from './collections'
+import { addRemarkFrontmatter, type Bookmark } from './collections'
 import { cleanTags } from './tags'
 
 /**
@@ -50,4 +50,7 @@ export const getBookmarksByTag = async (): Promise<Record<string, Bookmark[]>> =
 /**
  * Returns a flat list of all bookmarks with private bookmarks removed (in production).
  */
-export const getBookmarks = async (): Promise<Bookmark[]> => removePrivateBookmarks(await getCollection('bookmarks'))
+export const getBookmarks = async (): Promise<Bookmark[]> => {
+  const bookmarksToShow = removePrivateBookmarks(await getCollection('bookmarks'))
+  return Promise.all(bookmarksToShow.map(bookmark => addRemarkFrontmatter(bookmark)))
+}

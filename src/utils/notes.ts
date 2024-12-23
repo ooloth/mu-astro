@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content'
-import type { Writing } from './collections'
+import { addRemarkFrontmatter, type Writing } from './collections'
 import { isPost } from './posts'
 import { cleanTags } from './tags'
 
@@ -106,10 +106,12 @@ export const getNotesByTag = async (): Promise<Record<string, Writing[]>> => {
 }
 
 /**
- * Returns a flat list of all notes with private notes removed (in production).
+ * Returns a flat list of all notes with private notes removed (in production) and sorted by last modified date.
  */
-export const getNotes = async (): Promise<Writing[]> =>
-  removePrivateNotes(await getCollection('writing', note => isNote(note)))
+export const getNotes = async (): Promise<Writing[]> => {
+  const notesToShow = removePrivateNotes(await getCollection('writing', note => isNote(note)))
+  return Promise.all(notesToShow.map(note => addRemarkFrontmatter(note)))
+}
 
 /**
  * Returns all notes with child notes nested under their parents (always) and private notes removed (in production).

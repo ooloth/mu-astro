@@ -14,6 +14,16 @@ const tags = await getAllTagsInNotes()
 
 const drafts = await getDrafts()
 
+const notesByLastModified = [...bookmarks, ...notes, ...drafts].sort((a, b) => {
+  if (a.data.lastModified < b.data.lastModified) {
+    return 1
+  }
+  if (a.data.lastModified > b.data.lastModified) {
+    return -1
+  }
+  return 0
+})
+
 const getEmoji = (item: Bookmark | Draft | Writing): string => {
   if (item.data.favicon) {
     return `<img src="${item.data.favicon}" alt="" class="" />`

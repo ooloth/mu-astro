@@ -1,9 +1,11 @@
 import remarkUnwrapImages from 'remark-unwrap-images'
 import remarkWikiLink from '@portaljs/remark-wiki-link'
 
+import remarkLastModified from './last-modified'
 import remarkRemoveTags from './remove-tags'
 
 export default [
+  remarkLastModified,
   remarkRemoveTags,
   remarkUnwrapImages,
   [
