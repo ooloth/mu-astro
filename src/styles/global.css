@@ -245,7 +245,7 @@
     }
 
     & hr {
-      @apply my-8 border-zinc-600;
+      @apply my-8 border-solid border-zinc-600;
     }
   }
 }
