@@ -5,10 +5,10 @@ import Base, { type BaseProps } from './Base.astro'
 
 type Props = BaseProps
 
-const { description, title, ogImage } = Astro.props
+const { description, title, ogImage, canonicalUrl } = Astro.props
 ---
 
-<Base title={title} description={description} ogImage={ogImage}>
+<Base title={title} description={description} ogImage={ogImage} canonicalUrl={canonicalUrl}>
   <div class="flex flex-col flex-1">
     <Header />
 

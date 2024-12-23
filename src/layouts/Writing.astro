@@ -29,7 +29,7 @@ const isDraft = isPathnameInCollection(pathname, drafts)
 // const tags = cleanTags(entry.data.tags)
 ---
 
-<Main title={title} description={entry.data.description} ogImage={entry.data.ogImage}>
+<Main canonicalUrl={entry.data.source} description={entry.data.description} ogImage={entry.data.ogImage} title={title}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {

@@ -8,6 +8,7 @@ import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
 
 export type BaseProps = {
+  canonicalUrl?: string
   description?: string
   ogImage?: string
   title?: string
@@ -15,8 +16,8 @@ export type BaseProps = {
 
 type Props = BaseProps
 
-const { description, ogImage, title } = Astro.props
-const { pathname } = Astro.url
+const { canonicalUrl, description, ogImage, title } = Astro.props
+const { href, pathname } = Astro.url
 
 const posts = await getPosts()
 const tils = await getTILs()
@@ -144,7 +145,7 @@ const socialImage = ogImage
     <title>{pageTitleWithSuffix}</title>
     <meta name="description" content={pageDescription} />
     <meta name="author" content={site.author.name} />
-    <link rel="canonical" href={Astro.url.href} />
+    <link rel="canonical" href={canonicalUrl || href} />
     <link rel="sitemap" href="/sitemap.xml" />
 
     <!-- Open Graph (see: https://ogp.me) -->
