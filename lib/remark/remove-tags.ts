@@ -3,8 +3,9 @@
 
 import type { RemarkPlugin } from '@astrojs/markdown-remark'
 import type { Data, Text } from 'mdast'
-import { visit } from 'unist-util-visit'
 import type { Node } from 'unist'
+import { visit } from 'unist-util-visit'
+// import { type Transformer } from 'unified'
 
 /**
  * Given a string, remove all topic tags like " #post" or " #question"
@@ -14,11 +15,12 @@ const removeTags = (str: string): string => str.replaceAll(/\s#[\w|/]+/g, '')
 
 type Transformer = (tree: Node<Data>) => Promise<void>
 
+// # TODO: is this working? I thought I saw inline tags still there...
 const remarkRemoveTags: RemarkPlugin =
   (): Transformer =>
   async (tree: Node<Data>): Promise<void> => {
     // identify the type of node I want to modify ("text" in this case) here: https://astexplorer.net
-    visit(tree, 'text', (node: Text) => {
+    visit(tree, 'text', (node: Text): void => {
       if (!node.value.includes(' #')) return
 
       // Use Object.assign to replace the exact same object instead of triggering an infinite loop by creating new objects
