@@ -1,0 +1,52 @@
+---
+import { getBookmarks } from '../utils/bookmarks'
+import { isPathnameInCollection, type Bookmark, type Draft, type TIL, type Writing } from '../utils/collections'
+import { getDrafts, getPosts } from '../utils/posts'
+import { getTILs } from '../utils/tils'
+
+type Props = {
+  entry: Writing | Draft | TIL | Bookmark
+  title: string
+}
+
+const { pathname } = Astro.url
+
+const posts = await getPosts()
+const tils = await getTILs()
+const drafts = await getDrafts()
+const bookmarks = await getBookmarks()
+
+const isPost = isPathnameInCollection(pathname, posts)
+const isTIL = isPathnameInCollection(pathname, tils)
+const isDraft = isPathnameInCollection(pathname, drafts)
+const isBookmark = isPathnameInCollection(pathname, bookmarks)
+
+// TODO: add unit tests, auditing
+const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): string | null => {
+  const noDisclaimer = ['workouts']
+
+  const byAuthorIfAuthor = entry.data.author ? ` by ${entry.data.author}` : ''
+  const whereToFindWriting = `For more complete ideas, check out my <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a> pages.`
+
+  const disclaimer =
+    isPost || isTIL || noDisclaimer.includes(entry.slug)
+      ? null
+      : isDraft
+      ? `This is a rough draft of a potential future blog post. ${whereToFindWriting}`
+      : isBookmark
+      ? `These are rough notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
+      : `These are rough notes about ${title}. ${whereToFindWriting}`
+
+  return disclaimer
+}
+
+const disclaimer = getDisclaimer(Astro.props.entry, Astro.props.title)
+---
+
+{
+  disclaimer ? (
+    <aside role="note" class="mb-8 border border-[--moonlight-red] rounded italic">
+      <p set:html={disclaimer} class="!m-0 py-2 px-3 text-bright" />
+    </aside>
+  ) : null
+}
