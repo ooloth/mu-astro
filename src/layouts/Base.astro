@@ -88,11 +88,11 @@ const pageDescription = description
   : isTIL
   ? `Something ${site.author.name} learned about today.`
   : isDraft
-  ? `Notes for a future blog post by ${site.author.name}.`
+  ? `Notes for a potential future blog post by ${site.author.name}.`
   : isNote
   ? `Notes about ${title} by ${site.author.name}.`
   : isBookmark
-  ? `Notes about ${title}.`
+  ? `Notes about "${title}".`
   : site.description.site
 
 const borderWidth = 0
@@ -126,7 +126,9 @@ const socialImage = ogImage
       `c_fit,l_text:arial_90_extrabold_line_spacing_4:${encodeURIComponent(
         pageTitle,
       )},co_rgb:${pink},g_west,x_80,y_${-60},w_1040,h_${630 - 24 * 2 - 80 - 56 * 2}`,
-      `c_fit,l_text:arial_26:${isHome ? 'Created' : 'Written'}%20by,co_rgb:${gray},g_south_west,x_200,y_136,w_900`,
+      `c_fit,l_text:arial_26:${
+        isBookmark ? 'Notes' : isHome ? 'Created' : 'Written'
+      }%20by,co_rgb:${gray},g_south_west,x_200,y_136,w_900`,
       `c_fit,l_text:arial_34:${encodeURIComponent(site.author.name)},co_rgb:${white},g_south_west,x_${
         isHome ? 200 : 201
       },y_100,w_900`,
