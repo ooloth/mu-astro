@@ -1,5 +1,5 @@
 ---
-import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
+import { type Bookmark, type Draft, isPathnameInCollection, type TIL, type Writing } from '../utils/collections'
 import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
@@ -8,7 +8,7 @@ import { getBookmarks } from '../utils/bookmarks'
 import { getEntriesWithTags as getEntriesWithSameTags } from '../utils/tags'
 
 type Props = {
-  entry: Writing | Draft
+  entry: Writing | Draft | TIL | Bookmark
 }
 
 const { entry } = Astro.props
