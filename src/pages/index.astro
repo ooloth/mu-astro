@@ -1,8 +1,9 @@
 ---
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
+import type { Post } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getPosts, type Post } from '../utils/posts'
+import { getPosts } from '../utils/posts'
 
 const posts = await getPosts()
 

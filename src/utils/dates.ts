@@ -11,6 +11,8 @@ const getHumanReadableDate = (date: string | number | Date): string =>
 /**
  * Given a date, returns a machine-readable date string suitable for use in the `datetime` attribute of the `<time>` element.
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/time#valid_datetime_values
+ *
+ * WARN: This errors if passed an undefined date.
  */
 const getMachineReadableDate = (date: string | number | Date): string => new Date(date).toISOString()
 
