@@ -92,6 +92,7 @@ const writing = defineCollection({
     date: z.coerce.date().optional(), // TODO: require for articles
     description: z.string().optional().nullable(), // TODO: articles only
     feedId: z.string().optional().nullable(), // TODO: articles only
+    ogImage: z.string().optional().nullable(),
     parent: z.string().optional().nullable(), // TODO: remove from articles
     private: z.boolean().optional().nullable(), // TODO: remove from articles
     tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
