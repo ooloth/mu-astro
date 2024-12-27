@@ -6,7 +6,7 @@ import { getPosts, type Post } from '../utils/posts'
 
 const posts = await getPosts()
 
-const isScheduled = (post: Post): boolean => post.data.date && Date.parse(post.data.date) > Date.now()
+const isScheduled = (post: Post): boolean => (post.data.date ? Date.parse(post.data.date) > Date.now() : false)
 ---
 
 <Main title={site.title} description={site.description.site}>
