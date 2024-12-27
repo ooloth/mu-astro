@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content'
+import { getCollection, type InferEntrySchema } from 'astro:content'
 import { addRemarkFrontmatter, type Writing } from './collections'
 import { isPost } from './posts'
 import { cleanTags } from './tags'
@@ -6,19 +6,19 @@ import { cleanTags } from './tags'
 /**
  * Given an array of collection items, returns the array with child items nested under their parents.
  */
-function nestChildren(collection: Writing[]): Writing[] {
+function nestChildren(collection: Note[]): Note[] {
   // Step 1: Create a mapping from item slugs to their respective item data
   const slugToNodeMap = collection.reduce(
-    (nodesBySlug, item): Record<string, Writing> => {
+    (nodesBySlug, item): Record<string, Note> => {
       // Append an empty children array to the item data
       nodesBySlug[item.id.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
       return nodesBySlug
     },
-    {} as Record<string, Writing>,
+    {} as Record<string, Note>,
   )
 
   // Step 2: Build the item tree
-  const tree = collection.reduce((roots, item): Writing[] => {
+  const tree = collection.reduce((roots, item): Note[] => {
     // Find the node matching the current collection item
     const node = slugToNodeMap[item.id.toLowerCase()]
 
@@ -38,7 +38,7 @@ function nestChildren(collection: Writing[]): Writing[] {
 
     // Return the update tree
     return roots
-  }, [] as Writing[])
+  }, [] as Note[])
 
   return tree
 }
@@ -46,7 +46,7 @@ function nestChildren(collection: Writing[]): Writing[] {
 /**
  * Returns true if file is a note.
  */
-const isNote = (note: Writing): boolean => !isPost(note)
+const isNote = (note: Writing): note is Note => !isPost(note)
 
 /**
  * Returns true if file is a non-private note.
@@ -108,7 +108,7 @@ export const getNotesByTag = async (): Promise<Record<string, Writing[]>> => {
 /**
  * Returns a flat list of all notes with private notes removed (in production) and sorted by last modified date.
  */
-export const getNotes = async (): Promise<Writing[]> => {
+export const getNotes = async (): Promise<Note[]> => {
   const notesToShow = removePrivateNotes(await getCollection('writing', note => isNote(note)))
   return Promise.all(notesToShow.map(note => addRemarkFrontmatter(note)))
 }
