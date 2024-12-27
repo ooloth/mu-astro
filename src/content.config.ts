@@ -80,7 +80,7 @@ const tils = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
-    tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
+    tags: z.array(z.string()).optional().nullable(), // TODO: report when < 2 tags?
   }),
 })
 
@@ -89,11 +89,11 @@ const writing = defineCollection({
   // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/writing' }),
   schema: z.object({
-    title: z.string().optional().nullable(), // TODO: require for articles
     date: z.coerce.date().optional(), // TODO: require for articles
     parent: z.string().optional().nullable(), // TODO: remove from articles
     private: z.boolean().optional().nullable(), // TODO: remove from articles
     tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
+    title: z.string().optional().nullable(), // TODO: require for articles
   }),
 })
 
