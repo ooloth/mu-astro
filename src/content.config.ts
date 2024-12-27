@@ -20,6 +20,7 @@ const bookmarks = defineCollection({
   schema: z.object({
     author: z.array(z.string()).optional().nullable(),
     date: z.coerce.date().optional().nullable(),
+    private: z.boolean().optional().nullable(),
     tags: z.array(z.string()).optional().nullable(),
     title: z.string(),
   }),
@@ -42,6 +43,7 @@ const drafts = defineCollection({
   schema: z.object({
     title: z.string().optional().nullable(),
     date: z.coerce.date().optional().nullable(),
+    private: z.boolean().optional().nullable(),
     tags: z.array(z.string()).optional().nullable(),
   }),
 })
@@ -51,7 +53,7 @@ const pages = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/pages' }),
   schema: z.object({
     title: z.string(),
-    //   description: z.string(),
+    private: z.boolean().optional().nullable(),
     tags: z.array(z.string()).optional().nullable(),
   }),
 })
@@ -83,6 +85,7 @@ const writing = defineCollection({
   schema: z.object({
     title: z.string().optional().nullable(), // TODO: require for articles
     date: z.coerce.date().optional(), // TODO: require for articles
+    private: z.boolean().optional().nullable(), // TODO: remove from articles
     tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
   }),
 })
