@@ -1,6 +1,4 @@
-import type { Bookmark, Draft, TIL } from './collections'
-import type { Note } from './notes'
-import type { Post } from './posts'
+import type { Bookmark, Draft, Note, Post, TIL } from './collections'
 
 export const cleanTags = (tags?: string[]): string[] =>
   Array.from(
@@ -18,11 +16,11 @@ export const cleanTags = (tags?: string[]): string[] =>
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getEntriesWithTags = async (
-  entry: Bookmark | Draft | TIL | Post | Note,
-  collections: (Bookmark | Draft | TIL | Post | Note)[],
-): Promise<Record<string, (Bookmark | Draft | TIL | Post | Note)[]>> => {
-  const relatedByTag: Record<string, (Bookmark | Draft | TIL | Post | Note)[]> = {}
+export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | Bookmark>(
+  entry: T,
+  collections: T[],
+): Promise<Record<string, T[]>> => {
+  const relatedByTag: Record<string, T[]> = {}
 
   for (const item of collections) {
     // Go in order of the entry's tags, which are presumably sorted from most to least relevant
