@@ -1,5 +1,5 @@
 ---
-import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
+import { type Bookmark, type Draft, isPathnameInCollection, type TIL, type Writing } from '../utils/collections'
 import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
@@ -9,7 +9,7 @@ import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
 
 type Props = {
-  entry: Writing | Draft
+  entry: Writing | Draft | TIL | Bookmark
 }
 
 const { entry } = Astro.props
@@ -34,13 +34,13 @@ const isDraft = isPathnameInCollection(pathname, drafts)
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        (isPost || isTIL || isDraft) && (
+        entry.data.date && (isPost || isTIL || isDraft) ? (
           <p class="timestamp">
             <time datetime={getMachineReadableDate(date)} class="timestamp">
               {getHumanReadableDate(date)}
             </time>
 
-            {hasBeenModified ? (
+            {entry.data.lastModified && hasBeenModified ? (
               <>
                 <span class="mx-1">-</span>
                 <time datetime={getMachineReadableDate(entry.data.lastModified)} class="timestamp">
@@ -49,7 +49,7 @@ const isDraft = isPathnameInCollection(pathname, drafts)
               </>
             ) : null}
           </p>
-        )
+        ) : null
       }
 
       <h1>{title}</h1>
