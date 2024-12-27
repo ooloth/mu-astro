@@ -21,7 +21,7 @@ const removePrivateBookmarks = (bookmarks: Bookmark[]): Bookmark[] =>
  * TODO: add unit tests
  */
 export const getAllTagsInBookmarks = async (): Promise<string[]> =>
-  getBookmarks().then(bookmarks => cleanTags(bookmarks.flatMap(bookmark => bookmark.data.tags)))
+  getBookmarks().then(bookmarks => cleanTags(bookmarks.flatMap(bookmark => bookmark.data.tags ?? [])))
 
 /**
  * Returns a flat list of all notes with matching tags.
