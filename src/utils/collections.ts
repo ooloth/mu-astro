@@ -1,9 +1,9 @@
-import type { CollectionEntry } from 'astro:content'
+import { render, type CollectionEntry } from 'astro:content'
 
 // TODO: add Note? put in dedicated folder?
 export type Bookmark = CollectionEntry<'bookmarks'>
 export type Draft = CollectionEntry<'drafts'>
-export type TIL = CollectionEntry<'til'>
+export type TIL = CollectionEntry<'tils'>
 export type Writing = CollectionEntry<'writing'>
 
 /**
@@ -25,8 +25,8 @@ export const isPathnameInCollection = (
   )
 }
 
-export const addRemarkFrontmatter = async <CollectionEntry>(entry: CollectionEntry): Promise<CollectionEntry> => {
-  const { remarkPluginFrontmatter } = await entry.render()
+export async function addRemarkFrontmatter<T extends Writing | TIL | Bookmark | Draft>(entry: T): Promise<T> {
+  const { remarkPluginFrontmatter } = await render(entry)
 
   // see: https://docs.astro.build/en/recipes/modified-time/
   const entryWithRemarkFrontmatter = { ...entry, data: { ...entry.data, ...remarkPluginFrontmatter } }
