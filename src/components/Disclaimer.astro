@@ -26,7 +26,7 @@ const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): 
   const noDisclaimer = ['workouts']
 
   const byAuthorIfAuthor = entry.data.author ? ` by ${entry.data.author}` : ''
-  const whereToFindWriting = `For more complete ideas, check out my <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a> pages.`
+  const whereToFindWriting = `For more complete write-ups, check out my <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a> pages.`
 
   const disclaimer =
     isPost || isTIL || noDisclaimer.includes(entry.slug)
@@ -34,8 +34,8 @@ const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): 
       : isDraft
       ? `This is a rough draft of a potential future blog post. ${whereToFindWriting}`
       : isBookmark
-      ? `These are rough notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
-      : `These are rough notes about ${title}. ${whereToFindWriting}`
+      ? `These are my notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
+      : `These are my unfinished notes about ${title}. ${whereToFindWriting}`
 
   return disclaimer
 }
