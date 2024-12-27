@@ -85,6 +85,7 @@ const writing = defineCollection({
   schema: z.object({
     title: z.string().optional().nullable(), // TODO: require for articles
     date: z.coerce.date().optional(), // TODO: require for articles
+    parent: z.string().optional().nullable(), // TODO: remove from articles
     private: z.boolean().optional().nullable(), // TODO: remove from articles
     tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
   }),
