@@ -7,7 +7,8 @@ import remarkGfm from 'remark-gfm'
 import remarkSmartyPants from 'remark-smartypants'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
-import { unified, type Processor, type VFileWithOutput } from 'unified'
+import { unified, type Processor } from 'unified'
+import { type VFile } from 'vfile'
 
 import { getPublishedPosts } from '../utils/posts'
 import site from '../data/site'
@@ -41,7 +42,7 @@ export async function GET(context: APIContext): Promise<Response> {
         const content = (await unifiedPluginsPlusAstroDefaults
           // @ts-expect-error - TS doesn't like the type of "plugin" here
           .reduce((processor: Processor, plugin): Processor => processor.use(plugin), unified())
-          .process(post.body)) satisfies VFileWithOutput<string>
+          .process(post.body)) satisfies VFile
 
         const slug = `${post.id}/`
         const permalink = post.data.feedId || `${site.url}${slug}`
