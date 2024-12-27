@@ -1,5 +1,6 @@
 import fsExtra from 'fs-extra'
 import rehypePrettyCode from 'rehype-pretty-code'
+import rehypeUnwrapImages from 'rehype-unwrap-images'
 
 import rehypeCloudinaryImageAttributes from './cloudinary-image-attributes'
 
@@ -24,4 +25,5 @@ export default [
       },
     },
   ],
+  rehypeUnwrapImages,
 ]
