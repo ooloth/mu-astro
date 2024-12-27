@@ -1,5 +1,4 @@
-import type { Bookmark, Draft, TIL, Writing } from './collections'
-import type { Post } from './posts'
+import type { Bookmark, Draft, Post, TIL, Writing } from './collections'
 
 export const cleanTags = (tags?: string[]): string[] =>
   Array.from(
@@ -25,7 +24,7 @@ export const getEntriesWithTags = async (
 
   for (const item of collections) {
     // Go in order of the entry's tags, which are presumably sorted from most to least relevant
-    for (const tag of cleanTags(entry.data.tags) ?? []) {
+    for (const tag of cleanTags(entry.data.tags ?? [])) {
       if ((item.data.tags ?? []).includes(tag)) {
         if (item.data.title === entry.data.title) {
           continue
