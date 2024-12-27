@@ -15,7 +15,7 @@ type Props = {
 const { entry } = Astro.props
 const { pathname } = Astro.url
 
-const title = entry.data.title || entry.slug
+const title = entry.data.title || entry.id
 const date = entry.data.date || entry.data.lastModified
 const hasBeenModified = new Date(date).toDateString() > new Date(entry.data.lastModified).toDateString()
 

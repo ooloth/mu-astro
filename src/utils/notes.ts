@@ -11,7 +11,7 @@ function nestChildren(collection: Writing[]): Writing[] {
   const slugToNodeMap = collection.reduce(
     (nodesBySlug, item): Record<string, Writing> => {
       // Append an empty children array to the item data
-      nodesBySlug[item.slug.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
+      nodesBySlug[item.id.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
       return nodesBySlug
     },
     {} as Record<string, Writing>,
@@ -20,7 +20,7 @@ function nestChildren(collection: Writing[]): Writing[] {
   // Step 2: Build the item tree
   const tree = collection.reduce((roots, item): Writing[] => {
     // Find the node matching the current collection item
-    const node = slugToNodeMap[item.slug.toLowerCase()]
+    const node = slugToNodeMap[item.id.toLowerCase()]
 
     if (item.data.parent) {
       const parentNode = slugToNodeMap[item.data.parent.toLowerCase()]
@@ -51,7 +51,7 @@ const isNote = (note: Writing): boolean => !isPost(note)
 /**
  * Returns true if file is a non-private note.
  */
-const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.slug.includes('recursion')
+const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.id.includes('recursion')
 
 /**
  * In production, remove all private notes from all levels of the nested notes tree.

@@ -41,7 +41,7 @@ export const getTILs = async (): Promise<TILWithContent[]> => {
 
   const tilsWithContent: TILWithContent[] = await Promise.all(
     tilProperties.map(async til => {
-      const entry = await getEntry('til', til.slug)
+      const entry = await getEntry('til', til.id)
       const { Content, headings, remarkPluginFrontmatter } = await entry!.render() // TODO: make safer
       return { ...til, Content, headings, data: { ...til.data, ...remarkPluginFrontmatter } }
     }),

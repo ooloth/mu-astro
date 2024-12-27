@@ -29,7 +29,7 @@ const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): 
   const whereToFindWriting = `For more complete write-ups, check out <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a>.`
 
   const disclaimer =
-    isPost || isTIL || noDisclaimer.includes(entry.slug)
+    isPost || isTIL || noDisclaimer.includes(entry.id)
       ? null
       : isDraft
       ? `This is a rough draft of a potential future blog post. ${whereToFindWriting}`

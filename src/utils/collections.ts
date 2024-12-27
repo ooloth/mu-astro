@@ -20,8 +20,8 @@ export const isPathnameInCollection = (
 
   return collection.some(
     item =>
-      pathnameMatchesSlug(item.slug) ||
-      (item.data.children || []).some((child: Writing): boolean => pathnameMatchesSlug(child.slug)),
+      pathnameMatchesSlug(item.id) ||
+      (item.data.children || []).some((child: Writing): boolean => pathnameMatchesSlug(child.id)),
   )
 }
 

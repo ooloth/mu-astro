@@ -38,7 +38,7 @@ const hasRelated = Object.keys(entriesWithSameTags).length > 0
           <ul>
             {entriesWithTag.map(item => (
               <li>
-                <a href={`/${item.slug}/`}>{item.data.title}</a>
+                <a href={`/${item.id}/`}>{item.data.title}</a>
 
                 {item.data.date ? (
                   <time datetime={getMachineReadableDate(item.data.date)} class="timestamp ml-3">

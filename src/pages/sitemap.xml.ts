@@ -10,7 +10,7 @@ export async function GET(): Promise<Response> {
   const notes = await getNotes() // notes dynamically output by src/pages/[slug].astro (excluding private notes in production)
 
   // all paths in /[slug]/ format
-  const allPaths = [...pages, ...posts.map(post => `/${post.slug}/`), ...notes.map(note => `/${note.slug}/`)]
+  const allPaths = [...pages, ...posts.map(post => `/${post.id}/`), ...notes.map(note => `/${note.id}/`)]
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${allPaths
     .map(path => `<url><loc>${`https://michaeluloth.com${path}`}</loc></url>`)

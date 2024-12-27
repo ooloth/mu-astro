@@ -22,7 +22,7 @@ const isPublished = (post: Writing): post is PostWithDate =>
 /**
  * Sorts two drafts in ascending order by slug.
  */
-// const sortBySlug = (a: Draft, b: Draft): number => a.slug.localeCompare(b.slug)
+// const sortBySlug = (a: Draft, b: Draft): number => a.id.localeCompare(b.id)
 
 /**
  * Sorts two posts in descending order by publish date (or the current date if either post is a draft with no date).

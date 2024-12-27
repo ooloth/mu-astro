@@ -35,7 +35,7 @@ const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
     }
   }
 
-  if (isPathnameInCollection(item.slug, drafts)) {
+  if (isPathnameInCollection(item.id, drafts)) {
     return '✍️'
   }
 
@@ -67,8 +67,8 @@ const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
           <li class="inline">
             <span class="whitespace-nowrap">
               <span class="inline mr-1" set:html={getLinkEmoji(item)} />
-              <a href={`/${item.slug}/`} class="inline link-nav whitespace-normal">
-                {item.data.title || item.slug} {item.data.author ? ` (${item.data.author})` : ''}
+              <a href={`/${item.id}/`} class="inline link-nav whitespace-normal">
+                {item.data.title || item.id} {item.data.author ? ` (${item.data.author})` : ''}
               </a>
             </span>
 

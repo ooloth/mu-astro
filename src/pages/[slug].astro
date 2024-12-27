@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
   // Generate a path for each writing collection entry
   return [...posts, ...tils, ...notes, ...bookmarks, ...drafts].map(entry => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }))
 }

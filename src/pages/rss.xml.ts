@@ -43,7 +43,7 @@ export async function GET(context: APIContext): Promise<Response> {
           .reduce((processor: Processor, plugin): Processor => processor.use(plugin), unified())
           .process(post.body)) satisfies VFileWithOutput<string>
 
-        const slug = `${post.slug}/`
+        const slug = `${post.id}/`
         const permalink = post.data.feedId || `${site.url}${slug}`
 
         return {
