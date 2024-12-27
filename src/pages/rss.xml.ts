@@ -24,7 +24,7 @@ const unifiedPluginsPlusAstroDefaults = [
   rehypeStringify,
 ]
 
-export async function get(context: APIContext): Promise<{ body: string }> {
+export async function GET(context: APIContext): Promise<Response> {
   // Only include published posts, even in development
   const publishedBlogPosts = await getPublishedPosts()
 
