@@ -81,7 +81,7 @@ const removePrivateNotes = (notes: Writing[]): Writing[] =>
  * Returns a flat list of all tags found in all notes.
  */
 export const getAllTagsInNotes = async (): Promise<string[]> =>
-  getNotes().then(notes => cleanTags(notes.flatMap(note => note.data.tags)))
+  getNotes().then(notes => cleanTags(notes.flatMap(note => note.data.tags ?? [])))
 
 /**
  * Returns a flat list of all notes with matching tags.
