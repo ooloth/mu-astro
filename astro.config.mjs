@@ -6,7 +6,6 @@ import remarkPlugins from './lib/remark/plugins.ts'
 
 // see: https://astro.build/config
 export default defineConfig({
-  compressHTML: true,
   integrations: [
     tailwind({
       // Disable injecting a basic `base.css` import on every page so I can define and import my own
