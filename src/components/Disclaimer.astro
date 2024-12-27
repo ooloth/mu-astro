@@ -1,11 +1,11 @@
 ---
 import { getBookmarks } from '../utils/bookmarks'
-import { isPathnameInCollection, type Bookmark, type Draft, type TIL, type Writing } from '../utils/collections'
+import { isPathnameInCollection, type Bookmark, type Draft, type Note, type Post, type TIL } from '../utils/collections'
 import { getDrafts, getPosts } from '../utils/posts'
 import { getTILs } from '../utils/tils'
 
 type Props = {
-  entry: Writing | Draft | TIL | Bookmark
+  entry: Post | TIL | Draft | Note | Bookmark
   title: string
 }
 
@@ -22,10 +22,10 @@ const isDraft = isPathnameInCollection(pathname, drafts)
 const isBookmark = isPathnameInCollection(pathname, bookmarks)
 
 // TODO: add unit tests, auditing
-const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): string | null => {
+const getDisclaimer = (entry: Post | TIL | Draft | Note | Bookmark, title: string): string | null => {
   const noDisclaimer = ['workouts']
 
-  const byAuthorIfAuthor = entry.data.author ? ` by ${entry.data.author}` : ''
+  const byAuthorIfAuthor = 'author' in entry.data && entry.data.author ? ` by ${entry.data.author}` : ''
   const whereToFindWriting = `For more complete write-ups, check out <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a>.`
 
   const disclaimer =

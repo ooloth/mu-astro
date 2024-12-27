@@ -1,14 +1,14 @@
 ---
-import { type Bookmark, type Draft, isPathnameInCollection, type TIL, type Writing } from '../utils/collections'
-import { getNotes } from '../utils/notes'
-import { getDrafts, getPosts } from '../utils/posts'
+import { type Bookmark, type Draft, isPathnameInCollection, type TIL } from '../utils/collections'
+import { getNotes, type Note } from '../utils/notes'
+import { getDrafts, getPosts, type Post } from '../utils/posts'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
 import { getEntriesWithTags as getEntriesWithSameTags } from '../utils/tags'
 
 type Props = {
-  entry: Writing | Draft | TIL | Bookmark
+  entry: Post | TIL | Draft | Note | Bookmark
 }
 
 const { entry } = Astro.props

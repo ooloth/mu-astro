@@ -1,47 +1,7 @@
-import { getCollection, type InferEntrySchema } from 'astro:content'
-import { addRemarkFrontmatter, type Writing } from './collections'
+import { getCollection } from 'astro:content'
+import { addRemarkFrontmatter, isPublic, type Note, type Writing } from './collections'
 import { isPost } from './posts'
 import { cleanTags } from './tags'
-
-/**
- * Given an array of collection items, returns the array with child items nested under their parents.
- */
-function nestChildren(collection: Note[]): Note[] {
-  // Step 1: Create a mapping from item slugs to their respective item data
-  const slugToNodeMap = collection.reduce(
-    (nodesBySlug, item): Record<string, Note> => {
-      // Append an empty children array to the item data
-      nodesBySlug[item.id.toLowerCase()] = { ...item, data: { ...item.data, children: [] } }
-      return nodesBySlug
-    },
-    {} as Record<string, Note>,
-  )
-
-  // Step 2: Build the item tree
-  const tree = collection.reduce((roots, item): Note[] => {
-    // Find the node matching the current collection item
-    const node = slugToNodeMap[item.id.toLowerCase()]
-
-    if (item.data.parent) {
-      const parentNode = slugToNodeMap[item.data.parent.toLowerCase()]
-
-      if (parentNode) {
-        // If the note has a parent, add the item's data to the parent's children array
-        parentNode.data.children.push(node)
-      } else {
-        console.error(`Parent slug "${item.data.parent}" not found (this should never happen).`)
-      }
-    } else {
-      // If the item has no parent, treat it as a new root-level note
-      roots.push(node)
-    }
-
-    // Return the update tree
-    return roots
-  }, [] as Note[])
-
-  return tree
-}
 
 /**
  * Returns true if file is a note.
@@ -49,33 +9,20 @@ function nestChildren(collection: Note[]): Note[] {
 const isNote = (note: Writing): note is Note => !isPost(note)
 
 /**
- * Returns true if file is a non-private note.
- */
-const isPublicNote = (note: Writing): boolean => isNote(note) && !note.data.private && !note.id.includes('recursion')
-
-/**
  * In production, remove all private notes from all levels of the nested notes tree.
  */
-const removePrivateNotes = (notes: Writing[]): Writing[] =>
+const removePrivateNotes = (notes: Note[]): Note[] =>
   import.meta.env.PROD
     ? notes
         // Remove private notes from the current nesting level (starting with the root)
-        .filter(note => isPublicNote(note))
+        .filter(note => isPublic(note))
         // Remove private notes from the children of remaining notes (and so on, recursively)
         .map(note => {
-          return note.data?.children?.length
+          return note.data.children?.length
             ? { ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }
             : note
         })
     : notes
-
-/**
- * Given an array of nested collection items, returns the array with related items added to each parent and child.
- * TODO: based on parent-child relationships? Tags?
- */
-// function addRelated(collection: Writing[]): Writing[] {
-//   return collection
-// }
 
 /**
  * Returns a flat list of all tags found in all notes.
@@ -112,9 +59,3 @@ export const getNotes = async (): Promise<Note[]> => {
   const notesToShow = removePrivateNotes(await getCollection('writing', note => isNote(note)))
   return Promise.all(notesToShow.map(note => addRemarkFrontmatter(note)))
 }
-
-/**
- * Returns all notes with child notes nested under their parents (always) and private notes removed (in production).
- */
-export const getNestedNotes = async (): Promise<Writing[]> =>
-  removePrivateNotes(nestChildren(await getCollection('writing', note => isNote(note))))
