@@ -45,8 +45,10 @@ const disclaimer = getDisclaimer(Astro.props.entry, Astro.props.title)
 
 {
   disclaimer ? (
-    <aside role="note" class="mb-8 border border-[--moonlight-red] rounded italic">
-      <p set:html={disclaimer} class="!m-0 py-2 px-3 text-bright" />
+    <aside role="note" class="mb-8 border border-[--moonlight-red] rounded">
+      <p class="!m-0 py-2 px-3">
+        <em set:html={disclaimer} />
+      </p>
     </aside>
   ) : null
 }
