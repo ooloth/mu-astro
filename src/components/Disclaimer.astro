@@ -34,7 +34,7 @@ const getDisclaimer = (entry: Writing | Draft | TIL | Bookmark, title: string): 
       : isDraft
       ? `This is a rough draft of a potential future blog post. ${whereToFindWriting}`
       : isBookmark
-      ? `These are my notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
+      ? `These are my unfinished notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
       : `These are my unfinished notes about ${title}. ${whereToFindWriting}`
 
   return disclaimer
