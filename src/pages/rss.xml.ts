@@ -48,9 +48,9 @@ export async function GET(context: APIContext): Promise<Response> {
         const permalink = post.data.feedId || `${site.url}${slug}`
 
         return {
-          title: post.data.title,
+          title: post.data.title ?? undefined,
           link: slug,
-          description: post.data.description,
+          description: post.data.description ?? undefined,
           pubDate: post.data.date,
           customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
           content: String(content.value),
