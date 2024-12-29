@@ -22,6 +22,8 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props
+
+// TODO: check for an undefined entry before calling render
 const { Content } = await render(entry)
 ---
 
