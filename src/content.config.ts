@@ -89,7 +89,7 @@ const writing = defineCollection({
   // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/writing' }),
   schema: z.object({
-    date: z.coerce.date().optional(), // TODO: require for articles
+    date: z.coerce.date().optional().nullable(), // TODO: require for articles
     description: z.string().optional().nullable(), // TODO: articles only
     feedId: z.string().optional().nullable(), // TODO: articles only
     ogImage: z.string().optional().nullable(),
