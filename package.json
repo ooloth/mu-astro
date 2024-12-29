@@ -1,5 +1,6 @@
 {
   "name": "michaeluloth.com",
+  "version": "0.1.0",
   "type": "module",
   "dependencies": {
     "@astrojs/rss": "^4.0.10",
