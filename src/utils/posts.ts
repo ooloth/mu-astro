@@ -1,6 +1,14 @@
 import { getCollection } from 'astro:content'
 
-import { addRemarkFrontmatter, isPublished, sortDescending, type Draft, type Post, type Writing } from './collections'
+import {
+  addRemarkFrontmatter,
+  isPublished,
+  sortDescending,
+  type Draft,
+  type Post,
+  type PostEntry,
+  type Writing,
+} from './collections'
 
 /**
  * Returns true if file is a blog post.
@@ -10,7 +18,7 @@ export const isPost = (post: Writing): boolean => (post.data.tags ?? []).include
 /**
  * Returns all published posts, in descending order by date (useful for RSS feed).
  */
-export const getPublishedPosts = async (): Promise<Post[]> =>
+export const getPublishedPosts = async (): Promise<PostEntry[]> =>
   sortDescending(await getCollection('writing', isPublished))
 
 /**
