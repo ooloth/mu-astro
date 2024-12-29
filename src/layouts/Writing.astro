@@ -79,6 +79,6 @@ const ogImage = 'ogImage' in entry.data ? entry.data.ogImage ?? undefined : unde
 
     <article class="markdown"><slot /></article>
     <Related entry={entry} />
-    {isPost ? <Comments /> : null}
+    {isPost || isTIL ? <Comments /> : null}
   </div>
 </Main>
