@@ -49,7 +49,11 @@ export async function addRemarkFrontmatter(
   const { remarkPluginFrontmatter } = await render(entry)
 
   // see: https://docs.astro.build/en/recipes/modified-time/
-  return { ...entry, data: { ...entry.data, ...remarkPluginFrontmatter } } as Post | Draft | Note | Bookmark
+  return { ...entry, data: { ...entry.data, lastModified: remarkPluginFrontmatter.lastModified } } as
+    | Post
+    | Draft
+    | Note
+    | Bookmark
 }
 
 /**

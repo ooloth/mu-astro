@@ -51,7 +51,7 @@ export async function GET(context: APIContext): Promise<Response> {
           title: post.data.title ?? undefined,
           link: slug,
           description: post.data.description ?? undefined,
-          pubDate: post.data.date,
+          pubDate: post.data.date ?? undefined,
           customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
           content: String(content.value),
         }

@@ -17,8 +17,8 @@ export const getTILs = async (): Promise<TIL[]> => {
 
   const tilsWithContent: TIL[] = await Promise.all(
     tilProperties.map(async til => {
-      const { Content, remarkPluginFrontmatter } = await render(til) // TODO: make safer
-      return { ...til, Content, data: { ...til.data, ...remarkPluginFrontmatter } }
+      const { Content, remarkPluginFrontmatter } = await render(til)
+      return { ...til, Content, data: { ...til.data, lastModified: remarkPluginFrontmatter.lastModified } }
     }),
   )
 
