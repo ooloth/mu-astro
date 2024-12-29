@@ -16,7 +16,7 @@
   }
 
   /* code blocks */
-  div[data-rehype-pretty-code-fragment] {
+  figure[data-rehype-pretty-code-figure] {
     @apply mt-6 rounded-lg overflow-x-scroll;
 
     /* title (if any) */

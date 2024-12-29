@@ -16,7 +16,7 @@ interface Image extends Element {
   properties: Properties
 }
 
-const rehypeCloudinaryImageAttributes = (): RehypePlugin => {
+const rehypeCloudinaryImageAttributes: RehypePlugin = () => {
   const htmlImages: Image[] = []
 
   const visitor = (node: Element) => {
