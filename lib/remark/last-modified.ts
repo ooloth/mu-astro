@@ -1,13 +1,10 @@
 // see: https://docs.astro.build/en/recipes/modified-time/
 
-import { type MarkdownAstroData } from '@astrojs/markdown-remark'
 import { execSync } from 'child_process'
 import { resolve } from 'path'
-// import { type Transformer } from 'unified'
-// import { type VFile } from 'vfile'
+import { type Transformer } from 'unified'
 
-function remarkModifiedTime() {
-  // function remarkModifiedTime(): Transformer {
+function remarkModifiedTime(): Transformer {
   const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
 
   const submodulePaths = execSync('git config --file .gitmodules --get-regexp path')
@@ -47,7 +44,8 @@ function remarkModifiedTime() {
         result = execSync(`git log -1 --pretty="format:%cI" "${relativeFilePath}"`).toString().trim()
       }
 
-      ;(file.data.astro as MarkdownAstroData).frontmatter.lastModified = result
+      // TODO: what should happen if file.data.astro is undefined?
+      ;((file.data.astro ?? {}).frontmatter ?? {}).lastModified = result
     } catch (error) {
       console.error('Error getting last modified time:', error)
     }
