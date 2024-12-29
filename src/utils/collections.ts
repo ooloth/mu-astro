@@ -80,5 +80,5 @@ export const isPublished = (entry: PostEntry | TILEntry): boolean => {
 /**
  * Returns true if the entry is not marked private or obviously about work.
  */
-export const isPublic = <T extends Note | Bookmark | Draft>(entry: T): boolean =>
+export const isPublic = <T extends NoteEntry | BookmarkEntry | DraftEntry>(entry: T): boolean =>
   !entry.data.private && !(entry.data.tags ?? []).includes('private') && !entry.id.includes('recursion')
