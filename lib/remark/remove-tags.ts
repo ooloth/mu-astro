@@ -6,10 +6,13 @@ import type { Root, Text } from 'mdast'
 import { visit } from 'unist-util-visit'
 
 /**
- * Given a string, remove all topic tags like " #post" or " #question"
+ * Given a string, remove all topic tags like " #post" or " #question" or "#post" at the beginning of the text string
+ * (to avoid removing heading link slugs like "page#my-heading".
+ *
+ * TODO: add tests
  * TODO: can I move these tags to the frontmatter?
  */
-const removeTags = (str: string): string => str.replaceAll(/#[\w|/]+/g, '')
+const removeTags = (str: string): string => str.replaceAll(/(^|\s)#[\w|/]+/g, '').trim()
 
 const remarkRemoveTags =
   (): RemarkPlugin =>
