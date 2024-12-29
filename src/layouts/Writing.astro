@@ -16,7 +16,8 @@ const { entry } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.id
-const lastModified = 'lastModified' in entry.data ? new Date(String(entry.data.lastModified)) ?? undefined : undefined
+const lastModified =
+  'lastModified' in entry.data && entry.data.lastModified ? new Date(entry.data.lastModified) : undefined
 const date = entry.data.date ?? lastModified
 
 // Compare the dates at the day level (as opposed to the ms level) to determine if it's worth showing a modified date
