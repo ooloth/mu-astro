@@ -30,7 +30,6 @@ const isScheduled = (post: Post): boolean => (post.data.date ? Date.parse(String
           //     .filter(tag => tag !== 'post')
           //     .map(tag => tag.replace('topic/', ''))
           //     .at(0) ?? 'untagged'
-          // console.log('primaryTag:', primaryTag)
 
           const date = post.data.date || Date.now()
 

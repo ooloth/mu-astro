@@ -66,7 +66,6 @@ const convertWikiLinksToMarkdownLinks = (textNodeValue: string): PhrasingContent
       segments.push(u('link', { url: `${linkSlug}` }, [u('text', linkText)]))
 
       lastIndex = offset + match.length
-      // console.log('segments:', JSON.stringify(segments, null, 2))
 
       // What matters is the segments array we've populated, so we just return the match unchanged
       return match
