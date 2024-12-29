@@ -15,7 +15,7 @@ const removeTags = (str: string): string => str.replaceAll(/\s#[\w|/]+/g, '')
 
 type Transformer = (tree: Node<Data>) => Promise<void>
 
-// # TODO: is this working? I thought I saw inline tags still there...
+// TODO: is this working? I thought I saw inline tags still there...
 const remarkRemoveTags: RemarkPlugin =
   (): Transformer =>
   async (tree: Node<Data>): Promise<void> => {

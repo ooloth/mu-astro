@@ -15,7 +15,6 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/tailwind": "^5.1.4",
-    "@portaljs/remark-wiki-link": "^1.2.0",
     "@prettier/plugin-xml": "^3.1.1",
     "@types/fs-extra": "^11.0.1",
     "@types/markdown-it": "^12.2.3",
@@ -28,6 +27,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-astro": "^0.27.2",
     "eslint-plugin-jsx-a11y": "^6.7.1",
+    "github-slugger": "^2.0.0",
     "postcss-import": "^15.1.0",
     "postcss-nesting": "^12.0.0",
     "postcss-preset-env": "^9.1.0",
@@ -36,7 +36,9 @@
     "prettier-plugin-toml": "^0.3.1",
     "rehype-unwrap-images": "^1.0.0",
     "tsx": "^3.12.7",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "unist-builder": "^4.0.0",
+    "unist-util-visit": "^5.0.0"
   },
   "scripts": {
     "astro": "astro",
