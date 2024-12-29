@@ -3,15 +3,15 @@ import Tag from '../components/Tag.astro'
 import Main from '../layouts/Main.astro'
 import { getBookmarks } from '../utils/bookmarks'
 import { isPathnameInCollection, type Bookmark, type Writing, type Draft, type Note } from '../utils/collections'
-import { getAllTagsInNotes, getNotes } from '../utils/notes'
+import { getNotes } from '../utils/notes'
 import { getDrafts } from '../utils/posts'
+import { getAllTagsInEntries } from '../utils/tags'
 
 const bookmarks = await getBookmarks()
 const notes = await getNotes()
 const drafts = await getDrafts()
 
-// TODO: get tags from notes, bookmarks and drafts
-const tags = await getAllTagsInNotes()
+const tags = await getAllTagsInEntries([...bookmarks, ...notes, ...drafts])
 
 export const sortDescending = <T extends Draft | Note | Bookmark>(entries: T[]): T[] => {
   const sortByDate = <T extends Draft | Note | Bookmark>(a: T, b: T): number => {

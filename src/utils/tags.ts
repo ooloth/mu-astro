@@ -41,3 +41,9 @@ export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | B
 
   return relatedByTag
 }
+
+/**
+ * Returns a flat list of all tags found in all entries.
+ */
+export const getAllTagsInEntries = async (entries: (Draft | Note | Bookmark)[]): Promise<string[]> =>
+  cleanTags(entries.flatMap(entry => entry.data.tags ?? []))
