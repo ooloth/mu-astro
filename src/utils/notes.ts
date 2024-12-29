@@ -12,17 +12,7 @@ const isNote = (note: Writing): note is Note => !isPost(note)
  * In production, remove all private notes from all levels of the nested notes tree.
  */
 const removePrivateNotes = (notes: Note[]): Note[] =>
-  import.meta.env.PROD
-    ? notes
-        // Remove private notes from the current nesting level (starting with the root)
-        .filter(note => isPublic(note))
-        // Remove private notes from the children of remaining notes (and so on, recursively)
-        .map(note => {
-          return note.data.children?.length
-            ? { ...note, data: { ...note.data, children: removePrivateNotes(note.data.children) } }
-            : note
-        })
-    : notes
+  import.meta.env.PROD ? notes.filter(note => isPublic(note)) : notes
 
 /**
  * Returns a flat list of all tags found in all notes.

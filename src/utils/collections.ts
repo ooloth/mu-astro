@@ -23,18 +23,11 @@ export type Bookmark = CollectionEntry<'bookmarks'>
  */
 export const isPathnameInCollection = (
   pathname: string | undefined,
-  collection: Writing[] | Draft[] | TIL[] | Bookmark[] | Note[],
+  collection: Post[] | TIL[] | Draft[] | Note[] | Bookmark[],
 ): boolean => {
   const removeLeadingAndTrailingSlashes = (str?: string): string => (str ? str.replace(/^\/|\/$/g, '') : '')
 
-  const pathnameMatchesSlug = (slug: string): boolean =>
-    removeLeadingAndTrailingSlashes(pathname) === removeLeadingAndTrailingSlashes(slug)
-
-  return collection.some(
-    item =>
-      pathnameMatchesSlug(item.id) || ('children' in item.data && isPathnameInCollection(pathname, item.data.children)),
-    // (item.data.children ?? []).some((child: Note): boolean => pathnameMatchesSlug(child.id)),
-  )
+  return collection.some(item => removeLeadingAndTrailingSlashes(pathname) === removeLeadingAndTrailingSlashes(item.id))
 }
 
 export async function addRemarkFrontmatter<T extends Post | TIL | Draft | Note | Bookmark>(entry: T): Promise<T> {
