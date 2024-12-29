@@ -16,8 +16,11 @@ const { entry } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.id
-const date = entry.data.date || entry.data.lastModified
-const hasBeenModified = new Date(date).toDateString() > new Date(entry.data.lastModified).toDateString()
+const lastModified = 'lastModified' in entry.data ? new Date(String(entry.data.lastModified)) ?? undefined : undefined
+const date = entry.data.date ?? lastModified
+
+// Compare the dates at the day level (as opposed to the ms level) to determine if it's worth showing a modified date
+const hasBeenModified: boolean = date && lastModified ? date.toDateString() > lastModified.toDateString() : false
 
 const posts = await getPosts()
 const tils = await getTILs()
@@ -38,17 +41,17 @@ const ogImage = 'ogImage' in entry.data ? entry.data.ogImage ?? undefined : unde
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        entry.data.date && (isPost || isTIL || isDraft) ? (
+        date && (isPost || isTIL || isDraft) ? (
           <p class="timestamp">
             <time datetime={getMachineReadableDate(date)} class="timestamp">
               {getHumanReadableDate(date)}
             </time>
 
-            {entry.data.lastModified && hasBeenModified ? (
+            {lastModified && hasBeenModified ? (
               <>
                 <span class="mx-1">-</span>
-                <time datetime={getMachineReadableDate(entry.data.lastModified)} class="timestamp">
-                  {getHumanReadableDate(entry.data.lastModified)}
+                <time datetime={getMachineReadableDate(lastModified)} class="timestamp">
+                  {getHumanReadableDate(lastModified)}
                 </time>
               </>
             ) : null}
