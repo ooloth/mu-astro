@@ -50,7 +50,7 @@ export async function addRemarkFrontmatter<T extends Post | TIL | Draft | Note |
  * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
  */
 export const sortDescending = <T extends Post | TIL | TILEntry | Draft>(entries: T[]): T[] => {
-  const sortByDate = <T extends Post | TILEntry | Draft>(a: T, b: T): number => {
+  const sortByDate = <T extends Post | TIL | TILEntry | Draft>(a: T, b: T): number => {
     const dateA = a.data.date ? new Date(a.data.date).getTime() : -Infinity
     const dateB = b.data.date ? new Date(b.data.date).getTime() : -Infinity
     return dateB - dateA

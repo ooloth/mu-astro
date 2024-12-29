@@ -2,20 +2,31 @@
 import Tag from '../components/Tag.astro'
 import Main from '../layouts/Main.astro'
 import { getBookmarks } from '../utils/bookmarks'
-import { isPathnameInCollection, type Bookmark, type Writing, type Draft } from '../utils/collections'
+import { isPathnameInCollection, type Bookmark, type Writing, type Draft, type Note } from '../utils/collections'
 import { getAllTagsInNotes, getNotes } from '../utils/notes'
 import { getDrafts } from '../utils/posts'
 
 const bookmarks = await getBookmarks()
 const notes = await getNotes()
 const drafts = await getDrafts()
+
+// TODO: get tags from notes, bookmarks and drafts
 const tags = await getAllTagsInNotes()
 
-const notesByLastModified = [...bookmarks, ...notes, ...drafts].sort((a, b) => {
-  const aTime = new Date(a.data.lastModified).getTime()
-  const bTime = new Date(b.data.lastModified).getTime()
-  return bTime - aTime
-})
+export const sortDescending = <T extends Draft | Note | Bookmark>(entries: T[]): T[] => {
+  const sortByDate = <T extends Draft | Note | Bookmark>(a: T, b: T): number => {
+    const lastModifiedTime = (entry: T): number =>
+      'lastModified' in entry.data && entry.data.lastModified
+        ? new Date(String(entry.data.lastModified)).getTime()
+        : -Infinity
+
+    return lastModifiedTime(b) - lastModifiedTime(a)
+  }
+
+  return entries.sort(sortByDate)
+}
+
+const notesByLastModified = sortDescending([...bookmarks, ...notes, ...drafts])
 
 const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
   if ('favicon' in item.data && item.data.favicon) {
