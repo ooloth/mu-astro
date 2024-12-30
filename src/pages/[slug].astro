@@ -10,12 +10,12 @@ import { getBookmarks } from '../utils/bookmarks'
 export async function getStaticPaths() {
   const posts = await getPosts()
   const tils = await getTILs()
+  const drafts = await getDrafts()
   const notes = await getNotes()
   const bookmarks = await getBookmarks()
-  const drafts = await getDrafts()
 
   // Generate a path for each writing collection entry
-  return [...posts, ...tils, ...notes, ...bookmarks, ...drafts].map(entry => ({
+  return [...posts, ...tils, ...drafts, ...notes, ...bookmarks].map(entry => ({
     params: { slug: entry.id },
     props: { entry },
   }))
