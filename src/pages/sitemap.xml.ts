@@ -26,5 +26,5 @@ export async function GET(): Promise<Response> {
     .map(path => `<url><loc>${`https://michaeluloth.com${path}`}</loc></url>`)
     .join('')}</urlset>`
 
-  return new Response(JSON.stringify(xml))
+  return new Response(xml)
 }
