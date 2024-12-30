@@ -49,6 +49,11 @@
           background-color: rgb(200 200 255 / 0.15);
           box-shadow: 0 0 0 0.24em rgb(200 200 255 / 0.15);
         }
+
+        /* FIXME: not targeting the button correctly */
+        & > button.rehype-pretty-copy {
+          @apply top-3;
+        }
       }
 
       /* display line numbers if code fence includes "showLineNumbers" */
