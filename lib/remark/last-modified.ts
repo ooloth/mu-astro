@@ -5,7 +5,7 @@ import { execSync } from 'child_process'
 import { resolve } from 'path'
 import { type VFile } from 'vfile'
 
-function remarkModifiedTime(): RemarkPlugin {
+const remarkModifiedTime: RemarkPlugin = () => {
   const repoRoot = execSync('git rev-parse --show-toplevel').toString().trim()
 
   const submodulePaths = execSync('git config --file .gitmodules --get-regexp path')

@@ -14,8 +14,8 @@ import { visit } from 'unist-util-visit'
  */
 const removeTags = (str: string): string => str.replaceAll(/(^|\s)#[\w|/]+/g, '').trim()
 
-const remarkRemoveTags =
-  (): RemarkPlugin =>
+const remarkRemoveTags: RemarkPlugin =
+  () =>
   (tree: Root): void => {
     // Identify the type of node I want to modify ("text" in this case) here: https://astexplorer.net
     visit(tree, 'text', (node: Text): void => {
