@@ -25,6 +25,13 @@ const unifiedPluginsPlusAstroDefaults = [
   rehypeStringify,
 ]
 
+const cleanContent = (content: string): string => {
+  // Examples: "code{:js}</code>", "token{:.fp}</code>"
+  const rehypePrettyCodeInlineLangIndicator = /{:\.?\w+}<\/code>/g
+
+  return content.replace(rehypePrettyCodeInlineLangIndicator, '</code>')
+}
+
 export async function GET(context: APIContext): Promise<Response> {
   // Only include published posts, even in development
   const publishedBlogPosts = await getPublishedPosts()
@@ -36,6 +43,7 @@ export async function GET(context: APIContext): Promise<Response> {
     title: site.title,
     description: site.description.rss,
     customData: `<language>en-ca</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
+    // stylesheet: '', TODO: https://docs.astro.build/en/recipes/rss/#adding-a-stylesheet
     items: await Promise.all(
       publishedBlogPosts.map(async post => {
         // An alternative to calling unified().use(plugin).use(plugin).process(post.body) that leverages the arrays of shared plugins above
@@ -53,7 +61,7 @@ export async function GET(context: APIContext): Promise<Response> {
           description: post.data.description ?? undefined,
           pubDate: post.data.date ?? undefined,
           customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
-          content: String(content.value),
+          content: cleanContent(String(content.value)),
         }
       }),
     ),
