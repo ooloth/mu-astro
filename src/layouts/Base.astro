@@ -84,16 +84,16 @@ const pageTitleWithSuffix = pageTitle + (isHome ? '' : ` • ${site.title}`)
 const pageDescription = description
   ? description
   : isPost
-  ? `Blog post by ${site.author.name}.`
-  : isTIL
-  ? `Something ${site.author.name} learned about today.`
-  : isDraft
-  ? `Notes for a potential future blog post by ${site.author.name}.`
-  : isNote
-  ? `Notes about ${title} by ${site.author.name}.`
-  : isBookmark
-  ? `Notes about "${title}".`
-  : site.description.site
+    ? `Blog post by ${site.author.name}.`
+    : isTIL
+      ? `Something ${site.author.name} learned about today.`
+      : isDraft
+        ? `Notes for a potential future blog post by ${site.author.name}.`
+        : isNote
+          ? `Notes about ${title} by ${site.author.name}.`
+          : isBookmark
+            ? `Notes about "${title}".`
+            : site.description.site
 
 const borderWidth = 0
 const pink = 'fda4af'
@@ -136,7 +136,7 @@ const socialImage = ogImage
     ].join('/')
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang={site.language}>
   <head>
     <!-- Base -->

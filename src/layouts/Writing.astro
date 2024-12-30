@@ -31,9 +31,9 @@ const isPost = isPathnameInCollection(pathname, posts)
 const isTIL = isPathnameInCollection(pathname, tils)
 const isDraft = isPathnameInCollection(pathname, drafts)
 
-const source = 'source' in entry.data ? entry.data.source ?? undefined : undefined
-const description = 'description' in entry.data ? entry.data.description ?? undefined : undefined
-const ogImage = 'ogImage' in entry.data ? entry.data.ogImage ?? undefined : undefined
+const source = 'source' in entry.data ? (entry.data.source ?? undefined) : undefined
+const description = 'description' in entry.data ? (entry.data.description ?? undefined) : undefined
+const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : undefined
 
 // const tags = cleanTags(entry.data.tags)
 ---
