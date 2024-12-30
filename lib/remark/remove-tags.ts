@@ -2,26 +2,24 @@
 // see: https://github.com/syntax-tree/mdast
 
 import type { RemarkPlugin } from '@astrojs/markdown-remark'
-import type { Data, Text } from 'mdast'
-import type { Node } from 'unist'
+import type { Root, Text } from 'mdast'
 import { visit } from 'unist-util-visit'
-// import { type Transformer } from 'unified'
 
 /**
- * Given a string, remove all topic tags like " #post" or " #question"
+ * Given a string, remove all topic tags like " #post" or " #question" or "#post" at the beginning of the text string
+ * (to avoid removing heading link slugs like "page#my-heading".
+ *
+ * TODO: add tests
  * TODO: can I move these tags to the frontmatter?
  */
-const removeTags = (str: string): string => str.replaceAll(/\s#[\w|/]+/g, '')
+const removeTags = (str: string): string => str.replaceAll(/(^|\s)#[\w|/]+/g, '').trim()
 
-type Transformer = (tree: Node<Data>) => Promise<void>
-
-// # TODO: is this working? I thought I saw inline tags still there...
 const remarkRemoveTags: RemarkPlugin =
-  (): Transformer =>
-  async (tree: Node<Data>): Promise<void> => {
-    // identify the type of node I want to modify ("text" in this case) here: https://astexplorer.net
+  () =>
+  (tree: Root): void => {
+    // Identify the type of node I want to modify ("text" in this case) here: https://astexplorer.net
     visit(tree, 'text', (node: Text): void => {
-      if (!node.value.includes(' #')) return
+      if (!node.value.includes('#')) return
 
       // Use Object.assign to replace the exact same object instead of triggering an infinite loop by creating new objects
       Object.assign(node, {

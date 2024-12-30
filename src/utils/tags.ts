@@ -1,5 +1,4 @@
-import type { Bookmark, Draft, TIL, Writing } from './collections'
-import type { Post } from './posts'
+import type { Bookmark, Draft, Note, Post, TIL } from './collections'
 
 export const cleanTags = (tags?: string[]): string[] =>
   Array.from(
@@ -17,15 +16,15 @@ export const cleanTags = (tags?: string[]): string[] =>
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getEntriesWithTags = async (
-  entry: Bookmark | Draft | TIL | Post | Writing,
-  collections: (Bookmark | Draft | TIL | Post | Writing)[],
-): Promise<Record<string, (Bookmark | Draft | TIL | Post | Writing)[]>> => {
-  const relatedByTag: Record<string, (Bookmark | Draft | TIL | Post | Writing)[]> = {}
+export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | Bookmark>(
+  entry: T,
+  collections: T[],
+): Promise<Record<string, T[]>> => {
+  const relatedByTag: Record<string, T[]> = {}
 
   for (const item of collections) {
     // Go in order of the entry's tags, which are presumably sorted from most to least relevant
-    for (const tag of cleanTags(entry.data.tags) ?? []) {
+    for (const tag of cleanTags(entry.data.tags ?? [])) {
       if ((item.data.tags ?? []).includes(tag)) {
         if (item.data.title === entry.data.title) {
           continue
@@ -42,3 +41,9 @@ export const getEntriesWithTags = async (
 
   return relatedByTag
 }
+
+/**
+ * Returns a flat list of all tags found in all entries.
+ */
+export const getAllTagsInEntries = async (entries: (Draft | Note | Bookmark)[]): Promise<string[]> =>
+  cleanTags(entries.flatMap(entry => entry.data.tags ?? []))

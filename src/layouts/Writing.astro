@@ -1,5 +1,5 @@
 ---
-import { type Draft, isPathnameInCollection, type Writing } from '../utils/collections'
+import { type Bookmark, type Draft, isPathnameInCollection, type Note, type Post, type TIL } from '../utils/collections'
 import { getDrafts, getPosts } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
@@ -9,15 +9,19 @@ import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
 
 type Props = {
-  entry: Writing | Draft
+  entry: Post | TIL | Draft | Note | Bookmark
 }
 
 const { entry } = Astro.props
 const { pathname } = Astro.url
 
-const title = entry.data.title || entry.slug
-const date = entry.data.date || entry.data.lastModified
-const hasBeenModified = new Date(date).toDateString() > new Date(entry.data.lastModified).toDateString()
+const title = entry.data.title || entry.id
+const lastModified =
+  'lastModified' in entry.data && entry.data.lastModified ? new Date(entry.data.lastModified) : undefined
+const date = entry.data.date ?? lastModified
+
+// Compare the dates at the day level (as opposed to the ms level) to determine if it's worth showing a modified date
+const hasBeenModified: boolean = date && lastModified ? date.toDateString() > lastModified.toDateString() : false
 
 const posts = await getPosts()
 const tils = await getTILs()
@@ -27,29 +31,33 @@ const isPost = isPathnameInCollection(pathname, posts)
 const isTIL = isPathnameInCollection(pathname, tils)
 const isDraft = isPathnameInCollection(pathname, drafts)
 
+const source = 'source' in entry.data ? entry.data.source ?? undefined : undefined
+const description = 'description' in entry.data ? entry.data.description ?? undefined : undefined
+const ogImage = 'ogImage' in entry.data ? entry.data.ogImage ?? undefined : undefined
+
 // const tags = cleanTags(entry.data.tags)
 ---
 
-<Main canonicalUrl={entry.data.source} description={entry.data.description} ogImage={entry.data.ogImage} title={title}>
+<Main canonicalUrl={source} description={description} ogImage={ogImage} title={title}>
   <div class="mx-auto max-w-2xl">
     <header class="markdown">
       {
-        (isPost || isTIL || isDraft) && (
+        date && (isPost || isTIL || isDraft) ? (
           <p class="timestamp">
             <time datetime={getMachineReadableDate(date)} class="timestamp">
               {getHumanReadableDate(date)}
             </time>
 
-            {hasBeenModified ? (
+            {lastModified && hasBeenModified ? (
               <>
                 <span class="mx-1">-</span>
-                <time datetime={getMachineReadableDate(entry.data.lastModified)} class="timestamp">
-                  {getHumanReadableDate(entry.data.lastModified)}
+                <time datetime={getMachineReadableDate(lastModified)} class="timestamp">
+                  {getHumanReadableDate(lastModified)}
                 </time>
               </>
             ) : null}
           </p>
-        )
+        ) : null
       }
 
       <h1>{title}</h1>
@@ -72,6 +80,6 @@ const isDraft = isPathnameInCollection(pathname, drafts)
 
     <article class="markdown"><slot /></article>
     <Related entry={entry} />
-    {isPost ? <Comments /> : null}
+    {isPost || isTIL ? <Comments /> : null}
   </div>
 </Main>

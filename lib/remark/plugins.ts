@@ -1,22 +1,12 @@
-import remarkUnwrapImages from 'remark-unwrap-images'
-import remarkWikiLink from '@portaljs/remark-wiki-link'
-
+import { type RemarkPlugins } from 'astro'
 import remarkLastModified from './last-modified'
 import remarkRemoveTags from './remove-tags'
+import remarkWikiLink from './wiki-link'
 import remarkYouTubeEmbedFromImageLink from './youtube-embed-from-image-link'
 
 export default [
   remarkLastModified,
   remarkRemoveTags,
-  remarkUnwrapImages,
-  [
-    remarkWikiLink,
-    {
-      // see: https://github.com/datopian/portaljs/tree/main/packages/remark-wiki-link
-      // see: https://stackoverflow.com/a/76897910/8802485
-      pathFormat: 'obsidian-absolute',
-      wikiLinkResolver: (slug: string): string[] => [`${slug}/`], // expects all pages to have root-level paths
-    },
-  ],
+  remarkWikiLink,
   remarkYouTubeEmbedFromImageLink,
-]
+] satisfies RemarkPlugins

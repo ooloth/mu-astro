@@ -1,4 +1,6 @@
 ---
+import { render } from 'astro:content'
+
 import Writing from '../layouts/Writing.astro'
 import { getTILs } from '../utils/tils'
 import { getNotes } from '../utils/notes'
@@ -8,24 +10,23 @@ import { getBookmarks } from '../utils/bookmarks'
 export async function getStaticPaths() {
   const posts = await getPosts()
   const tils = await getTILs()
+  const drafts = await getDrafts()
   const notes = await getNotes()
   const bookmarks = await getBookmarks()
-  const drafts = await getDrafts()
 
   // Generate a path for each writing collection entry
-  return [...posts, ...tils, ...notes, ...bookmarks, ...drafts].map(entry => ({
-    params: { slug: entry.slug },
+  return [...posts, ...tils, ...drafts, ...notes, ...bookmarks].map(entry => ({
+    params: { slug: entry.id },
     props: { entry },
   }))
 }
 
 const { entry } = Astro.props
-const { Content, remarkPluginFrontmatter } = await entry.render()
 
-// see: https://docs.astro.build/en/recipes/modified-time/
-const entryWithRemarkFrontmatter = { ...entry, data: { ...entry.data, ...remarkPluginFrontmatter } }
+// TODO: check for an undefined entry before calling render
+const { Content } = await render(entry)
 ---
 
-<Writing entry={entryWithRemarkFrontmatter}>
+<Writing entry={entry}>
   <Content />
 </Writing>

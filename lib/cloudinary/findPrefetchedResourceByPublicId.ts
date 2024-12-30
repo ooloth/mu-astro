@@ -1,4 +1,4 @@
-import isCloudinaryUpload from './isCloudinaryUpload'
+import isCloudinaryMuImage from './isCloudinaryUpload'
 import readCachedCloudinaryResources from './readCachedCloudinaryResources'
 
 const cloudinaryResources = await readCachedCloudinaryResources()
@@ -26,7 +26,7 @@ function parseAnyCustomAttributesPassedAsQueryParams(publicId: string): {
 function findCachedResourceByPublicId(publicId: string) {
   if (!cloudinaryResources) throw new Error('Cloudinary resources have not been cached yet.')
 
-  if (!isCloudinaryUpload(publicId)) {
+  if (!isCloudinaryMuImage(publicId)) {
     throw new Error(`${publicId} is not a Cloudinary image path.`)
   }
 

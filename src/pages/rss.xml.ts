@@ -7,7 +7,8 @@ import remarkGfm from 'remark-gfm'
 import remarkSmartyPants from 'remark-smartypants'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
-import { unified, type Processor, type VFileWithOutput } from 'unified'
+import { unified, type Processor } from 'unified'
+import { type VFile } from 'vfile'
 
 import { getPublishedPosts } from '../utils/posts'
 import site from '../data/site'
@@ -24,7 +25,14 @@ const unifiedPluginsPlusAstroDefaults = [
   rehypeStringify,
 ]
 
-export async function get(context: APIContext): Promise<{ body: string }> {
+const cleanContent = (content: string): string => {
+  // Examples: "code{:js}</code>", "token{:.fp}</code>"
+  const rehypePrettyCodeInlineLangIndicator = /{:\.?\w+}<\/code>/g
+
+  return content.replace(rehypePrettyCodeInlineLangIndicator, '</code>')
+}
+
+export async function GET(context: APIContext): Promise<Response> {
   // Only include published posts, even in development
   const publishedBlogPosts = await getPublishedPosts()
 
@@ -35,24 +43,25 @@ export async function get(context: APIContext): Promise<{ body: string }> {
     title: site.title,
     description: site.description.rss,
     customData: `<language>en-ca</language><lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
+    // stylesheet: '', TODO: https://docs.astro.build/en/recipes/rss/#adding-a-stylesheet
     items: await Promise.all(
       publishedBlogPosts.map(async post => {
         // An alternative to calling unified().use(plugin).use(plugin).process(post.body) that leverages the arrays of shared plugins above
         const content = (await unifiedPluginsPlusAstroDefaults
           // @ts-expect-error - TS doesn't like the type of "plugin" here
           .reduce((processor: Processor, plugin): Processor => processor.use(plugin), unified())
-          .process(post.body)) satisfies VFileWithOutput<string>
+          .process(post.body)) satisfies VFile
 
-        const slug = `${post.slug}/`
+        const slug = `${post.id}/`
         const permalink = post.data.feedId || `${site.url}${slug}`
 
         return {
-          title: post.data.title,
+          title: post.data.title ?? undefined,
           link: slug,
-          description: post.data.description,
-          pubDate: post.data.date,
+          description: post.data.description ?? undefined,
+          pubDate: post.data.date ?? undefined,
           customData: `<guid permalink="true">${permalink}</guid><author>${site.author.email})</author>`,
-          content: String(content.value),
+          content: cleanContent(String(content.value)),
         }
       }),
     ),

@@ -2,27 +2,38 @@
 import Tag from '../components/Tag.astro'
 import Main from '../layouts/Main.astro'
 import { getBookmarks } from '../utils/bookmarks'
-import { isPathnameInCollection, type Bookmark, type Writing, type Draft } from '../utils/collections'
-import { getAllTagsInNotes, getNotes } from '../utils/notes'
+import { isPathnameInCollection, type Bookmark, type Writing, type Draft, type Note } from '../utils/collections'
+import { getNotes } from '../utils/notes'
 import { getDrafts } from '../utils/posts'
+import { getAllTagsInEntries } from '../utils/tags'
 
 const bookmarks = await getBookmarks()
 const notes = await getNotes()
 const drafts = await getDrafts()
-const tags = await getAllTagsInNotes()
 
-const notesByLastModified = [...bookmarks, ...notes, ...drafts].sort((a, b) => {
-  const aTime = new Date(a.data.lastModified).getTime()
-  const bTime = new Date(b.data.lastModified).getTime()
-  return bTime - aTime
-})
+const tags = await getAllTagsInEntries([...bookmarks, ...notes, ...drafts])
+
+export const sortDescending = <T extends Draft | Note | Bookmark>(entries: T[]): T[] => {
+  const sortByDate = <T extends Draft | Note | Bookmark>(a: T, b: T): number => {
+    const lastModifiedTime = (entry: T): number =>
+      'lastModified' in entry.data && entry.data.lastModified
+        ? new Date(String(entry.data.lastModified)).getTime()
+        : -Infinity
+
+    return lastModifiedTime(b) - lastModifiedTime(a)
+  }
+
+  return entries.sort(sortByDate)
+}
+
+const notesByLastModified = sortDescending([...bookmarks, ...notes, ...drafts])
 
 const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
-  if (item.data.favicon) {
+  if ('favicon' in item.data && item.data.favicon) {
     return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block -mt-1 mr-[0.15rem] ml-[0.2rem]" />`
   }
 
-  if (item.data.url) {
+  if ('url' in item.data && typeof item.data.url === 'string') {
     const url = new URL(item.data.url)
     if (url.hostname.includes('youtube.com')) {
       return '📺'
@@ -35,7 +46,7 @@ const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
     }
   }
 
-  if (isPathnameInCollection(item.slug, drafts)) {
+  if (isPathnameInCollection(item.id, drafts)) {
     return '✍️'
   }
 
@@ -67,8 +78,8 @@ const getLinkEmoji = (item: Bookmark | Draft | Writing): string => {
           <li class="inline">
             <span class="whitespace-nowrap">
               <span class="inline mr-1" set:html={getLinkEmoji(item)} />
-              <a href={`/${item.slug}/`} class="inline link-nav whitespace-normal">
-                {item.data.title || item.slug} {item.data.author ? ` (${item.data.author})` : ''}
+              <a href={`/${item.id}/`} class="inline link-nav whitespace-normal">
+                {item.data.title || item.id} {'author' in item.data && item.data.author ? ` (${item.data.author})` : ''}
               </a>
             </span>
 

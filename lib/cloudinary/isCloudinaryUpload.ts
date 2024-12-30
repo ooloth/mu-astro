@@ -1,8 +1,8 @@
 /**
- * Returns true if the image path includes includes "cloudinary" or "mu/".
+ * Returns true if the image path starts with "mu/".
  */
-function isCloudinaryUpload(src: string): boolean {
-  return src.includes('mu/')
+function isCloudinaryMuImage(src: unknown): boolean {
+  return typeof src === 'string' && src.startsWith('mu/')
 }
 
-export default isCloudinaryUpload
+export default isCloudinaryMuImage

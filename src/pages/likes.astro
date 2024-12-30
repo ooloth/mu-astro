@@ -8,10 +8,13 @@ import { getMachineReadableDate } from '../utils/dates'
 
 const title = 'Likes'
 
-const iTunesLists = await getCollection('itunes')
-const bookList = iTunesLists.find(list => list.id === 'books')?.data
-const albumList = iTunesLists.find(list => list.id === 'albums')?.data
-const podcastList = iTunesLists.find(list => list.id === 'podcasts')?.data
+const books = await getCollection('books')
+const albums = await getCollection('albums')
+const podcasts = await getCollection('podcasts')
+
+const bookList = books.map(book => book.data)
+const albumList = albums.map(album => album.data)
+const podcastList = podcasts.map(podcast => podcast.data)
 
 const categories = await Promise.all([
   { title: 'TV Shows', items: await fetchTmdbList(import.meta.env.TMDB_TV_LIST_ID, 'tv'), source: 'TMDB' },

@@ -20,8 +20,8 @@ const tils = await getTILs()
 
           return (
             <li class="mb-28">
-              <a href={`/${til.slug}/`} class="link-heading heading text-2xl">
-                {til.data.title || til.slug}
+              <a href={`/${til.id}/`} class="link-heading heading text-2xl">
+                {til.data.title || til.id}
               </a>
 
               <time datetime={getMachineReadableDate(date)} class="timestamp block mt-2 md:min-w-[7rem]">

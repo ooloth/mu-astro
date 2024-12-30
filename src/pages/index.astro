@@ -1,12 +1,13 @@
 ---
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
+import type { Post } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getPosts, type Post } from '../utils/posts'
+import { getPosts } from '../utils/posts'
 
 const posts = await getPosts()
 
-const isScheduled = (post: Post): boolean => post.data.date && Date.parse(post.data.date) > Date.now()
+const isScheduled = (post: Post): boolean => (post.data.date ? Date.parse(String(post.data.date)) > Date.now() : false)
 ---
 
 <Main title={site.title} description={site.description.site}>
@@ -29,7 +30,6 @@ const isScheduled = (post: Post): boolean => post.data.date && Date.parse(post.d
           //     .filter(tag => tag !== 'post')
           //     .map(tag => tag.replace('topic/', ''))
           //     .at(0) ?? 'untagged'
-          // console.log('primaryTag:', primaryTag)
 
           const date = post.data.date || Date.now()
 
@@ -39,8 +39,8 @@ const isScheduled = (post: Post): boolean => post.data.date && Date.parse(post.d
                 {getHumanReadableDate(date)}
               </time>
 
-              <a href={`/${post.slug}/`} class="group outline-none">
-                <span class="link">{post.data.title || post.slug}</span>
+              <a href={`/${post.id}/`} class="group outline-none">
+                <span class="link">{post.data.title || post.id}</span>
                 {isScheduled(post) ? <span class="ml-1">📆</span> : null}
               </a>
             </li>
