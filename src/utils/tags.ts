@@ -17,6 +17,22 @@ export const cleanTags = (tags?: string[] | null): string[] =>
   ].sort()
 
 /**
+ * Returns all entries that include all of the specified tags.
+ */
+export const filterEntriesByTags = <T extends Post | TIL | Draft | Note | Bookmark>(
+  entries: T[],
+  tags: string[],
+): T[] => {
+  if (tags.length === 0) {
+    return entries
+  }
+
+  return entries.filter(entry => {
+    return cleanTags(tags).every(tag => cleanTags(entry.data.tags).includes(tag))
+  })
+}
+
+/**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
 export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark>(
