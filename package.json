@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "type": "module",
   "dependencies": {
+    "@astrojs/netlify": "^6.0.1",
+    "@astrojs/node": "^9.0.0",
     "@astrojs/rss": "^4.0.10",
     "astro": "^5.1.1",
     "cloudinary": "2.5.1",
@@ -42,7 +44,8 @@
   "scripts": {
     "astro": "astro",
     "build": "npm run cloudinary:cache && astro build",
-    "check": "npm run cloudinary:cache && npm run format:check && npm run lint:check && npm run types:check",
+    "build:local": "npm run cloudinary:cache && astro build --node",
+    "check": "npm run cloudinary:cache; npm run format:check; npm run lint:check; npm run types:check",
     "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
     "dev": "npm i && astro check; npm run cloudinary:cache && astro dev",
     "eslint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
@@ -51,7 +54,7 @@
     "lint:check": "npm run eslint",
     "lint:fix": "npm run eslint -- --fix",
     "prettier": "prettier \"**/*.+(astro|cjs|css|graphql|html|js|json|jsonc|jsx|md|mdx|mjs|toml|ts|tsx|xml|yaml|yml)\"",
-    "preview": "astro preview",
+    "preview": "npm run build:local && astro preview --node",
     "start": "npm run dev",
     "types:check": "astro check && tsc --noEmit"
   }

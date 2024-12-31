@@ -1,25 +1,44 @@
 import type { Bookmark, Draft, Note, Post, TIL } from './collections'
 
-export const cleanTags = (tags?: string[]): string[] =>
-  Array.from(
-    new Set(
+/**
+ * Remove unwanted tags and tag segmeents from a list of tags. Ensure kebab case to avoid URL query param issues.
+ */
+export const cleanTags = (tags?: string[] | null): string[] =>
+  [
+    ...new Set(
       (tags ?? [])
         .filter(Boolean)
         .filter(tag => !['bookmark', 'note', 'post', 'til'].includes(tag))
         .map(tag => tag.replace('s/', ''))
         .map(tag => tag.replace('t/', ''))
         .map(tag => tag.replace('topic/', ''))
-        .map(tag => tag.replaceAll('-', ' ')),
+        .map(tag => tag.replaceAll(' ', '-')),
     ),
-  ).sort()
+  ].sort()
+
+/**
+ * Returns all entries that include all of the specified tags.
+ */
+export const filterEntriesByTags = <T extends Post | TIL | Draft | Note | Bookmark>(
+  entries: T[],
+  tags: string[],
+): T[] => {
+  if (tags.length === 0) {
+    return entries
+  }
+
+  return entries.filter(entry => {
+    return cleanTags(tags).every(tag => cleanTags(entry.data.tags).includes(tag))
+  })
+}
 
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | Bookmark>(
+export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark>(
   entry: T,
   collections: T[],
-): Promise<Record<string, T[]>> => {
+): Record<string, T[]> => {
   const relatedByTag: Record<string, T[]> = {}
 
   for (const item of collections) {
@@ -45,5 +64,5 @@ export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | B
 /**
  * Returns a flat list of all tags found in all entries.
  */
-export const getAllTagsInEntries = async (entries: (Draft | Note | Bookmark)[]): Promise<string[]> =>
+export const getAllTagsInEntries = (entries: (Draft | Note | Bookmark)[]): string[] =>
   cleanTags(entries.flatMap(entry => entry.data.tags ?? []))

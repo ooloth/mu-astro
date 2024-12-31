@@ -1,11 +1,12 @@
 // See: https://docs.astro.build/en/guides/content-collections/
+// See: https://docs.astro.build/en/guides/content-collections/#built-in-loaders
+// See: https://www.digitalocean.com/community/tools/glob
+// See: https://globster.xyz
 
 import { defineCollection, z } from 'astro:content'
 import { glob, file } from 'astro/loaders'
 
-// 3. Define your collection(s)
 const albums = defineCollection({
-  // See: https://globster.xyz
   loader: file('./src/content/itunes/albums.yaml'),
   schema: z.object({
     date: z.coerce.date(),
@@ -15,7 +16,6 @@ const albums = defineCollection({
 })
 
 const bookmarks = defineCollection({
-  // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/bookmarks' }),
   schema: z.object({
     author: z.array(z.string()).optional().nullable(),
@@ -33,8 +33,6 @@ const bookmarks = defineCollection({
 })
 
 const books = defineCollection({
-  // See: https://docs.astro.build/en/guides/content-collections/#built-in-loaders
-  // See: https://globster.xyz
   loader: file('./src/content/itunes/books.yaml'),
   schema: z.object({
     name: z.string(),
@@ -44,7 +42,6 @@ const books = defineCollection({
 })
 
 const drafts = defineCollection({
-  // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/drafts' }),
   schema: z.object({
     title: z.string().optional().nullable(),
@@ -55,7 +52,6 @@ const drafts = defineCollection({
 })
 
 const pages = defineCollection({
-  // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/pages' }),
   schema: z.object({
     title: z.string(),
@@ -65,7 +61,6 @@ const pages = defineCollection({
 })
 
 const podcasts = defineCollection({
-  // See: https://globster.xyz
   loader: file('./src/content/itunes/podcasts.yaml'),
   schema: z.object({
     name: z.string(),
@@ -75,7 +70,6 @@ const podcasts = defineCollection({
 })
 
 const tils = defineCollection({
-  // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/til' }),
   schema: z.object({
     title: z.string(),
@@ -86,7 +80,6 @@ const tils = defineCollection({
 
 // TODO: split into notes and article
 const writing = defineCollection({
-  // See: https://globster.xyz
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/writing' }),
   schema: z.object({
     date: z.coerce.date().optional().nullable(), // TODO: require for articles
