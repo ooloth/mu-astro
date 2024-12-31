@@ -5,20 +5,39 @@ import { getBookmarks } from '../../utils/bookmarks'
 import { getNotes } from '../../utils/notes'
 import { getDrafts } from '../../utils/posts'
 import type { Bookmark, Draft, Note } from '../../utils/collections'
-import { filterEntriesByTags, getAllTagsInEntries } from '../../utils/tags'
+import { cleanTags, filterItemsByTags, getAllTagsInEntries } from '../../utils/tags'
 import type { NotesListItem } from './generateNotesPageHtml'
 
 // TODO: move some of these to separate files and add tests?
 
 type NotesPageEntry = Draft | Note | Bookmark
 
-// TODO: cache result since it doesn't change?
-const getAllNotes = async (): Promise<NotesPageEntry[]> => {
-  const drafts = await getDrafts()
-  const notes = await getNotes()
-  const bookmarks = await getBookmarks()
+let cachedEntriesAll: NotesPageEntry[] | null = null
+let cachedItemsAll: NotesListItem[] | null = null
+let cachedTagsAll: string[] | null = null
 
-  return [...drafts, ...notes, ...bookmarks]
+const getAllNotes = async (): Promise<NotesPageEntry[]> => {
+  if (!cachedEntriesAll) {
+    cachedEntriesAll = [...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
+  }
+
+  return cachedEntriesAll
+}
+
+const getAllItems = async (): Promise<NotesListItem[]> => {
+  if (!cachedItemsAll) {
+    cachedItemsAll = createNotesListItems(sortDescending(await getAllNotes()))
+  }
+
+  return cachedItemsAll
+}
+
+const getAllTags = async (): Promise<string[]> => {
+  if (!cachedTagsAll) {
+    cachedTagsAll = getAllTagsInEntries(await getAllNotes())
+  }
+
+  return cachedTagsAll
 }
 
 const validateTags = (tagsInUrl: string[], tagsInContent: string[]): string[] => {
@@ -28,9 +47,7 @@ const validateTags = (tagsInUrl: string[], tagsInContent: string[]): string[] =>
 const sortDescending = (entries: NotesPageEntry[]): NotesPageEntry[] => {
   const sortByDate = (a: NotesPageEntry, b: NotesPageEntry): number => {
     const lastModifiedTime = (entry: NotesPageEntry): number =>
-      'lastModified' in entry.data && entry.data.lastModified
-        ? new Date(String(entry.data.lastModified)).getTime()
-        : -Infinity
+      entry.data.lastModified ? new Date(String(entry.data.lastModified)).getTime() : -Infinity
 
     return lastModifiedTime(b) - lastModifiedTime(a)
   }
@@ -100,6 +117,7 @@ const createNotesListItems = (notes: NotesPageEntry[]): NotesListItem[] => {
     return {
       href: `/${item.id}/`,
       iconHtml,
+      tags: cleanTags(item.data.tags),
       text,
     }
   }
@@ -126,21 +144,19 @@ export const filterNotes = defineAction({
     tags: z.array(z.string()),
   }),
   handler: async (input): Promise<FilteredNotes> => {
-    const allNotes = await getAllNotes()
-    const tagsInContent = getAllTagsInEntries(allNotes) // TODO: cache this result?
-    const validTags = validateTags(input.tags, tagsInContent)
-    const filteredNotes = filterEntriesByTags(allNotes, validTags)
-    const sortedNotes = sortDescending(filteredNotes)
-    const results = createNotesListItems(sortedNotes)
+    const allItems = await getAllItems() // cached
+    const allTags = await getAllTags() // cached
+    const validTags = validateTags(input.tags, allTags)
+    const filteredNotes = filterItemsByTags(allItems, validTags)
 
     return {
       count: {
-        all: allNotes.length,
-        filtered: results.length,
+        all: allItems.length,
+        filtered: filteredNotes.length,
       },
-      results,
+      results: filteredNotes,
       tags: {
-        all: tagsInContent,
+        all: allTags,
         filtered: getAllTagsInEntries(filteredNotes),
         query: input.tags,
         valid: validTags,

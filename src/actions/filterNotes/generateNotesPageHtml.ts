@@ -45,6 +45,7 @@ export type NotesListItem = {
   //   src: string
   // }
   iconHtml: string
+  tags: string[]
   text: string
 }
 

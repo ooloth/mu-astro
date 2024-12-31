@@ -1,5 +1,12 @@
 import type { Bookmark, Draft, Note, Post, TIL } from './collections'
 
+type HasTags = {
+  tags?: string[] | null
+  data?: {
+    tags?: string[] | null
+  }
+}
+
 /**
  * Remove unwanted tags and tag segmeents from a list of tags. Ensure kebab case to avoid URL query param issues.
  */
@@ -17,18 +24,15 @@ export const cleanTags = (tags?: string[] | null): string[] =>
   ].sort()
 
 /**
- * Returns all entries that include all of the specified tags.
+ * Returns items that include ALL of the given tags.
  */
-export const filterEntriesByTags = <T extends Post | TIL | Draft | Note | Bookmark>(
-  entries: T[],
-  tags: string[],
-): T[] => {
+export const filterItemsByTags = <T extends HasTags>(items: T[], tags: string[]): T[] => {
   if (tags.length === 0) {
-    return entries
+    return items
   }
 
-  return entries.filter(entry => {
-    return cleanTags(tags).every(tag => cleanTags(entry.data.tags).includes(tag))
+  return items.filter(item => {
+    return cleanTags(tags).every(tag => cleanTags(item.data?.tags ?? item.tags).includes(tag))
   })
 }
 
@@ -62,7 +66,9 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | 
 }
 
 /**
- * Returns a flat list of all tags found in all entries.
+ * Returns a flat list of all tags found in all given items.
  */
-export const getAllTagsInEntries = (entries: (Draft | Note | Bookmark)[]): string[] =>
-  cleanTags(entries.flatMap(entry => entry.data.tags ?? []))
+export const getAllTagsInEntries = <T extends HasTags>(entries: T[]): string[] => {
+  const allTags = entries.flatMap(entry => entry.data?.tags ?? entry.tags ?? [])
+  return cleanTags([...new Set(allTags)]) // Remove duplicates
+}
