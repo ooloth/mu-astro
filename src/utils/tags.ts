@@ -1,17 +1,20 @@
 import type { Bookmark, Draft, Note, Post, TIL } from './collections'
 
-export const cleanTags = (tags?: string[]): string[] =>
-  Array.from(
-    new Set(
+/**
+ * Remove unwanted tags and tag segmeents from a list of tags. Ensure kebab case to avoid URL query param issues.
+ */
+export const cleanTags = (tags?: string[] | null): string[] =>
+  [
+    ...new Set(
       (tags ?? [])
         .filter(Boolean)
         .filter(tag => !['bookmark', 'note', 'post', 'til'].includes(tag))
         .map(tag => tag.replace('s/', ''))
         .map(tag => tag.replace('t/', ''))
         .map(tag => tag.replace('topic/', ''))
-        .map(tag => tag.replaceAll('-', ' ')),
+        .map(tag => tag.replaceAll(' ', '-')),
     ),
-  ).sort()
+  ].sort()
 
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
