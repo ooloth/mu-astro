@@ -1,0 +1,27 @@
+<!-- Wrap the component elements in a custom element “mu-heart” -->
+<mu-heart>
+  <button aria-label="Heart">💜</button> × <span>0</span>
+</mu-heart>
+
+<script>
+  // Define the behaviour for this new type of HTML element
+  // See: https://docs.astro.build/en/guides/client-side-scripts/#web-components-with-custom-elements
+  // WARN: Outside styles like tailwind's aren't available in the shadow DOM by default
+  class Heart extends HTMLElement {
+    connectedCallback() {
+      let count = 0
+
+      const heartButton = this.querySelector('button')!
+      const countSpan = this.querySelector('span')!
+
+      // Each time the button is clicked, update the count.
+      heartButton.addEventListener('click', () => {
+        count++
+        countSpan.textContent = count.toString()
+      })
+    }
+  }
+
+  // Tell the browser to use this Heart class for <mu-heart> elements.
+  customElements.define('mu-heart', Heart)
+</script>

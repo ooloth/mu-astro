@@ -1,18 +1,28 @@
 ---
+import { actions } from 'astro:actions'
+import { generateTagCloudItemHtml } from '../actions/filterNotes/generateNotesPageHtml'
 import Main from '../layouts/Main.astro'
+import { generateNotesListItemHtml } from '../actions/filterNotes/generateNotesPageHtml'
+
+// At build time (when URL query params are not available), fetch all notes and their tags and prerender them
+const { data, error } = await Astro.callAction(actions.filterNotes, { tags: [] })
+if (error) console.error(error)
+
+const allEntries = data?.results || []
+const allTags = data?.tags || { valid: [], filtered: [], all: [] }
 ---
 
 <Main title="Notes" description="Rough notes about coding and other topics.">
   <h1 class="sr-only">Notes</h1>
 
   <section>
-    <h2 class="sr-only">Bookmarks, post drafts and topic notes, filterable by tag</h2>
-
-    <!-- Tag cloud -->
-    <ul data-tag-cloud class="flex flex-wrap gap-2"></ul>
-
-    <!-- Bookmarks, post drafts and topic notes by last modified date -->
-    <ul data-notes-list class="mt-5 leading-loose"></ul>
+    <h2 class="sr-only">Bookmarks, post drafts and topic notes (sorted by last modified date and filterable by tag)</h2>
+    <ul
+      data-tag-cloud
+      set:html={generateTagCloudItemHtml(allTags.valid, allTags.filtered, allTags.all)}
+      class="flex flex-wrap gap-2"
+    />
+    <ul data-notes-list set:html={generateNotesListItemHtml(allEntries)} class="mt-5 leading-loose" />
   </section>
 </Main>
 
@@ -25,13 +35,9 @@ import Main from '../layouts/Main.astro'
   } from '../actions/filterNotes/generateNotesPageHtml'
   import type { FilteredNotes } from '../actions/filterNotes'
 
-  const getFilteredNotes = async (tags: string[]): Promise<FilteredNotes | null> => {
+  const getFilteredNotes = async (tags: string[]): Promise<FilteredNotes | undefined> => {
     const { data, error } = await actions.filterNotes({ tags })
-
-    if (error) {
-      console.error(error)
-      return null
-    }
+    if (error) console.error(error)
 
     return data
   }
@@ -45,29 +51,21 @@ import Main from '../layouts/Main.astro'
     const url = new URL(window.location.href)
 
     if (!tags.length) {
-      // Remove the tags parameter from the URL
-      url.searchParams.delete('tags')
+      url.searchParams.delete('tags') // remove the tags param from the URL
     } else {
-      // Manually add the tags as an unencoded comma-separated list
-      url.search = `tags=${tags.sort().join(',')}`
+      url.search = `tags=${tags.sort().join(',')}` // add the tags as an unencoded comma-separated list
     }
 
     window.history.pushState({}, '', url)
   }
 
-  const updateTagCloudHtml = (
-    tagsInUrl: string[],
-    tagsInFilteredEntries: string[],
-    tagsInAllEntries: string[],
-  ): void => {
+  const updateTagCloudHtml = (tags: FilteredNotes['tags']): void => {
     const tagCloud = document.querySelector('ul[data-tag-cloud]')!
-
-    tagCloud.innerHTML = generateTagCloudItemHtml(tagsInUrl, tagsInFilteredEntries, tagsInAllEntries)
+    tagCloud.innerHTML = generateTagCloudItemHtml(tags.valid, tags.filtered, tags.all)
   }
 
   const updateNotesListHtml = (data: NotesListItem[]): void => {
     const notesList = document.querySelector('ul[data-notes-list]')!
-
     notesList.innerHTML = generateNotesListItemHtml(data)
   }
 
@@ -77,7 +75,7 @@ import Main from '../layouts/Main.astro'
     if (filteredNotes) {
       const { results, tags } = filteredNotes
       updateTagsInUrl(tags.valid)
-      updateTagCloudHtml(tags.valid, tags.filtered, tags.all)
+      updateTagCloudHtml(tags)
       updateNotesListHtml(results)
       attachTagButtonEventListeners()
     }
@@ -89,9 +87,9 @@ import Main from '../layouts/Main.astro'
       const tagsInUrl = getTagsFromUrl()
 
       // If the tag is already in the URL, remove it; otherwise append it
+      // TODO: use set operations?
       const newTagsInUrl = tagsInUrl.includes(tag) ? tagsInUrl.filter(t => t !== tag) : [...tagsInUrl, tag]
 
-      // Otherwise, add the tag to the URL and update the notes list
       updateUrlAndDOM(newTagsInUrl)
     }
 
