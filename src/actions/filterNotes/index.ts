@@ -6,12 +6,13 @@ import { getNotes } from '../../utils/notes'
 import { getDrafts } from '../../utils/posts'
 import type { Bookmark, Draft, Note } from '../../utils/collections'
 import { filterEntriesByTags, getAllTagsInEntries } from '../../utils/tags'
-import type { NotesListItem } from './generateNotesListItemHtml'
+import type { NotesListItem } from './generateNotesPageHtml'
 
 // TODO: move some of these to separate files and add tests?
 
 type NotesPageEntry = Draft | Note | Bookmark
 
+// TODO: cache result since it doesn't change?
 const getAllNotes = async (): Promise<NotesPageEntry[]> => {
   const drafts = await getDrafts()
   const notes = await getNotes()
@@ -22,6 +23,19 @@ const getAllNotes = async (): Promise<NotesPageEntry[]> => {
 
 const validateTags = (tagsInUrl: string[], tagsInContent: string[]): string[] => {
   return tagsInUrl.filter(tag => tagsInContent.includes(tag))
+}
+
+const sortDescending = (entries: NotesPageEntry[]): NotesPageEntry[] => {
+  const sortByDate = (a: NotesPageEntry, b: NotesPageEntry): number => {
+    const lastModifiedTime = (entry: NotesPageEntry): number =>
+      'lastModified' in entry.data && entry.data.lastModified
+        ? new Date(String(entry.data.lastModified)).getTime()
+        : -Infinity
+
+    return lastModifiedTime(b) - lastModifiedTime(a)
+  }
+
+  return entries.sort(sortByDate)
 }
 
 const getAccessibleEmojiMarkup = (emoji: string): string => {
@@ -71,30 +85,17 @@ const getIconHtml = (item: NotesPageEntry): string => {
   return '📝'
 }
 
-const getText = (item: NotesPageEntry): string => {
+const getLinkText = (item: NotesPageEntry): string => {
   const title = item.data.title || item.id
   const author = 'author' in item.data && item.data.author ? ` (${item.data.author})` : ''
 
   return `${title}${author}`
 }
 
-const sortDescending = (entries: NotesPageEntry[]): NotesPageEntry[] => {
-  const sortByDate = (a: NotesPageEntry, b: NotesPageEntry): number => {
-    const lastModifiedTime = (entry: NotesPageEntry): number =>
-      'lastModified' in entry.data && entry.data.lastModified
-        ? new Date(String(entry.data.lastModified)).getTime()
-        : -Infinity
-
-    return lastModifiedTime(b) - lastModifiedTime(a)
-  }
-
-  return entries.sort(sortByDate)
-}
-
 const createNotesListItems = (notes: NotesPageEntry[]): NotesListItem[] => {
   const createNotesListItem = (item: NotesPageEntry): NotesListItem => {
     const iconHtml = getIconHtml(item)
-    const text = getText(item)
+    const text = getLinkText(item)
 
     return {
       href: `/${item.id}/`,
@@ -106,11 +107,25 @@ const createNotesListItems = (notes: NotesPageEntry[]): NotesListItem[] => {
   return notes.map(createNotesListItem)
 }
 
+export type FilteredNotes = {
+  count: {
+    all: number
+    filtered: number
+  }
+  results: NotesListItem[]
+  tags: {
+    all: string[]
+    filtered: string[]
+    query: string[]
+    valid: string[]
+  }
+}
+
 export const filterNotes = defineAction({
   input: z.object({
     tags: z.array(z.string()),
   }),
-  handler: async input => {
+  handler: async (input): Promise<FilteredNotes> => {
     const allNotes = await getAllNotes()
     const tagsInContent = getAllTagsInEntries(allNotes) // TODO: cache this result?
     const validTags = validateTags(input.tags, tagsInContent)
@@ -125,6 +140,8 @@ export const filterNotes = defineAction({
       },
       results,
       tags: {
+        all: tagsInContent,
+        filtered: getAllTagsInEntries(filteredNotes),
         query: input.tags,
         valid: validTags,
       },
