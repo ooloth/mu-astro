@@ -68,7 +68,7 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | 
 /**
  * Returns a flat list of all tags found in all given items.
  */
-export const getAllTagsInEntries = <T extends HasTags>(entries: T[]): string[] => {
-  const allTags = entries.flatMap(entry => entry.data?.tags ?? entry.tags ?? [])
+export const getAllTagsInItems = <T extends HasTags>(items: T[]): string[] => {
+  const allTags = items.flatMap(item => item.data?.tags ?? item.tags ?? [])
   return cleanTags([...new Set(allTags)]) // Remove duplicates
 }

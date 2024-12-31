@@ -5,28 +5,20 @@ import { getBookmarks } from '../../utils/bookmarks'
 import { getNotes } from '../../utils/notes'
 import { getDrafts } from '../../utils/posts'
 import type { Bookmark, Draft, Note } from '../../utils/collections'
-import { cleanTags, filterItemsByTags, getAllTagsInEntries } from '../../utils/tags'
+import { cleanTags, filterItemsByTags, getAllTagsInItems } from '../../utils/tags'
 import type { NotesListItem } from './generateNotesPageHtml'
 
 // TODO: move some of these to separate files and add tests?
 
 type NotesPageEntry = Draft | Note | Bookmark
 
-let cachedEntriesAll: NotesPageEntry[] | null = null
 let cachedItemsAll: NotesListItem[] | null = null
 let cachedTagsAll: string[] | null = null
 
-const getAllNotes = async (): Promise<NotesPageEntry[]> => {
-  if (!cachedEntriesAll) {
-    cachedEntriesAll = [...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
-  }
-
-  return cachedEntriesAll
-}
-
 const getAllItems = async (): Promise<NotesListItem[]> => {
   if (!cachedItemsAll) {
-    cachedItemsAll = createNotesListItems(sortDescending(await getAllNotes()))
+    const allEntries = [...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
+    cachedItemsAll = createNotesListItems(sortDescending(allEntries))
   }
 
   return cachedItemsAll
@@ -34,7 +26,7 @@ const getAllItems = async (): Promise<NotesListItem[]> => {
 
 const getAllTags = async (): Promise<string[]> => {
   if (!cachedTagsAll) {
-    cachedTagsAll = getAllTagsInEntries(await getAllNotes())
+    cachedTagsAll = getAllTagsInItems(await getAllItems())
   }
 
   return cachedTagsAll
@@ -44,10 +36,19 @@ const validateTags = (tagsInUrl: string[], tagsInContent: string[]): string[] =>
   return tagsInUrl.filter(tag => tagsInContent.includes(tag))
 }
 
-const sortDescending = (entries: NotesPageEntry[]): NotesPageEntry[] => {
-  const sortByDate = (a: NotesPageEntry, b: NotesPageEntry): number => {
-    const lastModifiedTime = (entry: NotesPageEntry): number =>
-      entry.data.lastModified ? new Date(String(entry.data.lastModified)).getTime() : -Infinity
+type HasLastModified = {
+  lastModified?: string
+  data?: {
+    lastModified?: string
+  }
+}
+
+const sortDescending = <T extends HasLastModified>(entries: T[]): T[] => {
+  const sortByDate = (a: T, b: T): number => {
+    const lastModifiedTime = (entry: T): number => {
+      const lastModified = entry.data?.lastModified ?? entry.lastModified
+      return lastModified ? new Date(String(lastModified)).getTime() : -Infinity
+    }
 
     return lastModifiedTime(b) - lastModifiedTime(a)
   }
@@ -56,7 +57,7 @@ const sortDescending = (entries: NotesPageEntry[]): NotesPageEntry[] => {
 }
 
 const getAccessibleEmojiMarkup = (emoji: string): string => {
-  const getDescription = (emoji: string): string => {
+  const getEmojiDescription = (emoji: string): string => {
     const description: Record<string, string> = {
       '📺': 'television',
       '🧰': 'toolbox',
@@ -69,36 +70,38 @@ const getAccessibleEmojiMarkup = (emoji: string): string => {
     return emoji in description ? description[emoji] : ''
   }
 
-  return `<span role="img" aria-label="${getDescription(emoji)}">${emoji}</span>`
+  return `<span role="img" aria-label="${getEmojiDescription(emoji)}">${emoji}</span>`
 }
 
 // TODO: return just the content string and let the frontend render it as html?
 const getIconHtml = (item: NotesPageEntry): string => {
-  // First choice: writing hand if draft
   if (item.collection === 'drafts') {
     return getAccessibleEmojiMarkup('✍️')
   }
 
-  // Second choice: favicon if available
-  if ('favicon' in item.data && item.data.favicon) {
-    return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block -mt-1 mr-[0.15rem] ml-[0.2rem]" />`
-  }
+  if (item.collection === 'bookmarks') {
+    if (item.data.favicon) {
+      return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block -mt-1 mr-[0.15rem] ml-[0.2rem]" />`
+    }
 
-  // Third choice: custom emoji based on common domain name
-  if ('url' in item.data && typeof item.data.url === 'string') {
-    const url = new URL(item.data.url)
-    if (url.hostname.includes('youtube.com')) {
-      return '📺'
-    } else if (url.hostname.includes('github.com')) {
-      return '🧰'
-    } else if (url.hostname.includes('reddit.com')) {
-      return '💬'
-    } else {
-      return '📖'
+    if (item.data.source) {
+      const emojiByHostname = {
+        'github.com': '🧰',
+        'reddit.com': '💬',
+        'stackoverflow.com': '💬',
+        'youtube.com': '📺',
+      } as const
+
+      const isKnownHostname = (hostname: string): hostname is keyof typeof emojiByHostname =>
+        hostname in emojiByHostname
+
+      const hostname = new URL(item.data.source).hostname
+
+      return getAccessibleEmojiMarkup(isKnownHostname(hostname) ? emojiByHostname[hostname] : '📖')
     }
   }
 
-  // Default: generic emoji for notes
+  // Generic note emoji as default
   return '📝'
 }
 
@@ -147,17 +150,17 @@ export const filterNotes = defineAction({
     const allItems = await getAllItems() // cached
     const allTags = await getAllTags() // cached
     const validTags = validateTags(input.tags, allTags)
-    const filteredNotes = filterItemsByTags(allItems, validTags)
+    const filteredItems = filterItemsByTags(allItems, validTags)
 
     return {
       count: {
         all: allItems.length,
-        filtered: filteredNotes.length,
+        filtered: filteredItems.length,
       },
-      results: filteredNotes,
+      results: filteredItems,
       tags: {
         all: allTags,
-        filtered: getAllTagsInEntries(filteredNotes),
+        filtered: getAllTagsInItems(filteredItems),
         query: input.tags,
         valid: validTags,
       },
