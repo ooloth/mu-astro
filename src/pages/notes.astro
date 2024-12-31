@@ -35,13 +35,9 @@ const allTags = data?.tags || { valid: [], filtered: [], all: [] }
   } from '../actions/filterNotes/generateNotesPageHtml'
   import type { FilteredNotes } from '../actions/filterNotes'
 
-  const getFilteredNotes = async (tags: string[]): Promise<FilteredNotes | null> => {
+  const getFilteredNotes = async (tags: string[]): Promise<FilteredNotes | undefined> => {
     const { data, error } = await actions.filterNotes({ tags })
-
-    if (error) {
-      console.error(error)
-      return null
-    }
+    if (error) console.error(error)
 
     return data
   }
@@ -55,29 +51,21 @@ const allTags = data?.tags || { valid: [], filtered: [], all: [] }
     const url = new URL(window.location.href)
 
     if (!tags.length) {
-      // Remove the tags parameter from the URL
-      url.searchParams.delete('tags')
+      url.searchParams.delete('tags') // remove the tags param from the URL
     } else {
-      // Manually add the tags as an unencoded comma-separated list
-      url.search = `tags=${tags.sort().join(',')}`
+      url.search = `tags=${tags.sort().join(',')}` // add the tags as an unencoded comma-separated list
     }
 
     window.history.pushState({}, '', url)
   }
 
-  const updateTagCloudHtml = (
-    tagsInUrl: string[],
-    tagsInFilteredEntries: string[],
-    tagsInAllEntries: string[],
-  ): void => {
+  const updateTagCloudHtml = (tags: FilteredNotes['tags']): void => {
     const tagCloud = document.querySelector('ul[data-tag-cloud]')!
-
-    tagCloud.innerHTML = generateTagCloudItemHtml(tagsInUrl, tagsInFilteredEntries, tagsInAllEntries)
+    tagCloud.innerHTML = generateTagCloudItemHtml(tags.valid, tags.filtered, tags.all)
   }
 
   const updateNotesListHtml = (data: NotesListItem[]): void => {
     const notesList = document.querySelector('ul[data-notes-list]')!
-
     notesList.innerHTML = generateNotesListItemHtml(data)
   }
 
@@ -87,7 +75,7 @@ const allTags = data?.tags || { valid: [], filtered: [], all: [] }
     if (filteredNotes) {
       const { results, tags } = filteredNotes
       updateTagsInUrl(tags.valid)
-      updateTagCloudHtml(tags.valid, tags.filtered, tags.all)
+      updateTagCloudHtml(tags)
       updateNotesListHtml(results)
       attachTagButtonEventListeners()
     }
@@ -99,9 +87,9 @@ const allTags = data?.tags || { valid: [], filtered: [], all: [] }
       const tagsInUrl = getTagsFromUrl()
 
       // If the tag is already in the URL, remove it; otherwise append it
+      // TODO: use set operations?
       const newTagsInUrl = tagsInUrl.includes(tag) ? tagsInUrl.filter(t => t !== tag) : [...tagsInUrl, tag]
 
-      // Otherwise, add the tag to the URL and update the notes list
       updateUrlAndDOM(newTagsInUrl)
     }
 
