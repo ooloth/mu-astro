@@ -17,6 +17,6 @@ const removePrivateNotes = (notes: Note[]): Note[] =>
  * Returns a flat list of all notes with private notes removed (in production) and sorted by last modified date.
  */
 export const getNotes = async (): Promise<Note[]> => {
-  const notesToShow = removePrivateNotes(await getCollection('writing', note => isNote(note)))
+  const notesToShow = removePrivateNotes(await getCollection('writing', (note: Writing): note is Note => isNote(note)))
   return Promise.all(notesToShow.map(note => addRemarkFrontmatter(note)))
 }
