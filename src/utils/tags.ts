@@ -16,10 +16,10 @@ export const cleanTags = (tags?: string[]): string[] =>
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getEntriesWithTags = async <T extends Post | TIL | Draft | Note | Bookmark>(
+export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark>(
   entry: T,
   collections: T[],
-): Promise<Record<string, T[]>> => {
+): Record<string, T[]> => {
   const relatedByTag: Record<string, T[]> = {}
 
   for (const item of collections) {

@@ -5,7 +5,7 @@ import { getDrafts, getPosts } from '../utils/posts'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
-import { getEntriesWithTags as getEntriesWithSameTags } from '../utils/tags'
+import { getAllEntriesWithSameTagsAsEntry } from '../utils/tags'
 
 type Props = {
   entry: Post | TIL | Draft | Note | Bookmark
@@ -22,7 +22,13 @@ const notes = await getNotes()
 
 const isPost = isPathnameInCollection(pathname, posts)
 
-const entriesWithSameTags = await getEntriesWithSameTags(entry, [...posts, ...tils, ...drafts, ...notes, ...bookmarks])
+const entriesWithSameTags = getAllEntriesWithSameTagsAsEntry(entry, [
+  ...posts,
+  ...tils,
+  ...drafts,
+  ...notes,
+  ...bookmarks,
+])
 
 const hasRelated = Object.keys(entriesWithSameTags).length > 0
 ---
