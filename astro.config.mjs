@@ -8,11 +8,18 @@ import { transformerCopyButton } from '@rehype-pretty/transformers'
 import rehypePlugins from './lib/rehype/plugins.ts'
 import remarkPlugins from './lib/remark/plugins.ts'
 
-// source: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
+import netlify from '@astrojs/netlify'
+import node from '@astrojs/node'
+
+// The netlify adapter doesn't support preview mode, so we use the node adapter locally by default for "npm run preview"
+let adapter = process.argv.includes('--node') ? node({ mode: 'standalone' }) : netlify()
+
+// See: https://github.com/atomiks/rehype-pretty-code/blob/master/website/assets/moonlight-ii.json
 const moonlightV2 = await fsExtra.readJson('./lib/rehype/themes/moonlight-ii.json')
 
 // see: https://astro.build/config
 export default defineConfig({
+  adapter,
   integrations: [
     tailwind({
       // Disable injecting a basic `base.css` import on every page so I can define and import my own
