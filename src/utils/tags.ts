@@ -45,5 +45,5 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | 
 /**
  * Returns a flat list of all tags found in all entries.
  */
-export const getAllTagsInEntries = async (entries: (Draft | Note | Bookmark)[]): Promise<string[]> =>
+export const getAllTagsInEntries = (entries: (Draft | Note | Bookmark)[]): string[] =>
   cleanTags(entries.flatMap(entry => entry.data.tags ?? []))

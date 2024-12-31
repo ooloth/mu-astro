@@ -7,11 +7,8 @@ import { getNotes } from '../utils/notes'
 import { getDrafts } from '../utils/posts'
 import { getAllTagsInEntries } from '../utils/tags'
 
-const bookmarks = await getBookmarks()
-const notes = await getNotes()
-const drafts = await getDrafts()
+const tags = getAllTagsInEntries([...(await getBookmarks()), ...(await getNotes()), ...(await getDrafts())])
 
-const tags = await getAllTagsInEntries([...bookmarks, ...notes, ...drafts])
 
 export const sortDescending = <T extends Draft | Note | Bookmark>(entries: T[]): T[] => {
   const sortByDate = <T extends Draft | Note | Bookmark>(a: T, b: T): number => {
