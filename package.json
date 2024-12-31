@@ -45,7 +45,7 @@
     "astro": "astro",
     "build": "npm run cloudinary:cache && astro build",
     "build:local": "npm run cloudinary:cache && astro build --node",
-    "check": "npm run cloudinary:cache && npm run format:check && npm run lint:check && npm run types:check",
+    "check": "npm run cloudinary:cache; npm run format:check; npm run lint:check; npm run types:check",
     "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
     "dev": "npm i && astro check; npm run cloudinary:cache && astro dev",
     "eslint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
