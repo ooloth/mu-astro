@@ -2,14 +2,16 @@
 import nav from '../data/nav'
 ---
 
-<footer class="flex flex-col items-center sm:flex-row sm:items-baseline sm:justify-between mt-20 text-base">
+<footer
+  class="relative flex flex-col gap-3 items-center sm:flex-row sm:items-baseline sm:justify-between mt-20 bg-zinc-900 py-7 px-4 sm:px-6 text-base"
+>
   <p class="text-zinc-300">&copy; {new Date().getFullYear()} Michael Uloth</p>
 
-  <nav class="mt-3">
+  <nav>
     <ul class="flex flex-wrap justify-start">
       {
         nav.bottom.map(item => (
-          <li class="mx-2 sm:ms-2">
+          <li class="mx-2 sm:ms-2 sm:me-0">
             <a href={item.url} target="_blank" class="link-nav">
               {item.title}
             </a>
