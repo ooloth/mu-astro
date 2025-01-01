@@ -7,7 +7,7 @@ import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
 
 export async function GET(): Promise<Response> {
-  const pages = ['/', '/til/', '/notes/', '/about/', '/likes/'] // static pages statically output by src/pages
+  const pages = ['/', '/notes/', '/about/', '/likes/'] // static pages statically output by src/pages
   const posts = await getPosts() // pages dynamically created by src/pages/[slug].astro
   const tils = await getTILs() // pages dynamically created by src/pages/[slug].astro
   const drafts = await getDrafts() // pages dynamically created by src/pages/[slug].astro

@@ -1,52 +1,76 @@
 ---
+import PrevNext from '../components/PrevNext.astro'
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
-import type { Post } from '../utils/collections'
+import { sortByPublishDate } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import { getPosts } from '../utils/posts'
+import { getTILs } from '../utils/tils'
 
-const posts = await getPosts()
-
-const isScheduled = (post: Post): boolean => (post.data.date ? Date.parse(String(post.data.date)) > Date.now() : false)
+const writing = sortByPublishDate([...(await getPosts()), ...(await getTILs())])
+const latest = writing.slice(0, 5)
+const rest = writing.slice(5)
 ---
 
 <Main title={site.title} description={site.description.site}>
   <h1 class="sr-only">{site.title}</h1>
 
-  <section>
-    <h2 class="sr-only">Latest Posts</h2>
+  <div class="relative xl:flex xl:gap-28 2xl:gap-48 xl:justify-between xl:items-start mx-auto max-w-[90rem]">
+    <section class="max-w-[70ch]">
+      <h2 class="sr-only">The full content of my {latest.length} most recent posts</h2>
 
-    <ol reversed class="columns-xl gap-x-24">
-      {
-        posts.map(post => {
-          // TODO: my goal is to group the posts under a heading for each topic (tag) or perhaps the even-higher level category
-          // (e.g. Languages, Frameworks, etc) so I can do the same on the notes page and start publishing small notes quickly
-          // without worrying about nesting them hierarchically or inserting them into a topic note. All hidden "drafts" could
-          // just be immediately published as rough note outlines which I can expand on later if worthwhile. Otherwise, a quick
-          // blurb and a few links would be enough to share the idea in a way that would be helpful to future me, at the very least.
-          // TODO: read a "category" property instead of the first tag?
-          // const primaryTag =
-          //   (post.data.tags ?? ['untagged'])
-          //     .filter(tag => tag !== 'post')
-          //     .map(tag => tag.replace('topic/', ''))
-          //     .at(0) ?? 'untagged'
+      <ol reversed class="-mt-24">
+        {
+          latest.map(post => {
+            const date = post.data.date || post.data.lastModified
 
-          const date = post.data.date || Date.now()
+            return (
+              <li class="mt-24">
+                <time datetime={getMachineReadableDate(date)} class="timestamp block mt-2 md:min-w-[7rem]">
+                  {getHumanReadableDate(date)}
+                </time>
 
-          return (
-            <li class="flex flex-col md:flex-row md:items-baseline mb-7 md:mb-4">
-              <time datetime={getMachineReadableDate(date)} class="timestamp md:min-w-[7rem]">
-                {getHumanReadableDate(date)}
-              </time>
+                <a href={`/${post.id}/`} class="link-heading heading text-[1.45rem]">
+                  {post.data.title || post.id}
+                </a>
 
-              <a href={`/${post.id}/`} class="group outline-none">
-                <span class="link">{post.data.title || post.id}</span>
-                {isScheduled(post) ? <span class="ml-1">📆</span> : null}
-              </a>
-            </li>
-          )
-        })
-      }
-    </ol>
-  </section>
+                <div class="markdown pt-2">
+                  <post.Content />
+                </div>
+              </li>
+            )
+          })
+        }
+      </ol>
+
+      <div class="hidden xl:block">
+        <PrevNext entry={null} prev={null} next={rest[0]} />
+      </div>
+    </section>
+
+    <section class="mt-24 xl:mt-0 xl:sticky xl:top-7 xl:w-1/3 xl:max-w-[40ch]">
+      <h2 class="heading mt-8 xl:mt-0 text-[1.6rem] xl:text-[1.4rem]">Recent Posts ✍️</h2>
+
+      <ol reversed class="columns-md gap-x-20 mt-7">
+        {
+          rest.map((post, index) => {
+            const date = post.data.date || Date.now()
+
+            return (
+              <li class={`flex flex-col ${index > 0 ? 'mt-7' : null} break-inside-avoid-column`}>
+                {/* <li class="flex flex-col md:flex-row md:items-baseline mb-7 md:mb-4"> */}
+                <time datetime={getMachineReadableDate(date)} class="timestamp md:min-w-[7rem]">
+                  {getHumanReadableDate(date)}
+                </time>
+
+                <a href={`/${post.id}/`} class="group outline-none">
+                  <span class="link">{post.data.title || post.id}</span>
+                </a>
+              </li>
+            )
+          })
+        }
+      </ol>
+    </section>
+  </div>
 </Main>

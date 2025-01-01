@@ -10,7 +10,9 @@ type WithLastModified<T extends { data: object }> = Omit<T, 'data'> & {
 export type Writing = CollectionEntry<'writing'>
 
 export type PostEntry = CollectionEntry<'writing'>
-export type Post = WithLastModified<PostEntry>
+export type Post = WithLastModified<PostEntry> & {
+  Content: AstroComponentFactory
+}
 
 export type TILEntry = CollectionEntry<'tils'>
 export type TIL = WithLastModified<TILEntry> & {
@@ -56,17 +58,47 @@ export async function addRemarkFrontmatter(
     | Bookmark
 }
 
+type HasDate = {
+  date?: Date | null
+  data?: {
+    date?: Date | null
+  }
+}
+
 /**
  * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
  */
-export const sortDescending = <T extends PostEntry | TIL | TILEntry | Draft>(entries: T[]): T[] => {
-  const sortByDate = <T extends PostEntry | TIL | TILEntry | Draft>(a: T, b: T): number => {
-    const dateA = a.data.date ? new Date(a.data.date).getTime() : -Infinity
-    const dateB = b.data.date ? new Date(b.data.date).getTime() : -Infinity
-    return dateB - dateA
+export const sortByPublishDate = <T extends HasDate>(items: T[]): T[] => {
+  const sortByDate = (a: T, b: T): number => {
+    const publishTime = (item: T): number => {
+      const date = item.data?.date ?? item.date
+      return date ? new Date(String(date)).getTime() : -Infinity
+    }
+
+    return publishTime(b) - publishTime(a)
   }
 
-  return entries.sort(sortByDate)
+  return items.sort(sortByDate)
+}
+
+type HasLastModified = {
+  lastModified?: string
+  data?: {
+    lastModified?: string
+  }
+}
+
+export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T[] => {
+  const sortByDate = (a: T, b: T): number => {
+    const lastModifiedTime = (item: T): number => {
+      const lastModified = item.data?.lastModified ?? item.lastModified
+      return lastModified ? new Date(String(lastModified)).getTime() : -Infinity
+    }
+
+    return lastModifiedTime(b) - lastModifiedTime(a)
+  }
+
+  return items.sort(sortByDate)
 }
 
 /**

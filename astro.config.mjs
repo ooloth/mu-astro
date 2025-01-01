@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import { defineConfig } from 'astro/config'
 import tailwind from '@astrojs/tailwind'
 import rehypePrettyCode from 'rehype-pretty-code'
-import { transformerCopyButton } from '@rehype-pretty/transformers'
+// import { transformerCopyButton } from '@rehype-pretty/transformers'
 
 import rehypePlugins from './lib/rehype/plugins.ts'
 import remarkPlugins from './lib/remark/plugins.ts'
@@ -20,6 +20,9 @@ const moonlightV2 = await fsExtra.readJson('./lib/rehype/themes/moonlight-ii.jso
 // see: https://astro.build/config
 export default defineConfig({
   adapter,
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [
     tailwind({
       // Disable injecting a basic `base.css` import on every page so I can define and import my own
@@ -45,11 +48,13 @@ export default defineConfig({
             obj: 'variable.other.object',
             str: 'string',
           },
-          transformers: [
-            transformerCopyButton({
-              visibility: 'hover',
-            }),
-          ],
+          // FIXME: scrolls horizontally with the code instead of staying in the top right corner
+          // transformers: [
+          //   transformerCopyButton({
+          //     visibility: 'hover',
+          //     feedbackDuration: 2500,
+          //   }),
+          // ],
         },
       ],
     ],

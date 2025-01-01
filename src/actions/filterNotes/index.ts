@@ -4,7 +4,7 @@ import { z } from 'astro:schema'
 import { getBookmarks } from '../../utils/bookmarks'
 import { getNotes } from '../../utils/notes'
 import { getDrafts } from '../../utils/posts'
-import type { Bookmark, Draft, Note } from '../../utils/collections'
+import { sortByLastModifiedDate, type Bookmark, type Draft, type Note } from '../../utils/collections'
 import { cleanTags, filterItemsByTags, getAllTagsInItems } from '../../utils/tags'
 import type { NotesListItem } from './generateNotesPageHtml'
 
@@ -18,7 +18,7 @@ let cachedTagsAll: string[] | null = null
 const getAllItems = async (): Promise<NotesListItem[]> => {
   if (!cachedItemsAll) {
     const allEntries = [...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
-    cachedItemsAll = createNotesListItems(sortDescending(allEntries))
+    cachedItemsAll = createNotesListItems(sortByLastModifiedDate(allEntries))
   }
 
   return cachedItemsAll
@@ -34,26 +34,6 @@ const getAllTags = async (): Promise<string[]> => {
 
 const validateTags = (tagsInUrl: string[], tagsInContent: string[]): string[] => {
   return tagsInUrl.filter(tag => tagsInContent.includes(tag))
-}
-
-type HasLastModified = {
-  lastModified?: string
-  data?: {
-    lastModified?: string
-  }
-}
-
-const sortDescending = <T extends HasLastModified>(entries: T[]): T[] => {
-  const sortByDate = (a: T, b: T): number => {
-    const lastModifiedTime = (entry: T): number => {
-      const lastModified = entry.data?.lastModified ?? entry.lastModified
-      return lastModified ? new Date(String(lastModified)).getTime() : -Infinity
-    }
-
-    return lastModifiedTime(b) - lastModifiedTime(a)
-  }
-
-  return entries.sort(sortByDate)
 }
 
 const getAccessibleEmojiMarkup = (emoji: string): string => {

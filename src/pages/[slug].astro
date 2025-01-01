@@ -6,27 +6,47 @@ import { getTILs } from '../utils/tils'
 import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 import { getBookmarks } from '../utils/bookmarks'
+import { isPublished, sortByLastModifiedDate, sortByPublishDate, type Post, type TIL } from '../utils/collections'
 
+/**
+ * Generate a list of paths to pre-render for my content collections.
+ */
 export async function getStaticPaths() {
-  const posts = await getPosts()
-  const tils = await getTILs()
-  const drafts = await getDrafts()
-  const notes = await getNotes()
-  const bookmarks = await getBookmarks()
+  const writing = [...(await getPosts()), ...(await getTILs())]
+
+  // Separate scheduled posts and treat them as drafts
+  const [publishedWriting, unpublishedWriting] = writing.reduce(
+    ([published, unpublished], entry) => {
+      if (isPublished(entry)) {
+        return [[...published, entry], unpublished]
+      } else {
+        return [published, [...unpublished, entry]]
+      }
+    },
+    [[], []] as [(Post | TIL)[], (Post | TIL)[]],
+  )
+
+  const notes = [...unpublishedWriting, ...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
+  const sorted = [...sortByPublishDate(publishedWriting), ...sortByLastModifiedDate(notes)]
 
   // Generate a path for each writing collection entry
-  return [...posts, ...tils, ...drafts, ...notes, ...bookmarks].map(entry => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }))
+  return sorted.map((entry, index) => {
+    const prev = index > 0 ? sorted[index - 1] : null
+    const next = index < sorted.length - 1 ? sorted[index + 1] : null
+
+    return {
+      params: { slug: entry.id },
+      props: { entry, prev, next },
+    }
+  })
 }
 
-const { entry } = Astro.props
+const { entry, prev, next } = Astro.props
 
 // TODO: check for an undefined entry before calling render
 const { Content } = await render(entry)
 ---
 
-<Writing entry={entry}>
+<Writing entry={entry} prev={prev} next={next}>
   <Content />
 </Writing>
