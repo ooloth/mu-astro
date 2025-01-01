@@ -46,17 +46,13 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
     <header class="markdown">
       {
         date && (isPost || isTIL || isDraft) ? (
-          <p class="timestamp">
-            <time datetime={getMachineReadableDate(date)} class="timestamp">
-              {getHumanReadableDate(date)}
-            </time>
+          <p>
+            <time datetime={getMachineReadableDate(date)}>{getHumanReadableDate(date)}</time>
 
             {lastModified && hasBeenModified ? (
               <>
                 <span class="mx-1">-</span>
-                <time datetime={getMachineReadableDate(lastModified)} class="timestamp">
-                  {getHumanReadableDate(lastModified)}
-                </time>
+                <time datetime={getMachineReadableDate(lastModified)}>{getHumanReadableDate(lastModified)}</time>
               </>
             ) : null}
           </p>

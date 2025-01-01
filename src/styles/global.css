@@ -218,6 +218,10 @@
       @apply border-[--moonlight-red] text-bright;
     }
 
+    & time {
+      @apply timestamp;
+    }
+
     & table {
       @apply table-auto mt-6 border-collapse;
 
