@@ -1,11 +1,21 @@
 import { getCollection } from 'astro:content'
-import { addRemarkFrontmatter, isPublic, type Note, type Writing } from './collections'
+import {
+  addRemarkFrontmatter,
+  isPublic,
+  type Bookmark,
+  type Draft,
+  type Note,
+  type Post,
+  type TIL,
+  type Writing,
+} from './collections'
 import { isPost } from './posts'
 
 /**
  * Returns true if file is a note.
  */
-const isNote = (note: Writing): note is Note => !isPost(note)
+export const isNote = (entry: Writing | Post | TIL | Draft | Note | Bookmark): entry is Note =>
+  entry.collection === 'writing' && !isPost(entry)
 
 /**
  * In production, remove all private notes from all levels of the nested notes tree.

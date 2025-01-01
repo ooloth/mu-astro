@@ -4,16 +4,20 @@ import {
   addRemarkFrontmatter,
   isPublished,
   sortByPublishDate,
+  type Bookmark,
   type Draft,
+  type Note,
   type Post,
   type PostEntry,
+  type TIL,
   type Writing,
 } from './collections'
 
 /**
  * Returns true if file is a blog post.
  */
-export const isPost = (post: Writing): boolean => (post.data.tags ?? []).includes('post')
+export const isPost = (entry: Writing | Post | TIL | Draft | Note | Bookmark): boolean =>
+  entry.collection === 'writing' && (entry.data.tags ?? []).includes('post')
 
 /**
  * Returns all published posts, in descending order by date (useful for RSS feed).
@@ -23,6 +27,7 @@ export const getPublishedPosts = async (): Promise<PostEntry[]> =>
 
 /**
  * Returns all posts in development and only published posts in production, in descending order by date, with last modified date added.
+ * TODO: continue showing scheduled posts on notes page as drafts (even if moved out of drafts folder and date added)?
  */
 export const getPosts = async (): Promise<Post[]> => {
   const postsToShow = sortByPublishDate(
@@ -39,6 +44,11 @@ export const getPosts = async (): Promise<Post[]> => {
   return postsWithContent
   // return Promise.all(postsToShow.map(post => addRemarkFrontmatter(post)))
 }
+
+/**
+ * Returns true if file is a blog post.
+ */
+export const isDraft = (entry: Post | Draft): boolean => entry.collection === 'drafts'
 
 /**
  * Returns all drafts in both development and production, with last modified date added.
