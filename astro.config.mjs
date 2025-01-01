@@ -20,6 +20,9 @@ const moonlightV2 = await fsExtra.readJson('./lib/rehype/themes/moonlight-ii.jso
 // see: https://astro.build/config
 export default defineConfig({
   adapter,
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [
     tailwind({
       // Disable injecting a basic `base.css` import on every page so I can define and import my own
