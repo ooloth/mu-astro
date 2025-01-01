@@ -1,11 +1,11 @@
 ---
-import type { Bookmark, Draft, Note, Post, TIL } from '../utils/collections'
+import type { Bookmark, Draft, Note, Post, SinglePage, TIL } from '../utils/collections'
 import { isNote } from '../utils/notes'
 import { isPost } from '../utils/posts'
 import PaginationLink from './PaginationLink.astro'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark | null
+  entry: Post | TIL | Draft | Note | Bookmark | SinglePage | null
   prev: Post | TIL | Draft | Note | Bookmark | null
   next: Post | TIL | Draft | Note | Bookmark | null
 }
@@ -16,14 +16,14 @@ const { entry, prev, next } = Astro.props
  * Ensure pagination links guide users through pages that go together (i.e. published writing vs. rough notes) and
  * don't jump between different types of content.
  */
-const isIndexedOnSamePageAsEntry = (other: Post | TIL | Draft | Note | Bookmark | null): boolean => {
+const isIndexedOnSamePageAsEntry = (other: Post | TIL | Draft | Note | Bookmark | SinglePage | null): boolean => {
   // Skip the check if either entry or other is null
   if (!entry || !other) return true
 
-  const isIndexedOnHomePage = (item: Post | TIL | Draft | Note | Bookmark): boolean =>
+  const isIndexedOnHomePage = (item: Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
     item.collection === 'tils' || isPost(item)
 
-  const isIndexedOnNotesPage = (item: Post | TIL | Draft | Note | Bookmark): boolean =>
+  const isIndexedOnNotesPage = (item: Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
     item.collection === 'drafts' || item.collection === 'bookmarks' || isNote(item)
 
   return (

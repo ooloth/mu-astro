@@ -1,5 +1,5 @@
 ---
-import { render } from 'astro:content'
+import { getCollection, render } from 'astro:content'
 
 import Writing from '../layouts/Writing.astro'
 import { getTILs } from '../utils/tils'
@@ -12,6 +12,7 @@ import { isPublished, sortByLastModifiedDate, sortByPublishDate, type Post, type
  * Generate a list of paths to pre-render for my content collections.
  */
 export async function getStaticPaths() {
+  const pages = await getCollection('pages')
   const writing = [...(await getPosts()), ...(await getTILs())]
 
   // Separate scheduled posts and treat them as drafts
@@ -30,7 +31,7 @@ export async function getStaticPaths() {
   const sorted = [...sortByPublishDate(publishedWriting), ...sortByLastModifiedDate(notes)]
 
   // Generate a path for each writing collection entry
-  return sorted.map((entry, index) => {
+  const paginatedRoutes = sorted.map((entry, index) => {
     const prev = index > 0 ? sorted[index - 1] : null
     const next = index < sorted.length - 1 ? sorted[index + 1] : null
 
@@ -39,6 +40,15 @@ export async function getStaticPaths() {
       props: { entry, prev, next },
     }
   })
+
+  const singlePageRoutes = pages.map(entry => {
+    return {
+      params: { slug: entry.id },
+      props: { entry, prev: null, next: null },
+    }
+  })
+
+  return [...paginatedRoutes, ...singlePageRoutes]
 }
 
 const { entry, prev, next } = Astro.props

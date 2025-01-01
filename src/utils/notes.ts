@@ -6,6 +6,7 @@ import {
   type Draft,
   type Note,
   type Post,
+  type SinglePage,
   type TIL,
   type Writing,
 } from './collections'
@@ -14,7 +15,7 @@ import { isPost } from './posts'
 /**
  * Returns true if file is a note.
  */
-export const isNote = (entry: Writing | Post | TIL | Draft | Note | Bookmark): entry is Note =>
+export const isNote = (entry: Writing | Post | TIL | Draft | Note | Bookmark | SinglePage): entry is Note =>
   entry.collection === 'writing' && !isPost(entry)
 
 /**
