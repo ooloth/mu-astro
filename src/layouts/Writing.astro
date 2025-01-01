@@ -7,12 +7,15 @@ import Related from '../components/Related.astro'
 import { getTILs } from '../utils/tils'
 import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
+import PrevNext from '../components/PrevNext.astro'
 
 type Props = {
   entry: Post | TIL | Draft | Note | Bookmark
+  prev: Post | TIL | Draft | Note | Bookmark | null
+  next: Post | TIL | Draft | Note | Bookmark | null
 }
 
-const { entry } = Astro.props
+const { entry, prev, next } = Astro.props
 const { pathname } = Astro.url
 
 const title = entry.data.title || entry.id
@@ -83,3 +86,4 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
     {isPost || isTIL ? <Comments /> : null}
   </div>
 </Main>
+    {isPost || isTIL ? <PrevNext prev={prev} next={next} /> : null}

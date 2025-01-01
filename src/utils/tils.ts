@@ -1,12 +1,12 @@
 import { getCollection, render } from 'astro:content'
 
-import { isPublished, sortDescending, type TIL, type TILEntry } from './collections'
+import { isPublished, sortByPublishDate, type TIL, type TILEntry } from './collections'
 
 /**
  * Returns all published TILs, in descending order by date (useful for RSS feed).
  */
 export const getPublishedTILs = async (): Promise<TILEntry[]> =>
-  sortDescending(await getCollection('tils', isPublished))
+  sortByPublishDate(await getCollection('tils', isPublished))
 
 /**
  * Returns all TILs in development and only published posts in production, in descending order by date.
@@ -22,5 +22,5 @@ export const getTILs = async (): Promise<TIL[]> => {
     }),
   )
 
-  return sortDescending(tilsWithContent)
+  return sortByPublishDate(tilsWithContent)
 }

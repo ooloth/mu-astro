@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 import {
   addRemarkFrontmatter,
   isPublished,
-  sortDescending,
+  sortByPublishDate,
   type Draft,
   type Post,
   type PostEntry,
@@ -19,13 +19,13 @@ export const isPost = (post: Writing): boolean => (post.data.tags ?? []).include
  * Returns all published posts, in descending order by date (useful for RSS feed).
  */
 export const getPublishedPosts = async (): Promise<PostEntry[]> =>
-  sortDescending(await getCollection('writing', isPublished))
+  sortByPublishDate(await getCollection('writing', isPublished))
 
 /**
  * Returns all posts in development and only published posts in production, in descending order by date, with last modified date added.
  */
 export const getPosts = async (): Promise<Post[]> => {
-  const postsToShow = sortDescending(
+  const postsToShow = sortByPublishDate(
     await getCollection('writing', post => (import.meta.env.PROD ? isPublished(post) : isPost(post))),
   )
   return Promise.all(postsToShow.map(post => addRemarkFrontmatter(post)))
