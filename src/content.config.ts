@@ -6,13 +6,17 @@
 import { defineCollection, z } from 'astro:content'
 import { glob, file } from 'astro/loaders'
 
+// The item ID comes from URL of corresponding Apple Music CA (https://music.apple.com/ca), Apple Books CA
+// (https://books.apple.com/ca), or Apple Podcasts CA (https://podcasts.apple.com/ca) page
+const iTunesItem = z.object({
+  date: z.coerce.date(),
+  id: z.number(),
+  name: z.string(),
+})
+
 const albums = defineCollection({
   loader: file('./src/content/itunes/albums.yaml'),
-  schema: z.object({
-    date: z.coerce.date(),
-    id: z.number(),
-    name: z.string(),
-  }),
+  schema: iTunesItem,
 })
 
 const bookmarks = defineCollection({
@@ -34,11 +38,7 @@ const bookmarks = defineCollection({
 
 const books = defineCollection({
   loader: file('./src/content/itunes/books.yaml'),
-  schema: z.object({
-    name: z.string(),
-    id: z.number(),
-    date: z.coerce.date(),
-  }),
+  schema: iTunesItem,
 })
 
 const drafts = defineCollection({
@@ -62,11 +62,7 @@ const pages = defineCollection({
 
 const podcasts = defineCollection({
   loader: file('./src/content/itunes/podcasts.yaml'),
-  schema: z.object({
-    name: z.string(),
-    id: z.number(),
-    date: z.coerce.date(),
-  }),
+  schema: iTunesItem,
 })
 
 const tils = defineCollection({
