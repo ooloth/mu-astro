@@ -6,6 +6,7 @@ import {
   sortByPublishDate,
   type Bookmark,
   type Draft,
+  type DraftEntry,
   type Note,
   type Post,
   type PostEntry,
@@ -31,7 +32,7 @@ export const getPublishedPosts = async (): Promise<PostEntry[]> =>
  */
 export const getPosts = async (): Promise<Post[]> => {
   const postsToShow = sortByPublishDate(
-    await getCollection('writing', post => (import.meta.env.PROD ? isPublished(post) : isPost(post))),
+    await getCollection('writing', (post: Writing) => (import.meta.env.PROD ? isPublished(post) : isPost(post))),
   )
 
   const postsWithContent = await Promise.all(
@@ -42,7 +43,6 @@ export const getPosts = async (): Promise<Post[]> => {
   )
 
   return postsWithContent
-  // return Promise.all(postsToShow.map(post => addRemarkFrontmatter(post)))
 }
 
 /**
@@ -55,5 +55,5 @@ export const isDraft = (entry: Post | Draft): boolean => entry.collection === 'd
  */
 export const getDrafts = async (): Promise<Draft[]> => {
   const draftsToShow = await getCollection('drafts')
-  return Promise.all(draftsToShow.map(draft => addRemarkFrontmatter(draft)))
+  return Promise.all(draftsToShow.map((draft: DraftEntry) => addRemarkFrontmatter(draft)))
 }
