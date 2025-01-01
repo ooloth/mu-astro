@@ -26,13 +26,13 @@ const getDisclaimer = (entry: Post | TIL | Draft | Note | Bookmark, title: strin
   const noDisclaimer = ['workouts']
 
   const byAuthorIfAuthor = 'author' in entry.data && entry.data.author ? ` by ${entry.data.author}` : ''
-  const whereToFindWriting = `For more complete write-ups, check out <a href="/" class="link">writing</a> and <a href="/til/" class="link">TIL</a>.`
+  const whereToFindWriting = `For polished ideas, check out <a href="/" class="link">writing</a>.`
 
   const disclaimer =
     isPost || isTIL || noDisclaimer.includes(entry.id)
       ? null
       : isDraft
-        ? `This is a rough draft of a potential future blog post. ${whereToFindWriting}`
+        ? `This is a rough draft of a potential blog post. ${whereToFindWriting}`
         : isBookmark && 'source' in entry.data
           ? `These are my unfinished notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
           : `These are my unfinished notes about ${title}. ${whereToFindWriting}`
@@ -45,7 +45,7 @@ const disclaimer = getDisclaimer(Astro.props.entry, Astro.props.title)
 
 {
   disclaimer ? (
-    <aside role="note" class="mb-8 border border-[--moonlight-red] rounded">
+    <aside role="note" class="mb-8 border border-[--moonlight-red] rounded w-fit">
       <p class="!m-0 py-2 px-3">
         <em set:html={disclaimer} />
       </p>

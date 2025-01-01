@@ -19,7 +19,7 @@ const { pathname } = Astro.url
 const isCurrentPage = (item: NavItem): boolean =>
   item.url === pathname ||
   (isPathnameInCollection(pathname, posts) && item.url === '/') ||
-  (isPathnameInCollection(pathname, tils) && item.url === '/til/') ||
+  (isPathnameInCollection(pathname, tils) && item.url === '/') ||
   (isPathnameInCollection(pathname, drafts) && item.url === '/notes/') ||
   (isPathnameInCollection(pathname, notes) && item.url === '/notes/') ||
   (isPathnameInCollection(pathname, bookmarks) && item.url === '/notes/')
