@@ -42,7 +42,7 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
 ---
 
 <Main canonicalUrl={source} description={description} ogImage={ogImage} title={title}>
-  <div class="mx-auto max-w-2xl">
+  <div class="mx-auto max-w-[70ch]">
     <header class="markdown">
       {
         date && (isPost || isTIL || isDraft) ? (
