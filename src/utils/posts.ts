@@ -10,6 +10,7 @@ import {
   type Note,
   type Post,
   type PostEntry,
+  type SinglePage,
   type TIL,
   type Writing,
 } from './collections'
@@ -17,7 +18,7 @@ import {
 /**
  * Returns true if file is a blog post.
  */
-export const isPost = (entry: Writing | Post | TIL | Draft | Note | Bookmark): boolean =>
+export const isPost = (entry: Writing | Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
   entry.collection === 'writing' && (entry.data.tags ?? []).includes('post')
 
 /**

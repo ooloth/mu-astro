@@ -1,5 +1,13 @@
 ---
-import { type Bookmark, type Draft, isPathnameInCollection, type Note, type Post, type TIL } from '../utils/collections'
+import {
+  type Bookmark,
+  type Draft,
+  isPathnameInCollection,
+  type Note,
+  type Post,
+  type SinglePage,
+  type TIL,
+} from '../utils/collections'
 import { getNotes } from '../utils/notes'
 import { getDrafts, getPosts } from '../utils/posts'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
@@ -8,7 +16,7 @@ import { getBookmarks } from '../utils/bookmarks'
 import { getAllEntriesWithSameTagsAsEntry } from '../utils/tags'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark
+  entry: Post | TIL | Draft | Note | Bookmark | SinglePage
 }
 
 const { entry } = Astro.props
@@ -44,7 +52,7 @@ const hasRelated = Object.keys(entriesWithSameTags).length > 0
               <li>
                 <a href={`/${item.id}/`}>{item.data.title}</a>
 
-                {item.data.date ? (
+                {'date' in item.data && item.data.date ? (
                   <time datetime={getMachineReadableDate(item.data.date)} class="timestamp ml-3">
                     {getHumanReadableDate(item.data.date)}
                   </time>

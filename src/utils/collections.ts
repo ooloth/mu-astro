@@ -28,6 +28,8 @@ export type Note = WithLastModified<NoteEntry>
 export type BookmarkEntry = CollectionEntry<'bookmarks'>
 export type Bookmark = WithLastModified<BookmarkEntry>
 
+export type SinglePage = CollectionEntry<'pages'>
+
 /**
  * Returns true if the pathname matches any slug in the collection (at any ancestry level)
  */

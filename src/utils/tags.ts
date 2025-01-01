@@ -1,4 +1,4 @@
-import type { Bookmark, Draft, Note, Post, TIL } from './collections'
+import type { Bookmark, Draft, Note, Post, SinglePage, TIL } from './collections'
 
 type HasTags = {
   tags?: string[] | null
@@ -39,7 +39,7 @@ export const filterItemsByTags = <T extends HasTags>(items: T[], tags: string[])
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark>(
+export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark | SinglePage>(
   entry: T,
   collections: T[],
 ): Record<string, T[]> => {
