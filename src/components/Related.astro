@@ -20,8 +20,6 @@ const bookmarks = await getBookmarks()
 const drafts = await getDrafts()
 const notes = await getNotes()
 
-const isPost = isPathnameInCollection(pathname, posts)
-
 const entriesWithSameTags = getAllEntriesWithSameTagsAsEntry(entry, [
   ...posts,
   ...tils,
@@ -34,8 +32,8 @@ const hasRelated = Object.keys(entriesWithSameTags).length > 0
 ---
 
 {
-  isPost || !hasRelated ? null : (
-    <footer class="markdown mt-12 border-t-[1px] border-zinc-600 pb-8">
+  !hasRelated ? null : (
+    <footer class="markdown mt-12 border-t-[1px] border-zinc-600 ">
       {Object.entries(entriesWithSameTags).map(([tag, entriesWithTag]) => (
         <>
           <h2 class="text-red-500">

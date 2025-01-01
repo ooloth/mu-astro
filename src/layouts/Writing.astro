@@ -78,9 +78,9 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
     </header>
 
     <article class="markdown"><slot /></article>
-    <Related entry={entry} />
     {isPost || isTIL ? <Comments /> : null}
-  </div>
-</Main>
     <!-- <Subscribe /> -->
+    {isPost || isTIL ? null : <Related entry={entry} />}
     <PrevNext entry={entry} prev={prev} next={next} />
+  </div></Main
+>
