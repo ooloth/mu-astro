@@ -16,6 +16,7 @@ import { getTILs } from '../utils/tils'
 import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
 import PrevNext from '../components/PrevNext.astro'
+import { isSinglePage } from '../utils/pages'
 
 type Props = {
   entry: Post | TIL | Draft | Note | Bookmark | SinglePage
@@ -82,7 +83,7 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
         ) : null
       } -->
 
-      <Disclaimer entry={entry} title={title} />
+      {isSinglePage(entry) ? null : <Disclaimer entry={entry} title={title} />}
     </header>
 
     <article class="markdown"><slot /></article>
