@@ -17,7 +17,7 @@
 
   /* code blocks */
   figure[data-rehype-pretty-code-figure] {
-    @apply mt-6 rounded-lg overflow-x-scroll;
+    @apply my-8 rounded-lg overflow-x-scroll;
 
     /* title (if any) */
     [data-rehype-pretty-code-title] {
@@ -49,11 +49,6 @@
           background-color: rgb(200 200 255 / 0.15);
           box-shadow: 0 0 0 0.24em rgb(200 200 255 / 0.15);
         }
-
-        /* FIXME: not targeting the button correctly */
-        & > button.rehype-pretty-copy {
-          @apply top-3;
-        }
       }
 
       /* display line numbers if code fence includes "showLineNumbers" */
@@ -84,17 +79,16 @@
       & code[data-line-numbers-max-digits='3'] > [data-line]::before {
         width: 3rem;
       }
+
+      /* FIXME: not targeting the button correctly */
+      & .rehype-pretty-copy {
+        @apply !top-28 !mt-52 !pt-52;
+      }
     }
 
     /* caption (if any) */
     [data-rehype-pretty-code-caption] {
       @apply caption;
     }
-  }
-
-  /* paragraphs that follow a code block should have a bit more margin above them */
-  pre + p,
-  div[data-rehype-pretty-code-fragment] + p {
-    @apply mt-6;
   }
 }
