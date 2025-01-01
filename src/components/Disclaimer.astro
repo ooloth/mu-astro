@@ -31,7 +31,7 @@ const isBookmark = isPathnameInCollection(pathname, bookmarks)
 
 // TODO: add unit tests, auditing
 const getDisclaimer = (entry: Post | TIL | Draft | Note | Bookmark | SinglePage, title: string): string | null => {
-  const noDisclaimer = ['workouts']
+  const noDisclaimer = ['about', 'workouts']
 
   const byAuthorIfAuthor = 'author' in entry.data && entry.data.author ? ` by ${entry.data.author}` : ''
   const whereToFindWriting = `For more polished work, check out <a href="/" class="link">writing</a>.`
