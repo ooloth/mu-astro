@@ -83,4 +83,4 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
   </div>
 </Main>
     <!-- <Subscribe /> -->
-    {isPost || isTIL ? <PrevNext prev={prev} next={next} /> : null}
+    <PrevNext entry={entry} prev={prev} next={next} />
