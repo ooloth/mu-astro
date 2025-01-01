@@ -4,8 +4,8 @@ export const generateTagCloudItemHtml = (
   tagsInAllEntries: string[],
 ): string => {
   const colors = {
-    active: 'bg-[--moonlight-red] hover:shadow-glow text-zinc-950 cursor-pointer',
-    inactive: 'bg-zinc-950 hover:shadow-glow text-[--moonlight-red] cursor-pointer',
+    active: 'bg-[--moonlight-red] hover:shadow-glow text-zinc-900 cursor-pointer',
+    inactive: 'bg-zinc-900 hover:shadow-glow text-[--moonlight-red] cursor-pointer',
     unavailable: 'opacity-50 text-[--moonlight-red] cursor-not-allowed',
   }
 
