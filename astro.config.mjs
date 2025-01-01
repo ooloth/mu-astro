@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra'
 import { defineConfig } from 'astro/config'
 import tailwind from '@astrojs/tailwind'
 import rehypePrettyCode from 'rehype-pretty-code'
-import { transformerCopyButton } from '@rehype-pretty/transformers'
+// import { transformerCopyButton } from '@rehype-pretty/transformers'
 
 import rehypePlugins from './lib/rehype/plugins.ts'
 import remarkPlugins from './lib/remark/plugins.ts'
@@ -45,11 +45,13 @@ export default defineConfig({
             obj: 'variable.other.object',
             str: 'string',
           },
-          transformers: [
-            transformerCopyButton({
-              visibility: 'hover',
-            }),
-          ],
+          // FIXME: scrolls horizontally with the code instead of staying in the top right corner
+          // transformers: [
+          //   transformerCopyButton({
+          //     visibility: 'hover',
+          //     feedbackDuration: 2500,
+          //   }),
+          // ],
         },
       ],
     ],
