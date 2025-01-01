@@ -26,17 +26,21 @@ const rest = writing.slice(5)
 
             return (
               <li class="mt-24">
-                <time datetime={getMachineReadableDate(date)} class="timestamp block mt-2 md:min-w-[7rem]">
-                  {getHumanReadableDate(date)}
-                </time>
+                <article>
+                  <header>
+                    <time datetime={getMachineReadableDate(date)} class="timestamp block mt-2 md:min-w-[7rem]">
+                      {getHumanReadableDate(date)}
+                    </time>
 
-                <a href={`/${post.id}/`} class="link-heading heading text-[1.45rem]">
-                  {post.data.title || post.id}
-                </a>
+                    <a href={`/${post.id}/`} class="link-heading heading text-[1.45rem]">
+                      {post.data.title || post.id}
+                    </a>
+                  </header>
 
-                <div class="markdown pt-2">
-                  <post.Content />
-                </div>
+                  <div class="markdown pt-2">
+                    <post.Content />
+                  </div>
+                </article>
               </li>
             )
           })
