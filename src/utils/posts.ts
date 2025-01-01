@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content'
+import { getCollection, render } from 'astro:content'
 
 import {
   addRemarkFrontmatter,
@@ -28,7 +28,16 @@ export const getPosts = async (): Promise<Post[]> => {
   const postsToShow = sortByPublishDate(
     await getCollection('writing', post => (import.meta.env.PROD ? isPublished(post) : isPost(post))),
   )
-  return Promise.all(postsToShow.map(post => addRemarkFrontmatter(post)))
+
+  const postsWithContent = await Promise.all(
+    postsToShow.map(async post => {
+      const { Content, remarkPluginFrontmatter } = await render(post)
+      return { ...post, Content, data: { ...post.data, lastModified: remarkPluginFrontmatter.lastModified } }
+    }),
+  )
+
+  return postsWithContent
+  // return Promise.all(postsToShow.map(post => addRemarkFrontmatter(post)))
 }
 
 /**

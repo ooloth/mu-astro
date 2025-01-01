@@ -10,7 +10,9 @@ type WithLastModified<T extends { data: object }> = Omit<T, 'data'> & {
 export type Writing = CollectionEntry<'writing'>
 
 export type PostEntry = CollectionEntry<'writing'>
-export type Post = WithLastModified<PostEntry>
+export type Post = WithLastModified<PostEntry> & {
+  Content: AstroComponentFactory
+}
 
 export type TILEntry = CollectionEntry<'tils'>
 export type TIL = WithLastModified<TILEntry> & {
