@@ -21,7 +21,7 @@ const isIndexedOnSamePageAsEntry = (other: Post | TIL | Draft | Note | Bookmark 
   if (!entry || !other) return true
 
   const isIndexedOnHomePage = (item: Post | TIL | Draft | Note | Bookmark): boolean =>
-    item.collections === 'tils' || isPost(item)
+    item.collection === 'tils' || isPost(item)
 
   const isIndexedOnNotesPage = (item: Post | TIL | Draft | Note | Bookmark): boolean =>
     item.collection === 'drafts' || item.collection === 'bookmarks' || isNote(item)
