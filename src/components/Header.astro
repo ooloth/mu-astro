@@ -2,13 +2,13 @@
 import nav, { type NavItem } from '../data/nav'
 import site from '../data/site'
 import { isPathnameInCollection } from '../utils/collections'
-import { getDrafts, getPosts } from '../utils/posts'
+import { getPublishedPosts, getScheduledPosts } from '../utils/posts'
 import { getNotes } from '../utils/notes'
-import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
+import { getDrafts } from '../utils/drafts'
 
-const posts = await getPosts()
-const tils = await getTILs()
+const publishedPosts = await getPublishedPosts()
+const scheduledPosts = await getScheduledPosts()
 const drafts = await getDrafts()
 const notes = await getNotes()
 const bookmarks = await getBookmarks()
@@ -18,8 +18,8 @@ const { pathname } = Astro.url
 // see: https://docs.astro.build/en/reference/api-reference/#astrourl
 const isCurrentPage = (item: NavItem): boolean =>
   item.url === pathname ||
-  (isPathnameInCollection(pathname, posts) && item.url === '/') ||
-  (isPathnameInCollection(pathname, tils) && item.url === '/') ||
+  (isPathnameInCollection(pathname, publishedPosts) && item.url === '/') ||
+  (isPathnameInCollection(pathname, scheduledPosts) && item.url === '/notes/') ||
   (isPathnameInCollection(pathname, drafts) && item.url === '/notes/') ||
   (isPathnameInCollection(pathname, notes) && item.url === '/notes/') ||
   (isPathnameInCollection(pathname, bookmarks) && item.url === '/notes/')

@@ -2,29 +2,27 @@
 import {
   type Bookmark,
   type Draft,
-  isPathnameInCollection,
   type Note,
   type SinglePage,
   type Post,
-  type TIL,
+  type PostWithContent,
 } from '../utils/collections'
-import { getDrafts, getPosts } from '../utils/posts'
+import { isPost } from '../utils/posts'
 import Main from './Main.astro'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
 import Related from '../components/Related.astro'
-import { getTILs } from '../utils/tils'
 import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
 import PrevNext from '../components/PrevNext.astro'
+import { isDraft } from '../utils/drafts'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark | SinglePage
-  prev: Post | TIL | Draft | Note | Bookmark | null
-  next: Post | TIL | Draft | Note | Bookmark | null
+  entry: PostWithContent | Post | Draft | Note | Bookmark | SinglePage
+  prev: PostWithContent | Post | Draft | Note | Bookmark | null
+  next: PostWithContent | Post | Draft | Note | Bookmark | null
 }
 
 const { entry, prev, next } = Astro.props
-const { pathname } = Astro.url
 
 const title = entry.data.title || entry.id
 const lastModified =
@@ -34,30 +32,27 @@ const date = ('date' in entry.data && entry.data.date) ?? lastModified
 // Compare the dates at the day level (as opposed to the ms level) to determine if it's worth showing a modified date
 const hasBeenModified: boolean = date && lastModified ? date.toDateString() > lastModified.toDateString() : false
 
-const posts = await getPosts()
-const tils = await getTILs()
-const drafts = await getDrafts()
-
-const isPost = isPathnameInCollection(pathname, posts)
-const isTIL = isPathnameInCollection(pathname, tils)
-const isDraft = isPathnameInCollection(pathname, drafts)
-
 const source = 'source' in entry.data ? (entry.data.source ?? undefined) : undefined
 const description = 'description' in entry.data ? (entry.data.description ?? undefined) : undefined
 const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : undefined
 
+const showDate = date && (isPost(entry) || isDraft(entry))
+const showLastModifiedDate = showDate && lastModified && hasBeenModified
+const showComments = isPost(entry)
+const showRelated = !isPost(entry)
+
 // const tags = cleanTags(entry.data.tags)
+// TODO: extract Timestamp/Dates component?
 ---
 
 <Main canonicalUrl={source} description={description} ogImage={ogImage} title={title}>
   <div class="mx-auto max-w-[70ch]">
     <header class="markdown">
       {
-        date && (isPost || isTIL || isDraft) ? (
+        showDate ? (
           <p>
             <time datetime={getMachineReadableDate(date)}>{getHumanReadableDate(date)}</time>
-
-            {lastModified && hasBeenModified ? (
+            {showLastModifiedDate ? (
               <>
                 <span class="mx-1">-</span>
                 <time datetime={getMachineReadableDate(lastModified)}>{getHumanReadableDate(lastModified)}</time>
@@ -86,9 +81,9 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
     </header>
 
     <article class="markdown"><slot /></article>
-    {isPost || isTIL ? <Comments /> : null}
-    <!-- <Subscribe /> -->
-    {isPost || isTIL ? null : <Related entry={entry} />}
+    <!-- TODO: move these conditions into the components themselves? bad practice? -->
+    {showComments ? <Comments /> : null}
+    {showRelated ? <Related entry={entry} /> : null}
     <PrevNext entry={entry} prev={prev} next={next} />
   </div></Main
 >
