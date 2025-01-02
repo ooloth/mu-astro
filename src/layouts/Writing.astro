@@ -27,7 +27,6 @@ const { entry, prev, next } = Astro.props
 const title = entry.data.title || entry.id
 const lastModified =
   'lastModified' in entry.data && entry.data.lastModified ? new Date(entry.data.lastModified) : undefined
-console.log('lastModified:', lastModified)
 const date = ('date' in entry.data && entry.data.date) ?? lastModified
 
 // Compare the dates at the day level (as opposed to the ms level) to determine if it's worth showing a modified date

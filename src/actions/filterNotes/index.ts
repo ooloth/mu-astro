@@ -24,15 +24,6 @@ const getAllItems = async (): Promise<NotesListItem[]> => {
       ...(await getNotes()),
       ...(await getBookmarks()),
     ]
-    console.log(
-      'allEntries:',
-      allEntries.slice(0, 5).map(entry => ({
-        id: entry.id,
-        lastModified: entry.data.lastModified,
-        tags: entry.data.tags,
-      })),
-    )
-    console.log('allEntries:', allEntries.length)
     cachedItemsAll = createNotesListItems(sortByLastModifiedDate(allEntries))
   }
 
@@ -146,8 +137,6 @@ export const filterNotes = defineAction({
     const allTags = await getAllTags() // cached
     const validTags = validateTags(input.tags, allTags)
     const filteredItems = filterItemsByTags(allItems, validTags)
-    console.log('filteredItems:', filteredItems.slice(0, 5))
-    console.log('filteredItems:', filteredItems.length)
 
     return {
       count: {
