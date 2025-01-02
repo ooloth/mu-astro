@@ -1,4 +1,4 @@
-import type { Bookmark, Draft, Note, Post, SinglePage, TIL } from './collections'
+import type { Bookmark, Draft, Note, Post, SinglePage } from './collections'
 
 type HasTags = {
   tags?: string[] | null
@@ -39,7 +39,7 @@ export const filterItemsByTags = <T extends HasTags>(items: T[], tags: string[])
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | Note | Bookmark | SinglePage>(
+export const getAllEntriesWithSameTagsAsEntry = <T extends Post | Draft | Note | Bookmark | SinglePage>(
   entry: T,
   collections: T[],
 ): Record<string, T[]> => {
@@ -49,7 +49,7 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | 
     // Go in order of the entry's tags, which are presumably sorted from most to least relevant
     for (const tag of cleanTags(entry.data.tags ?? [])) {
       if ((item.data.tags ?? []).includes(tag)) {
-        if (item.data.title === entry.data.title) {
+        if (item.id === entry.id) {
           continue
         }
 
@@ -66,9 +66,11 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | TIL | Draft | 
 }
 
 /**
- * Returns a flat list of all tags found in all given items.
+ * Returns a deduplicated list of all tags found in the given items.
+ *
+ * TODO: return a set instead?
  */
 export const getAllTagsInItems = <T extends HasTags>(items: T[]): string[] => {
   const allTags = items.flatMap(item => item.data?.tags ?? item.tags ?? [])
-  return cleanTags([...new Set(allTags)]) // Remove duplicates
+  return cleanTags([...new Set(allTags)])
 }

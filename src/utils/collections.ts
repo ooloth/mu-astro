@@ -2,85 +2,54 @@ import { render, type CollectionEntry } from 'astro:content'
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
 // import type { MarkdownHeading } from 'astro'
 
-// Define a generic type that adds the lastModified property to the data field
-type WithLastModified<T extends { data: object }> = Omit<T, 'data'> & {
+// A generic type that adds a lastModified property to the existing data field
+type WithLastModified<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>> = Omit<T, 'data'> & {
   data: T['data'] & { lastModified: string }
 }
 
-export type Writing = CollectionEntry<'writing'>
+export type HasCollection = {
+  collection: 'posts' | 'drafts' | 'notes' | 'bookmarks' | 'pages' | 'albums' | 'books' | 'podcasts'
+}
 
-export type PostEntry = CollectionEntry<'writing'>
-export type Post = WithLastModified<PostEntry> & {
+export type HasContent = {
   Content: AstroComponentFactory
 }
 
-export type TILEntry = CollectionEntry<'tils'>
-export type TIL = WithLastModified<TILEntry> & {
-  Content: AstroComponentFactory
-}
-
-export type DraftEntry = CollectionEntry<'drafts'>
-export type Draft = WithLastModified<DraftEntry>
-
-export type NoteEntry = CollectionEntry<'writing'>
-export type Note = WithLastModified<NoteEntry>
-
-export type BookmarkEntry = CollectionEntry<'bookmarks'>
-export type Bookmark = WithLastModified<BookmarkEntry>
-
+export type Post = WithLastModified<CollectionEntry<'posts'>>
+export type PostWithContent = Post & HasContent
+export type Draft = WithLastModified<CollectionEntry<'drafts'>>
+export type Note = WithLastModified<CollectionEntry<'notes'>>
+export type Bookmark = WithLastModified<CollectionEntry<'bookmarks'>>
 export type SinglePage = CollectionEntry<'pages'>
 
 /**
- * Returns true if the pathname matches any slug in the collection (at any ancestry level)
+ * Adds the last modified date to the frontmatter of a post, draft, note, or bookmark.
+ * See: https://docs.astro.build/en/recipes/modified-time/
  */
-export const isPathnameInCollection = (
-  pathname: string | undefined,
-  collection: Post[] | TIL[] | Draft[] | Note[] | Bookmark[],
-): boolean => {
-  const removeLeadingAndTrailingSlashes = (str?: string): string => (str ? str.replace(/^\/|\/$/g, '') : '')
-
-  return collection.some(item => removeLeadingAndTrailingSlashes(pathname) === removeLeadingAndTrailingSlashes(item.id))
-}
-
-// Define the overloads
-export async function addRemarkFrontmatter(entry: PostEntry): Promise<Post>
-export async function addRemarkFrontmatter(entry: DraftEntry): Promise<Draft>
-export async function addRemarkFrontmatter(entry: NoteEntry): Promise<Note>
-export async function addRemarkFrontmatter(entry: BookmarkEntry): Promise<Bookmark>
-export async function addRemarkFrontmatter(
-  entry: PostEntry | DraftEntry | NoteEntry | BookmarkEntry,
-): Promise<Post | Draft | Note | Bookmark> {
-  const { remarkPluginFrontmatter } = await render(entry)
-
-  // see: https://docs.astro.build/en/recipes/modified-time/
-  return { ...entry, data: { ...entry.data, lastModified: remarkPluginFrontmatter.lastModified } } as
-    | Post
-    | Draft
-    | Note
-    | Bookmark
-}
-
-type HasDate = {
-  date?: Date | null
-  data?: {
-    date?: Date | null
-  }
+export async function addLastModifiedDate<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>>(
+  entries: T[],
+): Promise<WithLastModified<T>[]> {
+  return await Promise.all(
+    entries.map(async entry => {
+      const { remarkPluginFrontmatter } = await render(entry)
+      return { ...entry, data: { ...entry.data, lastModified: remarkPluginFrontmatter.lastModified } }
+    }),
+  )
 }
 
 /**
- * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
+ * Adds the last modified date to the frontmatter of a post (so it can be shown inline on the home page).
+ * See: https://docs.astro.build/en/recipes/modified-time/
  */
-export const sortByPublishDate = <T extends HasDate>(items: T[]): T[] => {
-  const sortByDate = (a: T, b: T): number => {
-    const publishTime = (item: T): number => {
-      const date = item.data?.date ?? item.date
-      return date ? new Date(String(date)).getTime() : -Infinity
-    }
-
-    return publishTime(b) - publishTime(a)
-  }
-
-  return items.sort(sortByDate)
+export async function addContent(
+  entries: CollectionEntry<'posts'>[],
+): Promise<(CollectionEntry<'posts'> & HasContent)[]> {
+  return await Promise.all(
+    entries.map(async entry => {
+      const { Content } = await render(entry)
+      return { ...entry, Content }
+    }),
+  )
 }
 
 type HasLastModified = {
@@ -104,15 +73,28 @@ export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T
 }
 
 /**
- * Returns true if an entry has a publish date and it's in the past.
+ * Returns true if the entry is not marked private or obviously work-specific.
  */
-export const isPublished = (entry: PostEntry | TILEntry): boolean => {
-  const date = entry.data.date ? new Date(entry.data.date) : null
-  return date !== null && date <= new Date()
-}
+export const isPublic = (entry: CollectionEntry<'drafts' | 'notes' | 'bookmarks' | 'pages'>): boolean =>
+  !(entry.data.private === true) && !(entry.data.tags ?? []).includes('private') && !entry.id.includes('recursion')
 
 /**
- * Returns true if the entry is not marked private or obviously about work.
+ * In production only, remove entries marked private.
  */
-export const isPublic = <T extends NoteEntry | BookmarkEntry | DraftEntry>(entry: T): boolean =>
-  !entry.data.private && !(entry.data.tags ?? []).includes('private') && !entry.id.includes('recursion')
+export const removePrivateInProduction = <T extends CollectionEntry<'drafts' | 'notes' | 'bookmarks' | 'pages'>>(
+  entries: T[],
+): T[] => (import.meta.env.PROD ? entries.filter(isPublic) : entries)
+
+/**
+ * Returns true if the pathname matches any slug in the collection.
+ *
+ * TODO: still useful now that each type comes from a distinct collection? Do I ever know the pathname but not the entry?
+ */
+export const isPathnameInCollection = (
+  pathname: string | undefined,
+  collection: Post[] | Draft[] | Note[] | Bookmark[],
+): boolean => {
+  const removeLeadingAndTrailingSlashes = (str?: string): string => (str ? str.replace(/^\/|\/$/g, '') : '')
+
+  return collection.some(item => removeLeadingAndTrailingSlashes(pathname) === removeLeadingAndTrailingSlashes(item.id))
+}

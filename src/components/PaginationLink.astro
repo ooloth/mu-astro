@@ -1,8 +1,8 @@
 ---
-import type { Bookmark, Draft, Note, Post, TIL } from '../utils/collections'
+import type { Bookmark, Draft, Note, Post } from '../utils/collections'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark
+  entry: Post | Draft | Note | Bookmark
   direction: 'Previous' | 'Next'
 }
 

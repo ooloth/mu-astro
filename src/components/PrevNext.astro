@@ -1,30 +1,32 @@
 ---
-import type { Bookmark, Draft, Note, Post, SinglePage, TIL } from '../utils/collections'
+import { isBookmark } from '../utils/bookmarks'
+import type { Bookmark, Draft, Note, Post, SinglePage } from '../utils/collections'
+import { isDraft } from '../utils/drafts'
 import { isNote } from '../utils/notes'
-import { isPost } from '../utils/posts'
+import { isPost, isPublished, isScheduled } from '../utils/posts'
 import PaginationLink from './PaginationLink.astro'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark | SinglePage | null
-  prev: Post | TIL | Draft | Note | Bookmark | null
-  next: Post | TIL | Draft | Note | Bookmark | null
+  entry: Post | Draft | Note | Bookmark | SinglePage | null
+  prev: Post | Draft | Note | Bookmark | null
+  next: Post | Draft | Note | Bookmark | null
 }
 
 const { entry, prev, next } = Astro.props
 
 /**
- * Ensure pagination links guide users through pages that go together (i.e. published writing vs. rough notes) and
- * don't jump between different types of content.
+ * Ensure pagination links guide users through pages that go together (i.e. published posts vs. rough notes) and
+ * don't jump to a different content category.
  */
-const isIndexedOnSamePageAsEntry = (other: Post | TIL | Draft | Note | Bookmark | SinglePage | null): boolean => {
+const isIndexedOnSamePageAsEntry = (other: Post | Draft | Note | Bookmark | SinglePage | null): boolean => {
   // Skip the check if either entry or other is null
   if (!entry || !other) return true
 
-  const isIndexedOnHomePage = (item: Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
-    item.collection === 'tils' || isPost(item)
+  const isIndexedOnHomePage = (item: Post | Draft | Note | Bookmark | SinglePage): boolean =>
+    isPost(item) && isPublished(item)
 
-  const isIndexedOnNotesPage = (item: Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
-    item.collection === 'drafts' || item.collection === 'bookmarks' || isNote(item)
+  const isIndexedOnNotesPage = (item: Post | Draft | Note | Bookmark | SinglePage): boolean =>
+    (isPost(item) && isScheduled(item)) || isDraft(item) || isNote(item) || isBookmark(item)
 
   return (
     (isIndexedOnHomePage(other) && isIndexedOnHomePage(entry)) ||

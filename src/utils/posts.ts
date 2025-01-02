@@ -1,60 +1,71 @@
-import { getCollection, render } from 'astro:content'
+import { getCollection, type CollectionEntry } from 'astro:content'
 
 import {
-  addRemarkFrontmatter,
-  isPublished,
-  sortByPublishDate,
-  type Bookmark,
-  type Draft,
-  type DraftEntry,
-  type Note,
+  addContent,
+  addLastModifiedDate,
+  sortByLastModifiedDate,
+  type HasCollection,
   type Post,
-  type PostEntry,
-  type SinglePage,
-  type TIL,
-  type Writing,
+  type PostWithContent,
 } from './collections'
+import { LIMIT } from '../pages/index.astro'
 
 /**
- * Returns true if file is a blog post.
+ * Returns true if the entry is from the posts collection.
  */
-export const isPost = (entry: Writing | Post | TIL | Draft | Note | Bookmark | SinglePage): boolean =>
-  entry.collection === 'writing' && (entry.data.tags ?? []).includes('post')
+export const isPost = (entry: HasCollection): entry is Post => entry.collection === 'posts'
 
 /**
- * Returns all published posts, in descending order by date (useful for RSS feed).
+ * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
  */
-export const getPublishedPosts = async (): Promise<PostEntry[]> =>
-  sortByPublishDate(await getCollection('writing', isPublished))
+export const sortByPublishDate = (items: CollectionEntry<'posts'>[]): CollectionEntry<'posts'>[] => {
+  const sortByDate = (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>): number => {
+    const publishTime = (item: CollectionEntry<'posts'>): number => {
+      return item.data.date.getTime()
+      // const date = item.data?.date ?? item.date
+      // return date ? new Date(String(date)).getTime() : -Infinity
+    }
 
-/**
- * Returns all posts in development and only published posts in production, in descending order by date, with last modified date added.
- * TODO: continue showing scheduled posts on notes page as drafts (even if moved out of drafts folder and date added)?
- */
-export const getPosts = async (): Promise<Post[]> => {
-  const postsToShow = sortByPublishDate(
-    await getCollection('writing', (post: Writing) => (import.meta.env.PROD ? isPublished(post) : isPost(post))),
-  )
+    return publishTime(b) - publishTime(a)
+  }
 
-  const postsWithContent = await Promise.all(
-    postsToShow.map(async post => {
-      const { Content, remarkPluginFrontmatter } = await render(post)
-      return { ...post, Content, data: { ...post.data, lastModified: remarkPluginFrontmatter.lastModified } }
-    }),
-  )
+  return items.sort(sortByDate)
+}
 
-  return postsWithContent
+export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean => {
+  return post.data.date <= new Date()
+  // const date = post.data.date ? new Date(post.data.date) : null
+  // return date !== null && date <= new Date()
 }
 
 /**
- * Returns true if file is a blog post.
+ * Returns all posts with a publish date in the past, sorted by publish date (useful for RSS feed). Includes the
+ * full rendered content of the first few so they can be shown inline on the home page.
  */
-export const isDraft = (entry: Post | Draft): boolean => entry.collection === 'drafts'
+export const getPublishedPosts = async (): Promise<(Post | PostWithContent)[]> => {
+  const postsToShow = sortByPublishDate(await getCollection('posts', isPublished))
+  const postsToShowInline = postsToShow.slice(0, LIMIT)
+  const postsToShowInList = postsToShow.slice(LIMIT)
+
+  return await addLastModifiedDate([...(await addContent(postsToShowInline)), ...postsToShowInList])
+}
+
+export const isScheduled = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean => {
+  return post.data.date > new Date()
+  // const date = post.data.date ? new Date(post.data.date) : null
+  // return date !== null && date > new Date()
+}
 
 /**
- * Returns all drafts in both development and production, with last modified date added.
+ * Returns all posts scheduled to be published in the future, sorted by last modified date.
  */
-export const getDrafts = async (): Promise<Draft[]> => {
-  const draftsToShow = await getCollection('drafts')
-  return Promise.all(draftsToShow.map((draft: DraftEntry) => addRemarkFrontmatter(draft)))
+export const getScheduledPosts = async (): Promise<Post[]> => {
+  return sortByLastModifiedDate(await addLastModifiedDate(await getCollection('posts', isScheduled)))
 }
+
+/**
+ * Returns all posts with their last modified date (and the first few with their content), sorted by publish date.
+ * In production, only returns published posts (i.e. no scheduled posts).
+ */
+export const getPosts = async (): Promise<(Post | PostWithContent)[]> =>
+  sortByLastModifiedDate(await addLastModifiedDate(await getCollection('posts')))

@@ -2,58 +2,44 @@
 import { getCollection, render } from 'astro:content'
 
 import Writing from '../layouts/Writing.astro'
-import { getTILs } from '../utils/tils'
 import { getNotes } from '../utils/notes'
-import { getDrafts, getPosts } from '../utils/posts'
 import { getBookmarks } from '../utils/bookmarks'
-import { isPublished, sortByLastModifiedDate, sortByPublishDate, type Post, type TIL } from '../utils/collections'
+import { getDrafts } from '../utils/drafts'
+import { getPublishedPosts, getScheduledPosts } from '../utils/posts'
 
 /**
- * Generate a list of paths to pre-render for my content collections.
+ * Generate a list of dynamic paths to pre-render.
  */
 export async function getStaticPaths() {
-  const pages = await getCollection('pages')
-  const writing = [...(await getPosts()), ...(await getTILs())]
+  const paginated = [
+    ...(await getPublishedPosts()),
+    ...(await getScheduledPosts()),
+    ...(await getDrafts()),
+    ...(await getNotes()),
+    ...(await getBookmarks()),
+  ]
 
-  // Separate scheduled posts and treat them as drafts
-  const [publishedWriting, unpublishedWriting] = writing.reduce(
-    ([published, unpublished], entry) => {
-      if (isPublished(entry)) {
-        return [[...published, entry], unpublished]
-      } else {
-        return [published, [...unpublished, entry]]
-      }
+  const standalone = await getCollection('pages')
+
+  const paginatedRoutes = paginated.map((entry, index) => ({
+    params: { slug: entry.id },
+    props: {
+      entry,
+      prev: paginated?.[index - 1] ?? null,
+      next: paginated?.[index + 1] ?? null,
     },
-    [[], []] as [(Post | TIL)[], (Post | TIL)[]],
-  )
+  }))
 
-  const notes = [...unpublishedWriting, ...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
-  const sorted = [...sortByPublishDate(publishedWriting), ...sortByLastModifiedDate(notes)]
-
-  // Generate a path for each writing collection entry
-  const paginatedRoutes = sorted.map((entry, index) => {
-    const prev = index > 0 ? sorted[index - 1] : null
-    const next = index < sorted.length - 1 ? sorted[index + 1] : null
-
-    return {
-      params: { slug: entry.id },
-      props: { entry, prev, next },
-    }
-  })
-
-  const singlePageRoutes = pages.map(entry => {
-    return {
-      params: { slug: entry.id },
-      props: { entry, prev: null, next: null },
-    }
-  })
+  const singlePageRoutes = standalone.map(entry => ({
+    params: { slug: entry.id },
+    props: { entry, prev: null, next: null },
+  }))
 
   return [...paginatedRoutes, ...singlePageRoutes]
 }
 
 const { entry, prev, next } = Astro.props
 
-// TODO: check for an undefined entry before calling render
 const { Content } = await render(entry)
 ---
 

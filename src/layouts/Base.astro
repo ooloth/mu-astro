@@ -1,11 +1,11 @@
 ---
 import '../styles/global.css'
 import site from '../data/site'
-import { getDrafts, getPosts } from '../utils/posts'
+import { getPublishedPosts, getScheduledPosts } from '../utils/posts'
 import { getNotes } from '../utils/notes'
 import { isPathnameInCollection } from '../utils/collections'
-import { getTILs } from '../utils/tils'
 import { getBookmarks } from '../utils/bookmarks'
+import { getDrafts } from '../utils/drafts'
 
 export type BaseProps = {
   canonicalUrl?: string
@@ -16,17 +16,18 @@ export type BaseProps = {
 
 type Props = BaseProps
 
+// TODO: Just pass in the whole entry?
 const { canonicalUrl, description, ogImage, title } = Astro.props
 const { href, pathname } = Astro.url
 
-const posts = await getPosts()
-const tils = await getTILs()
+const publishedPosts = await getPublishedPosts()
+const scheduledPosts = await getScheduledPosts()
 const drafts = await getDrafts()
 const notes = await getNotes()
 const bookmarks = await getBookmarks()
 
-const isPost = isPathnameInCollection(pathname, posts)
-const isTIL = isPathnameInCollection(pathname, tils)
+const isPublishedPost = isPathnameInCollection(pathname, publishedPosts)
+const isScheduledPost = isPathnameInCollection(pathname, scheduledPosts)
 const isDraft = isPathnameInCollection(pathname, drafts)
 const isNote = isPathnameInCollection(pathname, notes)
 const isBookmark = isPathnameInCollection(pathname, bookmarks)
@@ -83,17 +84,15 @@ const pageTitleWithSuffix = pageTitle + (isHome ? '' : ` • ${site.title}`)
 
 const pageDescription = description
   ? description
-  : isPost
+  : isPublishedPost
     ? `Blog post by ${site.author.name}.`
-    : isTIL
-      ? `Something ${site.author.name} learned about today.`
-      : isDraft
-        ? `Notes for a potential future blog post by ${site.author.name}.`
-        : isNote
-          ? `Notes about ${title} by ${site.author.name}.`
-          : isBookmark
-            ? `Notes about "${title}".`
-            : site.description.site
+    : isScheduledPost || isDraft
+      ? `Notes for a potential future blog post by ${site.author.name}.`
+      : isNote
+        ? `Notes about ${title} by ${site.author.name}.`
+        : isBookmark
+          ? `Notes about "${title}".`
+          : site.description.site
 
 const borderWidth = 0
 const pink = 'fda4af'

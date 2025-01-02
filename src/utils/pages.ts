@@ -1,7 +1,14 @@
-import { type Bookmark, type Draft, type Note, type Post, type SinglePage, type TIL, type Writing } from './collections'
+import { getCollection } from 'astro:content'
+import { removePrivateInProduction, type HasCollection, type SinglePage } from './collections'
 
 /**
  * Returns true if file is a standalone page.
  */
-export const isSinglePage = (entry: Writing | Post | TIL | Draft | Note | Bookmark | SinglePage): entry is SinglePage =>
-  entry.collection === 'pages'
+export const isSinglePage = (entry: HasCollection): entry is SinglePage => entry.collection === 'pages'
+
+/**
+ * Returns a list of all standalone pages (with private pages removed in production).
+ */
+export const getSinglePages = async (): Promise<SinglePage[]> => {
+  return removePrivateInProduction(await getCollection('pages'))
+}

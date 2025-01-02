@@ -3,21 +3,36 @@ import { z } from 'astro:schema'
 
 import { getBookmarks } from '../../utils/bookmarks'
 import { getNotes } from '../../utils/notes'
-import { getDrafts } from '../../utils/posts'
-import { sortByLastModifiedDate, type Bookmark, type Draft, type Note } from '../../utils/collections'
+import { sortByLastModifiedDate, type Bookmark, type Draft, type Note, type Post } from '../../utils/collections'
 import { cleanTags, filterItemsByTags, getAllTagsInItems } from '../../utils/tags'
 import type { NotesListItem } from './generateNotesPageHtml'
+import { getDrafts } from '../../utils/drafts'
+import { getScheduledPosts } from '../../utils/posts'
 
 // TODO: move some of these to separate files and add tests?
 
-type NotesPageEntry = Draft | Note | Bookmark
+type NotesPageEntry = Post | Draft | Note | Bookmark // scheduled posts appear on the notes page like drafts
 
 let cachedItemsAll: NotesListItem[] | null = null
 let cachedTagsAll: string[] | null = null
 
 const getAllItems = async (): Promise<NotesListItem[]> => {
   if (!cachedItemsAll) {
-    const allEntries = [...(await getDrafts()), ...(await getNotes()), ...(await getBookmarks())]
+    const allEntries = [
+      ...(await getScheduledPosts()),
+      ...(await getDrafts()),
+      ...(await getNotes()),
+      ...(await getBookmarks()),
+    ]
+    console.log(
+      'allEntries:',
+      allEntries.slice(0, 5).map(entry => ({
+        id: entry.id,
+        lastModified: entry.data.lastModified,
+        tags: entry.data.tags,
+      })),
+    )
+    console.log('allEntries:', allEntries.length)
     cachedItemsAll = createNotesListItems(sortByLastModifiedDate(allEntries))
   }
 
@@ -131,6 +146,8 @@ export const filterNotes = defineAction({
     const allTags = await getAllTags() // cached
     const validTags = validateTags(input.tags, allTags)
     const filteredItems = filterItemsByTags(allItems, validTags)
+    console.log('filteredItems:', filteredItems.slice(0, 5))
+    console.log('filteredItems:', filteredItems.length)
 
     return {
       count: {

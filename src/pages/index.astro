@@ -2,14 +2,17 @@
 import PrevNext from '../components/PrevNext.astro'
 import site from '../data/site'
 import Main from '../layouts/Main.astro'
-import { sortByPublishDate } from '../utils/collections'
+import { type Post, type PostWithContent } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getPosts } from '../utils/posts'
-import { getTILs } from '../utils/tils'
+import { getPublishedPosts } from '../utils/posts'
 
-const writing = sortByPublishDate([...(await getPosts()), ...(await getTILs())])
-const latest = writing.slice(0, 5)
-const rest = writing.slice(5)
+export const LIMIT = 5
+const posts = await getPublishedPosts()
+
+// const hasContent = (post: Post | PostWithContent): post is PostWithContent => 'Content' in post
+
+const postsToShowInline = posts.slice(0, LIMIT) as PostWithContent[]
+const postsToShowInList = posts.slice(LIMIT) as Post[]
 ---
 
 <Main title={site.title} description={site.description.site}>
@@ -17,11 +20,11 @@ const rest = writing.slice(5)
 
   <div class="xl:flex xl:gap-28 2xl:gap-48 xl:justify-between xl:items-start mx-auto max-w-[90rem]">
     <section class="max-w-[70ch]">
-      <h2 class="sr-only">The full content of my {latest.length} most recent posts</h2>
+      <h2 class="sr-only">The full content of my {postsToShowInline.length} most recent posts</h2>
 
       <ol reversed class="-mt-24">
         {
-          latest.map(post => {
+          postsToShowInline.map(post => {
             const date = post.data.date || post.data.lastModified
 
             return (
@@ -48,7 +51,7 @@ const rest = writing.slice(5)
       </ol>
 
       <div class="hidden xl:block">
-        <PrevNext entry={null} prev={null} next={rest[0]} />
+        <PrevNext entry={null} prev={null} next={postsToShowInList[0]} />
       </div>
     </section>
 
@@ -57,7 +60,7 @@ const rest = writing.slice(5)
 
       <ol reversed class="columns-md gap-x-20 mt-7">
         {
-          rest.map((post, index) => {
+          postsToShowInList.map((post, index) => {
             const date = post.data.date || Date.now()
 
             return (

@@ -1,47 +1,27 @@
 ---
-import { getBookmarks } from '../utils/bookmarks'
-import {
-  isPathnameInCollection,
-  type Bookmark,
-  type Draft,
-  type Note,
-  type Post,
-  type SinglePage,
-  type TIL,
-} from '../utils/collections'
-import { getDrafts, getPosts } from '../utils/posts'
-import { getTILs } from '../utils/tils'
+import { isBookmark } from '../utils/bookmarks'
+import { type Bookmark, type Draft, type Note, type Post, type SinglePage } from '../utils/collections'
+import { isDraft } from '../utils/drafts'
+import { isPost, isPublished } from '../utils/posts'
 
 type Props = {
-  entry: Post | TIL | Draft | Note | Bookmark | SinglePage
+  entry: Post | Draft | Note | Bookmark | SinglePage
   title: string
 }
 
-const { pathname } = Astro.url
-
-const posts = await getPosts()
-const tils = await getTILs()
-const drafts = await getDrafts()
-const bookmarks = await getBookmarks()
-
-const isPost = isPathnameInCollection(pathname, posts)
-const isTIL = isPathnameInCollection(pathname, tils)
-const isDraft = isPathnameInCollection(pathname, drafts)
-const isBookmark = isPathnameInCollection(pathname, bookmarks)
-
 // TODO: add unit tests, auditing
-const getDisclaimer = (entry: Post | TIL | Draft | Note | Bookmark | SinglePage, title: string): string | null => {
+const getDisclaimer = (entry: Post | Draft | Note | Bookmark | SinglePage, title: string): string | null => {
   const noDisclaimer = ['about', 'workouts']
 
   const byAuthorIfAuthor = 'author' in entry.data && entry.data.author ? ` by ${entry.data.author}` : ''
   const whereToFindWriting = `For more polished work, check out <a href="/" class="link">writing</a>.`
 
   const disclaimer =
-    isPost || isTIL || noDisclaimer.includes(entry.id)
+    (isPost(entry) && isPublished(entry)) || noDisclaimer.includes(entry.id)
       ? null
-      : isDraft
+      : isDraft(entry)
         ? `This is a rough draft of a potential blog post. ${whereToFindWriting}`
-        : isBookmark && 'source' in entry.data
+        : isBookmark(entry) && 'source' in entry.data
           ? `These are my unfinished notes about <a href="${entry.data.source}">${title}</a>${byAuthorIfAuthor}. ${whereToFindWriting}`
           : `These are my unfinished notes about ${title}. ${whereToFindWriting}`
 
