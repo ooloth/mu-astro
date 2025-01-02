@@ -47,7 +47,7 @@
     "build:local": "npm run cloudinary:cache && astro build --node",
     "check": "npm run cloudinary:cache; npm run format:check; npm run lint:check; npm run types:check",
     "cloudinary:cache": "tsx ./scripts/cacheCloudinaryResources.ts",
-    "content:update": "git submodule foreach --recursive git pull origin main",
+    "content:update": "git submodule update --recursive --remote",
     "dev": "npm i && astro check; npm run content:update; npm run cloudinary:cache && astro dev",
     "eslint": "eslint '**/*.{astro,js,ts,tsx}' --ignore-path .gitignore",
     "format:check": "npm run prettier -- --list-different",
