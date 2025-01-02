@@ -4,15 +4,12 @@ import site from '../data/site'
 import Main from '../layouts/Main.astro'
 import { type Post, type PostWithContent } from '../utils/collections'
 import { getHumanReadableDate, getMachineReadableDate } from '../utils/dates'
-import { getPublishedPosts } from '../utils/posts'
+import { FEATURED_COUNT, getPublishedPosts } from '../utils/posts'
 
-export const LIMIT = 5
 const posts = await getPublishedPosts()
 
-// const hasContent = (post: Post | PostWithContent): post is PostWithContent => 'Content' in post
-
-const postsToShowInline = posts.slice(0, LIMIT) as PostWithContent[]
-const postsToShowInList = posts.slice(LIMIT) as Post[]
+const postsToShowInline = posts.slice(0, FEATURED_COUNT) as PostWithContent[]
+const postsToShowInList = posts.slice(FEATURED_COUNT) as Post[]
 ---
 
 <Main title={site.title} description={site.description.site}>

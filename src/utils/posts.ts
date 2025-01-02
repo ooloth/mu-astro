@@ -8,7 +8,8 @@ import {
   type Post,
   type PostWithContent,
 } from './collections'
-import { LIMIT } from '../pages/index.astro'
+
+export const FEATURED_COUNT = 5
 
 /**
  * Returns true if the entry is from the posts collection.
@@ -44,8 +45,8 @@ export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithCont
  */
 export const getPublishedPosts = async (): Promise<(Post | PostWithContent)[]> => {
   const postsToShow = sortByPublishDate(await getCollection('posts', isPublished))
-  const postsToShowInline = postsToShow.slice(0, LIMIT)
-  const postsToShowInList = postsToShow.slice(LIMIT)
+  const postsToShowInline = postsToShow.slice(0, FEATURED_COUNT)
+  const postsToShowInList = postsToShow.slice(FEATURED_COUNT)
 
   return await addLastModifiedDate([...(await addContent(postsToShowInline)), ...postsToShowInList])
 }
