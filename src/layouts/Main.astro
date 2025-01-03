@@ -2,17 +2,26 @@
 import Footer from '../components/Footer.astro'
 import Header from '../components/Header.astro'
 import Base, { type BaseProps } from './Base.astro'
+import { maxWidthOfCopy } from './Writing.astro'
 
 type Props = BaseProps
 
 const { description, title, ogImage, canonicalUrl } = Astro.props
+const { pathname } = Astro.url
+
+// Special cases; otherwise default to `maxWidthOfCopy`
+const maxWidthByPathname: Record<string, string> = {
+  '/': 'max-w-[95rem]',
+  '/likes/': '',
+  '/notes/': '',
+}
 ---
 
 <Base title={title} description={description} ogImage={ogImage} canonicalUrl={canonicalUrl}>
-  <div class="flex flex-col flex-1">
+  <div class=`flex flex-col flex-1 mx-auto px-4 sm:px-6 w-full ${maxWidthByPathname?.[pathname] ?? maxWidthOfCopy}`>
     <Header />
 
-    <main id="skip" class="flex-1 px-4 sm:px-6">
+    <main id="skip" class="flex-1">
       <slot />
     </main>
 

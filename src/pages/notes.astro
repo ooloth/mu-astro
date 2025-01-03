@@ -8,12 +8,13 @@ import { generateNotesListItemHtml } from '../actions/filterNotes/generateNotesP
 const { data, error } = await Astro.callAction(actions.filterNotes, { tags: [] })
 if (error) console.error(error)
 
+const title = 'Notes'
 const allEntries = data?.results || []
 const allTags = data?.tags || { valid: [], filtered: [], all: [] }
 ---
 
-<Main title="Notes" description="Rough notes about coding and other topics.">
-  <h1 class="sr-only">Notes</h1>
+<Main title={title} description="Rough notes about coding and other topics.">
+  <h1 class="sr-only">{title}</h1>
 
   <section>
     <h2 class="sr-only">Bookmarks, post drafts and topic notes (sorted by last modified date and filterable by tag)</h2>
