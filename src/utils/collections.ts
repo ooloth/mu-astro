@@ -1,6 +1,5 @@
 import { render, type CollectionEntry } from 'astro:content'
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
-// import type { MarkdownHeading } from 'astro'
 
 // A generic type that adds a lastModified property to the existing data field
 type WithLastModified<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>> = Omit<T, 'data'> & {
@@ -26,51 +25,33 @@ export type SinglePage = CollectionEntry<'pages'>
  * Adds the last modified date to the frontmatter of a post, draft, note, or bookmark.
  * See: https://docs.astro.build/en/recipes/modified-time/
  */
-export async function addLastModifiedDate<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>>(
+export const addLastModifiedDate = async <T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>>(
   entries: T[],
-): Promise<WithLastModified<T>[]> {
-  return await Promise.all(
-    entries.map(async entry => {
-      const { remarkPluginFrontmatter } = await render(entry)
-      return { ...entry, data: { ...entry.data, lastModified: remarkPluginFrontmatter.lastModified } }
-    }),
+): Promise<WithLastModified<T>[]> =>
+  await Promise.all(
+    entries.map(async entry => ({
+      ...entry,
+      data: { ...entry.data, lastModified: (await render(entry)).remarkPluginFrontmatter.lastModified },
+    })),
   )
-}
 
 /**
  * Adds the last modified date to the frontmatter of a post (so it can be shown inline on the home page).
  * See: https://docs.astro.build/en/recipes/modified-time/
  */
-export async function addContent(
+export const addContent = async (
   entries: CollectionEntry<'posts'>[],
-): Promise<(CollectionEntry<'posts'> & HasContent)[]> {
-  return await Promise.all(
-    entries.map(async entry => {
-      const { Content } = await render(entry)
-      return { ...entry, Content }
-    }),
-  )
-}
+): Promise<(CollectionEntry<'posts'> & HasContent)[]> =>
+  await Promise.all(entries.map(async entry => ({ ...entry, Content: (await render(entry)).Content })))
 
 type HasLastModified = {
-  lastModified?: string
-  data?: {
-    lastModified?: string
+  data: {
+    lastModified: string
   }
 }
 
-export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T[] => {
-  const sortByDate = (a: T, b: T): number => {
-    const lastModifiedTime = (item: T): number => {
-      const lastModified = item.data?.lastModified ?? item.lastModified
-      return lastModified ? new Date(String(lastModified)).getTime() : -Infinity
-    }
-
-    return lastModifiedTime(b) - lastModifiedTime(a)
-  }
-
-  return items.sort(sortByDate)
-}
+export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T[] =>
+  items.sort((a: T, b: T): number => new Date(b.data.lastModified).getTime() - new Date(a.data.lastModified).getTime())
 
 /**
  * Returns true if the entry is not marked private or obviously work-specific.
@@ -87,8 +68,6 @@ export const removePrivateInProduction = <T extends CollectionEntry<'drafts' | '
 
 /**
  * Returns true if the pathname matches any slug in the collection.
- *
- * TODO: still useful now that each type comes from a distinct collection? Do I ever know the pathname but not the entry?
  */
 export const isPathnameInCollection = (
   pathname: string | undefined,
