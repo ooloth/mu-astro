@@ -18,7 +18,7 @@ import { glob, file } from 'astro/loaders'
 
 const post = z.object({
   date: z.coerce.date(),
-  description: z.string().optional().nullable(),
+  // description: z.string().optional().nullable(),
   devLink: z.string().optional().nullable(),
   feedId: z.string().optional().nullable(),
   hackerNewsLink: z.string().optional().nullable(),
@@ -42,7 +42,6 @@ const posts = defineCollection({
 
 const drafts = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/drafts' }),
-  // schema: publishedPost.partial(), // TODO: prefer this approach once there's also a way to make everything nullable
   schema: z.object({
     ...post.shape,
     date: z.coerce.date().optional().nullable(),
@@ -54,11 +53,12 @@ const drafts = defineCollection({
 const notes = defineCollection({
   loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
   schema: z.object({
+    // description: z.string().optional().nullable(),
     ogImage: z.string().optional().nullable(),
     // parent: z.string().optional().nullable(), // TODO: remove? (will be ignored); legacy from when notes were nested; still useful for determining which notes are related?
     private: z.boolean().optional().nullable(), // TODO: remove from articles
     tags: z.array(z.string()).optional().nullable(), // TODO: require? report?
-    title: z.string().optional().nullable(), // TODO: require for articles
+    title: z.string().optional().nullable(),
   }),
 })
 
@@ -72,10 +72,10 @@ const bookmarks = defineCollection({
     favicon: z.string().optional().nullable(),
     image: z.string().optional().nullable(),
     private: z.boolean().optional().nullable(),
-    slug: z.string(),
-    source: z.string(),
+    slug: z.string().nonempty(),
+    source: z.string().nonempty(),
     tags: z.array(z.string()).optional().nullable(), // TODO: report when < 2 tags?
-    title: z.string(),
+    title: z.string().nonempty(),
   }),
 })
 
@@ -88,7 +88,7 @@ const pages = defineCollection({
   schema: z.object({
     ogImage: z.string().optional().nullable(),
     private: z.boolean().optional().nullable(),
-    title: z.string(),
+    title: z.string().nonempty(),
     tags: z.array(z.string()).optional().nullable(),
   }),
 })
@@ -99,8 +99,8 @@ const pages = defineCollection({
 
 const iTunesItem = z.object({
   date: z.coerce.date(),
-  id: z.number(), // see path after https://music.apple.com/ca, https://books.apple.com/ca, or https://podcasts.apple.com/ca
-  name: z.string(),
+  id: z.number().nonnegative(), // see path after https://music.apple.com/ca, https://books.apple.com/ca, or https://podcasts.apple.com/ca
+  name: z.string().nonempty(),
 })
 
 const albums = defineCollection({
