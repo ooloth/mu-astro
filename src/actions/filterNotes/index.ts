@@ -3,7 +3,14 @@ import { z } from 'astro:schema'
 
 import { getBookmarks } from '../../utils/bookmarks'
 import { getNotes } from '../../utils/notes'
-import { sortByLastModifiedDate, type Bookmark, type Draft, type Note, type Post } from '../../utils/collections'
+import {
+  sortByLastModifiedDate,
+  type Bookmark,
+  type Draft,
+  type Note,
+  type Post,
+  type SinglePage,
+} from '../../utils/collections'
 import { cleanTags, filterItemsByTags, getAllTagsInItems } from '../../utils/tags'
 import type { NotesListItem } from './generateNotesPageHtml'
 import { getDrafts } from '../../utils/drafts'
@@ -59,15 +66,14 @@ const getAccessibleEmojiMarkup = (emoji: string): string => {
   return `<span role="img" aria-label="${getEmojiDescription(emoji)}">${emoji}</span>`
 }
 
-// TODO: return just the content string and let the frontend render it as html?
-const getIconHtml = (item: NotesPageEntry): string => {
+export const getIconHtml = (item: NotesPageEntry | Post | Draft | Note | Bookmark | SinglePage): string => {
   if (item.collection === 'drafts') {
     return getAccessibleEmojiMarkup('✍️')
   }
 
   if (item.collection === 'bookmarks') {
     if (item.data.favicon) {
-      return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block -mt-1 mr-[0.15rem] ml-[0.2rem]" />`
+      return `<img src="${item.data.favicon}" alt="" width="20" class="inline-block !-mt-[0.2rem] !mb-0 mr-[0.15rem] ml-[0.2rem]" />`
     }
 
     if (item.data.source) {

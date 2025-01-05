@@ -5,6 +5,7 @@ import { getPosts } from '../utils/posts'
 import { getBookmarks } from '../utils/bookmarks'
 import { getAllEntriesWithSameTagsAsEntry } from '../utils/tags'
 import { getDrafts } from '../utils/drafts'
+import { getIconHtml } from '../actions/filterNotes'
 
 type Props = {
   entry: Post | Draft | Note | Bookmark | SinglePage
@@ -33,13 +34,10 @@ const hasRelatedEntries = Object.keys(entriesWithSameTags).length > 0
           <ul>
             {entriesWithTag.map(entry => (
               <li>
-                <a href={`/${entry.id}/`}>{entry.data.title}</a>
-
-                {/* {'date' in entry.data && entry.data.date ? (
-                  <time datetime={getMachineReadableDate(entry.data.date)} class="timestamp ml-3">
-                    {getHumanReadableDate(entry.data.date)}
-                  </time>
-                ) : null} */}
+                <a href={`/${entry.id}/`} class="link-nav">
+                  {entry.data.title}
+                </a>
+                <span class="ml-1" set:html={getIconHtml(entry)} />
               </li>
             ))}
           </ul>
