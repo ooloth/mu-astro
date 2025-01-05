@@ -55,6 +55,7 @@ const displayedIds = new Set()
             <ul>
               {tagEntries.map(entry => {
                 if (displayedIds.has(entry.id)) return null
+                const author = 'author' in entry.data ? entry.data.author : null
                 displayedIds.add(entry.id)
 
                 return (
@@ -62,6 +63,12 @@ const displayedIds = new Set()
                     <a href={`/${entry.id}/`} class="link-nav">
                       {entry.data.title}
                     </a>
+                    {author ? (
+                      <>
+                        <span class="mx-1 text-[--moonlight-red]">•</span>
+                        <span class="text-zinc-400">{author}</span>
+                      </>
+                    ) : null}
                     <span class="ml-1" set:html={getIconHtml(entry)} />
                   </li>
                 )
