@@ -43,22 +43,27 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | Draft | Note |
   entry: T,
   collections: T[],
 ): Record<string, T[]> => {
+  const relatedEntries: Set<T> = new Set()
   const relatedByTag: Record<string, T[]> = {}
 
+  // Find all entries that share at least one tag with the current entry
   for (const item of collections) {
-    // Go in order of the entry's tags, which are presumably sorted from most to least relevant
     for (const tag of cleanTags(entry.data.tags ?? [])) {
       if ((item.data.tags ?? []).includes(tag)) {
-        if (item.id === entry.id) {
-          continue
+        if (item.id !== entry.id) {
+          relatedEntries.add(item)
         }
-
-        if (!relatedByTag[tag]) {
-          relatedByTag[tag] = []
-        }
-
-        relatedByTag[tag].push(item)
       }
+    }
+  }
+
+  for (const entry of relatedEntries) {
+    for (const tag of cleanTags(entry.data.tags ?? [])) {
+      if (!relatedByTag[tag]) {
+        relatedByTag[tag] = []
+      }
+
+      relatedByTag[tag].push(entry)
     }
   }
 
