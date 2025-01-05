@@ -15,6 +15,7 @@ import Comments from '../components/Comments.astro'
 import Disclaimer from '../components/Disclaimer.astro'
 import PrevNext from '../components/PrevNext.astro'
 import { isDraft } from '../utils/drafts'
+import { isSinglePage } from '../utils/pages'
 
 type Props = {
   entry: PostWithContent | Post | Draft | Note | Bookmark | SinglePage
@@ -39,7 +40,7 @@ const ogImage = 'ogImage' in entry.data ? (entry.data.ogImage ?? undefined) : un
 const showDate = date && (isPost(entry) || isDraft(entry))
 const showLastModifiedDate = showDate && lastModified && hasBeenModified
 const showComments = isPost(entry)
-const showRelated = !isPost(entry)
+const showRelated = !isPost(entry) && !isSinglePage(entry)
 
 export const maxWidthOfCopy = 'max-w-[72ch]'
 

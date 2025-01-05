@@ -1,13 +1,14 @@
 ---
-import { type Bookmark, type Draft, type Note, type Post, type SinglePage } from '../utils/collections'
+import { type Bookmark, type Draft, type Note, type Post } from '../utils/collections'
 import { getNotes } from '../utils/notes'
 import { getPosts } from '../utils/posts'
 import { getBookmarks } from '../utils/bookmarks'
-import { getAllEntriesWithSameTagsAsEntry } from '../utils/tags'
+import { cleanTags, getAllEntriesWithSameTagsAsEntry } from '../utils/tags'
 import { getDrafts } from '../utils/drafts'
+import { getIconHtml } from '../actions/filterNotes'
 
 type Props = {
-  entry: Post | Draft | Note | Bookmark | SinglePage
+  entry: Post | Draft | Note | Bookmark
 }
 
 const { entry } = Astro.props
@@ -20,31 +21,62 @@ const entriesWithSameTags = getAllEntriesWithSameTagsAsEntry(entry, [
 ])
 
 const hasRelatedEntries = Object.keys(entriesWithSameTags).length > 0
+
+const tagsInDisplayOrder = Object.keys(entriesWithSameTags).sort((a, b) => {
+  // "introduction" first; first tag in entry.data.tags (i.e. the primary tag) second; everything else in alphabetical order:
+  if (a === 'introduction') return -1
+  if (b === 'introduction') return 1
+  if (entry.data.tags?.includes(a)) return -1
+  if (entry.data.tags?.includes(b)) return 1
+  return 0
+})
+
+const primaryTag = cleanTags(entry.data.tags)[0]
+
+// Used below to avoid displaying the same entry twice under different tags
+const displayedIds = new Set()
 ---
 
 {
   hasRelatedEntries ? (
     <footer class="markdown mt-12 border-t-[1px] border-zinc-600 ">
-      {Object.entries(entriesWithSameTags).map(([tag, entriesWithTag]) => (
-        <>
-          <h2 class="text-red-500">
-            Related to <span class="text-zinc-400">#{tag}</span>
-          </h2>
-          <ul>
-            {entriesWithTag.map(entry => (
-              <li>
-                <a href={`/${entry.id}/`}>{entry.data.title}</a>
+      {tagsInDisplayOrder.map(tag => {
+        const tagEntries = entriesWithSameTags[tag]
 
-                {/* {'date' in entry.data && entry.data.date ? (
-                  <time datetime={getMachineReadableDate(entry.data.date)} class="timestamp ml-3">
-                    {getHumanReadableDate(entry.data.date)}
-                  </time>
-                ) : null} */}
-              </li>
-            ))}
-          </ul>
-        </>
-      ))}
+        if (tagEntries.length === 0) return null
+        if (tagEntries.every(entry => displayedIds.has(entry.id))) return null
+
+        return (
+          <section>
+            <h2 class="text-red-500">
+              <span class="capitalize">{tag === primaryTag ? 'General' : tag}</span>
+              {/* Related to <span class="text-zinc-400">#{tag}</span> */}
+            </h2>
+            <ul>
+              {tagEntries.map(entry => {
+                if (displayedIds.has(entry.id)) return null
+                const author = 'author' in entry.data ? entry.data.author : null
+                displayedIds.add(entry.id)
+
+                return (
+                  <li>
+                    <a href={`/${entry.id}/`} class="link-nav">
+                      {entry.data.title}
+                    </a>
+                    {author ? (
+                      <>
+                        <span class="mx-1 text-[--moonlight-red]">•</span>
+                        <span class="text-zinc-400">{author}</span>
+                      </>
+                    ) : null}
+                    <span class="ml-1" set:html={getIconHtml(entry)} />
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )
+      })}
     </footer>
   ) : null
 }
