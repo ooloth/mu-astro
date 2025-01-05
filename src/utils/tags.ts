@@ -1,4 +1,4 @@
-import type { Bookmark, Draft, Note, Post, SinglePage } from './collections'
+import type { Bookmark, Draft, Note, Post } from './collections'
 
 type HasTags = {
   tags?: string[] | null
@@ -36,10 +36,16 @@ export const filterItemsByTags = <T extends HasTags>(items: T[], tags: string[])
   })
 }
 
+type HasDate = {
+  data: {
+    date: Date
+  }
+}
+
 /**
  * Returns a mapping of the entry's tags to lists of other content entries with that tag.
  */
-export const getAllEntriesWithSameTagsAsEntry = <T extends Post | Draft | Note | Bookmark | SinglePage>(
+export const getAllEntriesWithSameTagsAsEntry = <T extends Post | Draft | Note | Bookmark>(
   entry: T,
   collections: T[],
 ): Record<string, T[]> => {
@@ -65,6 +71,21 @@ export const getAllEntriesWithSameTagsAsEntry = <T extends Post | Draft | Note |
 
       relatedByTag[tag].push(entry)
     }
+  }
+
+  for (const tag in relatedByTag) {
+    // Separate items with dates from those without dates
+    const itemsWithDate = relatedByTag[tag].filter(item => 'date' in item.data && item.data.date) as (T & HasDate)[]
+    const itemsWithoutDate = relatedByTag[tag].filter(item => !('date' in item.data) || !item.data.date)
+
+    // Sort items with dates by date (descending)
+    itemsWithDate.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+
+    // Sort items without dates by lastModified date (descending)
+    itemsWithoutDate.sort((a, b) => new Date(b.data.lastModified).getTime() - new Date(a.data.lastModified).getTime())
+
+    // Concatenate the sorted arrays
+    relatedByTag[tag] = [...itemsWithDate, ...itemsWithoutDate]
   }
 
   return relatedByTag

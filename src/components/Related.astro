@@ -1,5 +1,5 @@
 ---
-import { type Bookmark, type Draft, type Note, type Post, type SinglePage } from '../utils/collections'
+import { type Bookmark, type Draft, type Note, type Post } from '../utils/collections'
 import { getNotes } from '../utils/notes'
 import { getPosts } from '../utils/posts'
 import { getBookmarks } from '../utils/bookmarks'
@@ -8,7 +8,7 @@ import { getDrafts } from '../utils/drafts'
 import { getIconHtml } from '../actions/filterNotes'
 
 type Props = {
-  entry: Post | Draft | Note | Bookmark | SinglePage
+  entry: Post | Draft | Note | Bookmark
 }
 
 const { entry } = Astro.props
