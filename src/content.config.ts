@@ -18,7 +18,7 @@ import { glob, file } from 'astro/loaders'
 
 const post = z.object({
   date: z.coerce.date(),
-  // description: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   devLink: z.string().optional().nullable(),
   feedId: z.string().optional().nullable(),
   hackerNewsLink: z.string().optional().nullable(),
