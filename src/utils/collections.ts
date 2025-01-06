@@ -36,7 +36,7 @@ export const addLastModifiedDate = async <T extends CollectionEntry<'posts' | 'd
   )
 
 /**
- * Adds the last modified date to the frontmatter of a post (so it can be shown inline on the home page).
+ * Adds the rendered content to the frontmatter of a post (so it can be shown inline on the home page).
  * See: https://docs.astro.build/en/recipes/modified-time/
  */
 export const addContent = async (
@@ -51,7 +51,15 @@ type HasLastModified = {
 }
 
 export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T[] =>
-  items.sort((a: T, b: T): number => new Date(b.data.lastModified).getTime() - new Date(a.data.lastModified).getTime())
+  structuredClone(items).sort((a: T, b: T): number => {
+    // if (!a.data.lastModified) {
+    //   throw new Error(`Missing lastModified date: ${JSON.stringify(a)}`)
+    // }
+    // if (!b.data.lastModified) {
+    //   throw new Error(`Missing lastModified date: ${JSON.stringify(b)}`)
+    // }
+    return new Date(b.data.lastModified).getTime() - new Date(a.data.lastModified).getTime()
+  })
 
 /**
  * Returns true if the entry is not marked private or obviously work-specific.

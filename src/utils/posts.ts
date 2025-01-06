@@ -20,7 +20,7 @@ export const isPost = (entry: HasCollection): entry is Post => entry.collection 
  * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
  */
 export const sortByPublishDate = (items: CollectionEntry<'posts'>[]): CollectionEntry<'posts'>[] =>
-  items.sort((a, b): number => b.data.date.getTime() - a.data.date.getTime())
+  structuredClone(items).sort((a, b): number => b.data.date.getTime() - a.data.date.getTime())
 
 export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean =>
   post.data.date <= new Date()
