@@ -43,16 +43,13 @@ const showComments = isPost(entry)
 const showRelated = !isPost(entry) && !isSinglePage(entry)
 
 export const maxWidthOfCopy = 'max-w-[72ch]'
-
-// const tags = cleanTags(entry.data.tags)
-// TODO: extract Timestamp/Dates component?
 ---
 
 <Main canonicalUrl={source} description={description} ogImage={ogImage} title={title}>
   <header class="markdown">
     {
       showDate ? (
-        <p>
+        <p class="inline">
           <time datetime={getMachineReadableDate(date)}>{getHumanReadableDate(date)}</time>
           {showLastModifiedDate ? (
             <>
@@ -65,19 +62,6 @@ export const maxWidthOfCopy = 'max-w-[72ch]'
     }
 
     <h1>{title}</h1>
-
-    <!-- TODO: how to show tags on all writing pages? -->
-    <!-- {
-        tags.length ? (
-          <ul class="flex flex-wrap gap-2">
-            {tags.map(tag => (
-              <li>
-                <Tag tag={tag} />
-              </li>
-            ))}
-          </ul>
-        ) : null
-      } -->
 
     <Disclaimer entry={entry} title={title} />
   </header>
