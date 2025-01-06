@@ -30,10 +30,10 @@ export async function addLastModifiedDate<T extends CollectionEntry<'posts' | 'd
   entries: T[],
 ): Promise<WithLastModified<T>[]> {
   return await Promise.all(
-    entries.map(async entry => {
-      const { remarkPluginFrontmatter } = await render(entry)
-      return { ...entry, data: { ...entry.data, lastModified: remarkPluginFrontmatter.lastModified } }
-    }),
+    entries.map(async entry => ({
+      ...entry,
+      data: { ...entry.data, lastModified: (await render(entry)).remarkPluginFrontmatter.lastModified },
+    })),
   )
 }
 
@@ -44,27 +44,19 @@ export async function addLastModifiedDate<T extends CollectionEntry<'posts' | 'd
 export async function addContent(
   entries: CollectionEntry<'posts'>[],
 ): Promise<(CollectionEntry<'posts'> & HasContent)[]> {
-  return await Promise.all(
-    entries.map(async entry => {
-      const { Content } = await render(entry)
-      return { ...entry, Content }
-    }),
-  )
+  return await Promise.all(entries.map(async entry => ({ ...entry, Content: (await render(entry)).Content })))
 }
 
 type HasLastModified = {
-  lastModified?: string
-  data?: {
+  data: {
     lastModified?: string
   }
 }
 
 export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T[] => {
   const sortByDate = (a: T, b: T): number => {
-    const lastModifiedTime = (item: T): number => {
-      const lastModified = item.data?.lastModified ?? item.lastModified
-      return lastModified ? new Date(String(lastModified)).getTime() : -Infinity
-    }
+    const lastModifiedTime = (item: T): number =>
+      item.data.lastModified ? new Date(String(item.data.lastModified)).getTime() : -Infinity
 
     return lastModifiedTime(b) - lastModifiedTime(a)
   }
