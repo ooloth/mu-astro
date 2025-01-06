@@ -30,7 +30,7 @@ export const sortByPublishDate = (items: CollectionEntry<'posts'>[]): Collection
     return publishTime(b) - publishTime(a)
   }
 
-  return items.sort(sortByDate)
+  return structuredClone(items).sort(sortByDate)
 }
 
 export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean => {

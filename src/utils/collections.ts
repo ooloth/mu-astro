@@ -69,7 +69,7 @@ export const sortByLastModifiedDate = <T extends HasLastModified>(items: T[]): T
     return lastModifiedTime(b) - lastModifiedTime(a)
   }
 
-  return items.sort(sortByDate)
+  return structuredClone(items).sort(sortByDate)
 }
 
 /**
