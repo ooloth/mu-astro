@@ -1,6 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
+    "noErrorTruncation": true,
     "verbatimModuleSyntax": true
   },
   "include": [".astro/types.d.ts", "**/*"],
