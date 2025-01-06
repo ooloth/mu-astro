@@ -30,7 +30,7 @@ const remarkModifiedTime: RemarkPlugin = () => {
       // Check if the file is within a submodule
       const submodulePath = submodulePaths.find(submodule => relativeFilePath.startsWith(submodule))
 
-      let result: string
+      let result
       if (submodulePath) {
         // Navigate to the submodule directory and get the last modified time
         const submoduleAbsolutePath = resolve(repoRoot, submodulePath)

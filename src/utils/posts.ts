@@ -19,11 +19,25 @@ export const isPost = (entry: HasCollection): entry is Post => entry.collection 
 /**
  * Returns entries sorted in descending order by publish date, with undefined dates sorted first.
  */
-export const sortByPublishDate = (items: CollectionEntry<'posts'>[]): CollectionEntry<'posts'>[] =>
-  structuredClone(items).sort((a, b): number => b.data.date.getTime() - a.data.date.getTime())
+export const sortByPublishDate = (items: CollectionEntry<'posts'>[]): CollectionEntry<'posts'>[] => {
+  const sortByDate = (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>): number => {
+    const publishTime = (item: CollectionEntry<'posts'>): number => {
+      return item.data.date.getTime()
+      // const date = item.data?.date ?? item.date
+      // return date ? new Date(String(date)).getTime() : -Infinity
+    }
 
-export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean =>
-  post.data.date <= new Date()
+    return publishTime(b) - publishTime(a)
+  }
+
+  return items.sort(sortByDate)
+}
+
+export const isPublished = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean => {
+  return post.data.date <= new Date()
+  // const date = post.data.date ? new Date(post.data.date) : null
+  // return date !== null && date <= new Date()
+}
 
 /**
  * Returns all posts with a publish date in the past, sorted by publish date (useful for RSS feed). Includes the
@@ -37,14 +51,18 @@ export const getPublishedPosts = async (): Promise<(Post | PostWithContent)[]> =
   return await addLastModifiedDate([...(await addContent(postsToShowInline)), ...postsToShowInList])
 }
 
-export const isScheduled = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean =>
-  post.data.date > new Date()
+export const isScheduled = (post: CollectionEntry<'posts'> | Post | PostWithContent): boolean => {
+  return post.data.date > new Date()
+  // const date = post.data.date ? new Date(post.data.date) : null
+  // return date !== null && date > new Date()
+}
 
 /**
  * Returns all posts scheduled to be published in the future, sorted by last modified date.
  */
-export const getScheduledPosts = async (): Promise<Post[]> =>
-  sortByLastModifiedDate(await addLastModifiedDate(await getCollection('posts', isScheduled)))
+export const getScheduledPosts = async (): Promise<Post[]> => {
+  return sortByLastModifiedDate(await addLastModifiedDate(await getCollection('posts', isScheduled)))
+}
 
 /**
  * Returns all posts with their last modified date (and the first few with their content), sorted by publish date.
