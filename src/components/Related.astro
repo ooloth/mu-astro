@@ -13,14 +13,11 @@ type Props = {
 
 const { entry } = Astro.props
 
-const entriesWithSameTags = getAllEntriesWithSameTagsAsEntry(entry, [
-  ...(await getPosts()),
-  ...(await getBookmarks()),
-  ...(await getDrafts()),
-  ...(await getNotes()),
-])
+const allEntries = [...(await getPosts()), ...(await getBookmarks()), ...(await getDrafts()), ...(await getNotes())]
+const entriesWithSameTags = getAllEntriesWithSameTagsAsEntry(entry, allEntries)
 
 const hasRelatedEntries = Object.keys(entriesWithSameTags).length > 0
+const hasBacklinks = entry.data.backlinks?.length > 0
 
 const tagsInDisplayOrder = Object.keys(entriesWithSameTags).sort((a, b) => {
   // "introduction" first; first tag in entry.data.tags (i.e. the primary tag) second; everything else in alphabetical order:
@@ -36,7 +33,7 @@ const displayedIds = new Set()
 ---
 
 {
-  hasRelatedEntries ? (
+  hasRelatedEntries || hasBacklinks ? (
     <footer class="markdown mt-12 border-t-[1px] border-zinc-600 ">
       {tagsInDisplayOrder.map(tag => {
         const tagEntries = entriesWithSameTags[tag]
@@ -46,7 +43,7 @@ const displayedIds = new Set()
 
         return (
           <section>
-            <h2 class="text-red-500">
+            <h2>
               {isNote(entry) ? (
                 <span class="capitalize">{tag === entry.id ? 'General' : tag}</span>
               ) : (
@@ -55,6 +52,7 @@ const displayedIds = new Set()
                 </>
               )}
             </h2>
+
             <ul>
               {tagEntries.map(entry => {
                 if (displayedIds.has(entry.id)) return null
@@ -80,6 +78,34 @@ const displayedIds = new Set()
           </section>
         )
       })}
+
+      {hasBacklinks ? (
+        <section>
+          <h2>Backlinks</h2>
+          <ul>
+            {entry.data.backlinks.map(backlink => {
+              const backlinkedEntry = allEntries.find(entry => entry.id === backlink)
+              if (!backlinkedEntry) return null
+              const author = 'author' in backlinkedEntry.data ? backlinkedEntry.data.author : null
+
+              return (
+                <li>
+                  <a href={`/${backlinkedEntry.id}/`} class="link-nav">
+                    {backlinkedEntry.data.title}
+                  </a>
+                  {author ? (
+                    <>
+                      <span class="mx-1 text-[--moonlight-red]">•</span>
+                      <span class="text-zinc-400">{author}</span>
+                    </>
+                  ) : null}
+                  <span class="ml-1" set:html={getIconHtml(backlinkedEntry)} />
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ) : null}
     </footer>
   ) : null
 }
