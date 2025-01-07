@@ -15,7 +15,6 @@ const remarkModifiedTime: RemarkPlugin = () => {
     .map(line => line.split(' ')[1])
 
   return function (_tree, file: VFile): void {
-    // return function (_tree, file: VFile): void {
     const filepath = file.history[0]
 
     if (!filepath) {

@@ -67,7 +67,7 @@ export const maxWidthOfCopy = 'max-w-[72ch]'
   </header>
 
   <article class="markdown"><slot /></article>
-  <!-- TODO: move these conditions into the components themselves? bad practice? -->
+
   {showComments ? <Comments /> : null}
   {showRelated ? <Related entry={entry} /> : null}
   <PrevNext entry={entry} prev={prev} next={next} />
