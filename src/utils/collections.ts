@@ -3,8 +3,11 @@ import type { AstroComponentFactory } from 'astro/runtime/server/index.js'
 // import type { MarkdownHeading } from 'astro'
 
 // A generic type that adds a lastModified property to the existing data field
-type WithLastModified<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>> = Omit<T, 'data'> & {
-  data: T['data'] & { lastModified: string }
+type WithRemarkFrontmatter<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>> = Omit<T, 'data'> & {
+  data: T['data'] & {
+    backlinks: string[]
+    lastModified: string
+  }
 }
 
 export type HasCollection = {
@@ -15,11 +18,11 @@ export type HasContent = {
   Content: AstroComponentFactory
 }
 
-export type Post = WithLastModified<CollectionEntry<'posts'>>
+export type Post = WithRemarkFrontmatter<CollectionEntry<'posts'>>
 export type PostWithContent = Post & HasContent
-export type Draft = WithLastModified<CollectionEntry<'drafts'>>
-export type Note = WithLastModified<CollectionEntry<'notes'>>
-export type Bookmark = WithLastModified<CollectionEntry<'bookmarks'>>
+export type Draft = WithRemarkFrontmatter<CollectionEntry<'drafts'>>
+export type Note = WithRemarkFrontmatter<CollectionEntry<'notes'>>
+export type Bookmark = WithRemarkFrontmatter<CollectionEntry<'bookmarks'>>
 export type SinglePage = CollectionEntry<'pages'>
 
 /**
@@ -28,12 +31,19 @@ export type SinglePage = CollectionEntry<'pages'>
  */
 export async function addLastModifiedDate<T extends CollectionEntry<'posts' | 'drafts' | 'notes' | 'bookmarks'>>(
   entries: T[],
-): Promise<WithLastModified<T>[]> {
+): Promise<WithRemarkFrontmatter<T>[]> {
   return await Promise.all(
-    entries.map(async entry => ({
-      ...entry,
-      data: { ...entry.data, lastModified: (await render(entry)).remarkPluginFrontmatter.lastModified },
-    })),
+    entries.map(async entry => {
+      const renderedEntry = await render(entry)
+      return {
+        ...entry,
+        data: {
+          ...entry.data,
+          backlinks: renderedEntry.remarkPluginFrontmatter.backlinks,
+          lastModified: renderedEntry.remarkPluginFrontmatter.lastModified,
+        },
+      }
+    }),
   )
 }
 
