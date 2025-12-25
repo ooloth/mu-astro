@@ -137,6 +137,9 @@
       & h2 {
         @apply heading mt-8 text-[1.4rem];
       }
+      & h3 {
+        @apply heading mt-8 text-xl;
+      }
     }
   }
 
